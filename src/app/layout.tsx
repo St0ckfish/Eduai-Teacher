@@ -18,7 +18,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${GeistSans.variable}`}>
       <body className="bg-bgSecondary">
-      <NavBar />
+        <NavBar />
         <TRPCReactProvider>{children}</TRPCReactProvider>
       </body>
     </html>

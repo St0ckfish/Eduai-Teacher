@@ -6,46 +6,74 @@ import { AiFillHome } from "react-icons/ai";
 import { RiCalendarScheduleFill } from "react-icons/ri";
 import { usePathname } from "next/navigation";
 
+const useWindowDimensions = () => {
+  const isClient = typeof window === "object";
+  const [windowSize, setWindowSize] = useState(
+    isClient
+      ? { width: window.innerWidth, height: window.innerHeight }
+      : { width: undefined, height: undefined },
+  );
+
+  useEffect(() => {
+    if (!isClient) {
+      return;
+    }
+
+    const handleResize = () => {
+      setWindowSize({ width: window.innerWidth, height: window.innerHeight });
+    };
+
+    window.addEventListener("resize", handleResize);
+    handleResize();
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, [isClient]);
+
+  return windowSize;
+};
+
+interface NavBarLinkProps {
+  href: string;
+  icon: React.ComponentType<{ className?: string }>;
+  label: string;
+  small: boolean;
+  url: string;
+}
+
+const NavBarLink = ({ href, icon: Icon, label, small, url }: NavBarLinkProps) => {
+  const isActive = url === href;
+  return (
+    <li>
+      <Link
+        className={`flex ${small ? "w-[40px]" : ""} text-md text-gray-500 group mt-4 items-center gap-x-3.5 rounded-lg px-2.5 py-2 font-sans font-semibold hover:bg-bgSecondary hover:text-primary`}
+        href={href}
+      >
+        <Icon
+          className={`h-10 w-10 ${small ? "" : "pl-4"} ${
+            isActive ? `${small ? "" : "border-l-2"} border-primary text-primary` : ""
+          }`}
+        />
+        {!small && (
+          <p className={`translate-y-0.5 ${isActive ? "text-primary" : ""}`}>
+            {label}
+          </p>
+        )}
+      </Link>
+    </li>
+  );
+};
+
 const NavBar = () => {
   const url = usePathname();
-  const [pathname, setPathname] = useState("");
   const [small, setSmall] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+
   const toggleNavbarSmall = () => {
     setSmall(!small);
   };
 
-  useEffect(() => {
-    setPathname(window.location.pathname);
-  }, [pathname]);
   const OpenSideBar = () => {
     setIsOpen(!isOpen);
-  };
-
-  const useWindowDimensions = () => {
-    const isClient = typeof window === "object";
-    const [windowSize, setWindowSize] = useState(
-      isClient
-        ? { width: window.innerWidth, height: window.innerHeight }
-        : { width: undefined, height: undefined },
-    );
-
-    useEffect(() => {
-      if (!isClient) {
-        return;
-      }
-
-      const handleResize = () => {
-        setWindowSize({ width: window.innerWidth, height: window.innerHeight });
-      };
-
-      window.addEventListener("resize", handleResize);
-      handleResize();
-
-      return () => window.removeEventListener("resize", handleResize);
-    }, [isClient]);
-
-    return windowSize;
   };
 
   const { width } = useWindowDimensions();
@@ -56,12 +84,17 @@ const NavBar = () => {
     }
   }, [width]);
 
+  const navLinks = [
+    { href: "/", icon: AiFillHome, label: "Home" },
+    { href: "/schedule", icon: RiCalendarScheduleFill, label: "My Schedule" },
+  ];
+
   return (
     <>
       <header>
         <div>
           <header
-            className={` lg:ps-64 sticky inset-x-0 top-0 z-[48] flex w-full flex-wrap bg-bgPrimary py-2.5 text-sm  sm:flex-nowrap sm:justify-start sm:py-4`}
+            className={`sticky inset-x-0 top-0 z-[48] flex w-full flex-wrap bg-bgPrimary py-2.5 text-sm sm:flex-nowrap sm:justify-start sm:py-4 lg:ps-64`}
           >
             <nav
               className="mx-auto flex w-full basis-full items-center px-4 sm:px-6"
@@ -81,7 +114,7 @@ const NavBar = () => {
                 <div className="sm:hidden">
                   <button
                     type="button"
-                    className="inline-flex h-[2.375rem] w-[2.375rem] items-center justify-center gap-x-2 rounded-full border border-transparent text-sm font-semibold text-gray-800 hover:bg-gray-100 disabled:pointer-events-none disabled:opacity-50"
+                    className="border-transparent text-gray-800 hover:bg-gray-100 inline-flex h-[2.375rem] w-[2.375rem] items-center justify-center gap-x-2 rounded-full border text-sm font-semibold disabled:pointer-events-none disabled:opacity-50"
                   >
                     <svg
                       className="size-4 flex-shrink-0"
@@ -104,10 +137,9 @@ const NavBar = () => {
                 <div className="hidden sm:block"></div>
 
                 <div className="flex flex-row items-center justify-end gap-2">
-                  
                   <Link
                     href="/notifies"
-                    className="inline-flex h-[2.375rem] w-[2.375rem] items-center justify-center gap-x-2 rounded-full border border-transparent text-sm font-semibold text-textPrimary hover:bg-bgSecondary disabled:pointer-events-none disabled:opacity-50"
+                    className=" text-textPrimary inline-flex h-[2.375rem] w-[2.375rem] items-center justify-center gap-x-2 rounded-full  text-sm font-semibold hover:bg-bgSecondary disabled:pointer-events-none disabled:opacity-50"
                   >
                     <svg
                       className="size-4 flex-shrink-0"
@@ -127,10 +159,10 @@ const NavBar = () => {
                   </Link>
                   <Link
                     href="/chat"
-                    className="inline-flex h-[2.375rem] w-[2.375rem] items-center justify-center gap-x-2 rounded-full border border-transparent text-sm font-semibold text-textPrimary hover:bg-bgSecondary disabled:pointer-events-none disabled:opacity-50"
+                    className=" text-textPrimary inline-flex h-[2.375rem] w-[2.375rem] items-center justify-center gap-x-2 rounded-full  text-sm font-semibold hover:bg-bgSecondary disabled:pointer-events-none disabled:opacity-50"
                   >
                     <svg
-                      className="h-5 w-5 text-textPrimary"
+                      className="text-textPrimary h-5 w-5"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
@@ -144,41 +176,23 @@ const NavBar = () => {
                     </svg>
                   </Link>
 
-                  
-
-                  <div className="hs-dropdown relative inline-flex [--placement:bottom-right]">
-                    
-                  </div>
+                  <div className="hs-dropdown relative inline-flex [--placement:bottom-right]"></div>
                 </div>
               </div>
             </nav>
           </header>
-          <div
-            className="sticky inset-x-0 top-0 z-20 border-y border-borderPrimary bg-bgPrimary px-4 sm:px-6 md:px-8 lg:hidden"
-          >
+          <div className="border-borderPrimary sticky inset-x-0 top-0 z-20 border-y bg-bgPrimary px-4 sm:px-6 md:px-8 lg:hidden">
             <div className="flex items-center justify-between py-2">
               <ol className="ms-3 flex items-center whitespace-nowrap">
-                <li className="flex items-center text-sm text-textPrimary">
-                  {/* {currentLanguage === "ar"
-                    ? "تخطيط التطبيق"
-                    : currentLanguage === "fr"
-                      ? "Mise en page de l'application"
-                      : "Application Layout"} */}
-
-                  {/* {currentLanguage === "ar" ? (
-                    <MdNavigateBefore size={25} className="text-gray-400" />
-                  ) : (
-                    <MdNavigateNext size={25} className="text-gray-400" />
-                  )} */}
+                <li className="text-textPrimary flex items-center text-sm">
+                  {/* Breadcrumb or other content */}
                 </li>
               </ol>
 
               <button
-                onClick={() => {
-                  OpenSideBar();
-                }}
+                onClick={OpenSideBar}
                 type="button"
-                className="flex items-center justify-center gap-x-1.5 rounded-lg border border-borderPrimary px-3 py-2 text-xs text-gray-500 hover:text-gray-600"
+                className="border-borderPrimary text-gray-500 hover:text-gray-600 flex items-center justify-center gap-x-1.5 rounded-lg border px-3 py-2 text-xs"
                 data-hs-overlay="#application-sidebar"
                 aria-controls="application-sidebar"
                 aria-label="Sidebar"
@@ -205,7 +219,11 @@ const NavBar = () => {
             <div
               dir={"ltr"}
               id="application-sidebar"
-              className={`hs-overlay hs-overlay-open:translate-x-0 transform transition-all duration-300 [--auto-close:lg] ${small ? "w-[90px]" : "w-[260px]"} drop-shadow-2xl lg:drop-shadow-none ${!isOpen ? "w-0" : ""} fixed inset-y-0 start-0 z-[60] bg-bgPrimary duration-300 ease-in lg:bottom-0 lg:end-auto lg:block lg:translate-x-0`}
+              className={`hs-overlay hs-overlay-open:translate-x-0 transform transition-all duration-300 [--auto-close:lg] ${
+                small ? "w-[90px]" : "w-[260px]"
+              } drop-shadow-2xl lg:drop-shadow-none ${
+                !isOpen ? "w-0" : ""
+              } fixed inset-y-0 start-0 z-[60] bg-bgPrimary duration-300 ease-in lg:bottom-0 lg:end-auto lg:block lg:translate-x-0`}
             >
               <div className="px-8 pt-4">
                 <Link href="/">
@@ -226,13 +244,9 @@ const NavBar = () => {
               </div>
               <div className="mx-5 flex -translate-y-6 justify-end">
                 {!small && (
-                  <button
-                    onClick={() => {
-                      toggleNavbarSmall();
-                    }}
-                  >
+                  <button onClick={toggleNavbarSmall}>
                     <svg
-                      className="h-8 w-8 text-secondary"
+                      className="text-secondary h-8 w-8"
                       width="24"
                       height="24"
                       viewBox="0 0 24 24"
@@ -242,10 +256,9 @@ const NavBar = () => {
                       strokeLinecap="round"
                       strokeLinejoin="round"
                     >
-                      {" "}
-                      <path stroke="none" d="M0 0h24v24H0z" />{" "}
-                      <line x1="4" y1="6" x2="20" y2="6" />{" "}
-                      <line x1="4" y1="12" x2="20" y2="12" />{" "}
+                      <path stroke="none" d="M0 0h24v24H0z" />
+                      <line x1="4" y1="6" x2="20" y2="6" />
+                      <line x1="4" y1="12" x2="20" y2="12" />
                       <line x1="4" y1="18" x2="20" y2="18" />
                     </svg>
                   </button>
@@ -253,21 +266,17 @@ const NavBar = () => {
               </div>
 
               <nav
-                className={`hs-accordion-group flex w-full flex-col flex-wrap p-6 ${!isOpen ? "hidden" : ""} `}
+                className={`hs-accordion-group flex w-full flex-col flex-wrap p-6 ${
+                  !isOpen ? "hidden" : ""
+                } `}
                 data-hs-accordion-always-open
               >
                 <ul className="space-y-1.5">
-                  <div
-                    className={`flex ${small ? "w-[40px]" : ""} justify-center`}
-                  >
+                  <div className={`flex ${small ? "w-[40px]" : ""} justify-center`}>
                     {small && (
-                      <button
-                        onClick={() => {
-                          toggleNavbarSmall();
-                        }}
-                      >
+                      <button onClick={toggleNavbarSmall}>
                         <svg
-                          className="h-6 w-6 text-secondary"
+                          className="text-secondary h-6 w-6"
                           width="24"
                           height="24"
                           viewBox="0 0 24 24"
@@ -277,46 +286,27 @@ const NavBar = () => {
                           strokeLinecap="round"
                           strokeLinejoin="round"
                         >
-                          {" "}
-                          <path stroke="none" d="M0 0h24v24H0z" />{" "}
+                          <path stroke="none" d="M0 0h24v24H0z" />
                           <polyline points="9 6 15 12 9 18" />
                         </svg>
                       </button>
                     )}
                   </div>
-                  <li>
-                    <Link
-                      className={`flex ${small ? "w-[40px]" : ""} text-md group mt-4 items-center gap-x-3.5 rounded-lg px-2.5 py-2 font-sans font-semibold text-gray-500 hover:bg-bgSecondary hover:text-primary`}
-                      href="/"
-                    >
-                      <AiFillHome className={`w-10 h-10 ${small ? "" : "pl-4"} ${url === "/" ? `${small ? "" : "border-l-2" } border-primary text-primary` : ""}`}/>
-                      {!small && (
-                        <p className={`translate-y-0.5 ${url === "/" ? "text-primary" : ""}`}>
-                         Home
-                        </p>
-                      )}
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      className={`flex ${small ? "w-[40px]" : ""} text-md group mt-4 items-center gap-x-3.5 rounded-lg px-2.5 py-2 font-sans font-semibold text-gray-500 hover:bg-bgSecondary hover:text-primary`}
-                      href="/schedule"
-                    >
-                      <RiCalendarScheduleFill className={`w-10 h-10 ${small ? "" : "pl-4"} ${url === "/schedule" ? `${small ? "" : "border-l-2" } border-primary text-primary` : ""}`}/>
-                      {!small && (
-                        <p className={`translate-y-0.5 ${url === "/schedule" ? "text-primary" : ""}`}>
-                         My Schedule
-                        </p>
-                      )}
-                    </Link>
-                  </li>
-                  
+                  {navLinks.map((link) => (
+                    <NavBarLink
+                      key={link.href}
+                      href={link.href}
+                      icon={link.icon}
+                      label={link.label}
+                      small={small}
+                      url={url}
+                    />
+                  ))}
                 </ul>
               </nav>
             </div>
           )}
         </div>
-        <div></div>
       </header>
     </>
   );
