@@ -4,7 +4,7 @@ import Container from "~/_components/Container";
 import * as React from "react";
 import { Calendar } from "~/components/ui/calendar";
 
-export function CalendarDemo() {
+function CalendarDemo() {
   const [date, setDate] = React.useState<Date | undefined>(new Date());
 
   return (
