@@ -59,10 +59,10 @@ const NavBarLink = ({
             isActive
               ? `${small ? "" : "border-l-2"} border-primary text-primary`
               : ""
-          }`}
+          } text-black`}
         />
         {!small && (
-          <p className={`translate-y-0.5 ${isActive ? "text-primary" : ""}`}>
+          <p className={`translate-y-0.5 ${isActive ? "text-primary" : ""} text-black`}>
             {label}
           </p>
         )}
@@ -254,7 +254,7 @@ const NavBar = () => {
                 {!small && (
                   <button onClick={toggleNavbarSmall}>
                     <svg
-                      className="h-8 w-8 text-secondary"
+                      className="h-8 w-8 text-black"
                       width="24"
                       height="24"
                       viewBox="0 0 24 24"
@@ -286,7 +286,7 @@ const NavBar = () => {
                     {small && (
                       <button onClick={toggleNavbarSmall}>
                         <svg
-                          className="h-6 w-6 text-secondary"
+                          className="h-6 w-6 text-black"
                           width="24"
                           height="24"
                           viewBox="0 0 24 24"
