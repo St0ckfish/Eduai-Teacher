@@ -40,17 +40,25 @@ interface NavBarLinkProps {
   url: string;
 }
 
-const NavBarLink = ({ href, icon: Icon, label, small, url }: NavBarLinkProps) => {
+const NavBarLink = ({
+  href,
+  icon: Icon,
+  label,
+  small,
+  url,
+}: NavBarLinkProps) => {
   const isActive = url === href;
   return (
     <li>
       <Link
-        className={`flex ${small ? "w-[40px]" : ""} text-md text-gray-500 group mt-4 items-center gap-x-3.5 rounded-lg px-2.5 py-2 font-sans font-semibold hover:bg-bgSecondary hover:text-primary`}
+        className={`flex ${small ? "w-[40px]" : ""} text-md group mt-4 items-center gap-x-3.5 rounded-lg px-2.5 py-2 font-sans font-semibold text-gray-500 hover:bg-bgSecondary hover:text-primary`}
         href={href}
       >
         <Icon
           className={`h-10 w-10 ${small ? "" : "pl-4"} ${
-            isActive ? `${small ? "" : "border-l-2"} border-primary text-primary` : ""
+            isActive
+              ? `${small ? "" : "border-l-2"} border-primary text-primary`
+              : ""
           }`}
         />
         {!small && (
@@ -114,7 +122,7 @@ const NavBar = () => {
                 <div className="sm:hidden">
                   <button
                     type="button"
-                    className="border-transparent text-gray-800 hover:bg-gray-100 inline-flex h-[2.375rem] w-[2.375rem] items-center justify-center gap-x-2 rounded-full border text-sm font-semibold disabled:pointer-events-none disabled:opacity-50"
+                    className="inline-flex h-[2.375rem] w-[2.375rem] items-center justify-center gap-x-2 rounded-full border border-transparent text-sm font-semibold text-gray-800 hover:bg-gray-100 disabled:pointer-events-none disabled:opacity-50"
                   >
                     <svg
                       className="size-4 flex-shrink-0"
@@ -139,7 +147,7 @@ const NavBar = () => {
                 <div className="flex flex-row items-center justify-end gap-2">
                   <Link
                     href="/notifies"
-                    className=" text-textPrimary inline-flex h-[2.375rem] w-[2.375rem] items-center justify-center gap-x-2 rounded-full  text-sm font-semibold hover:bg-bgSecondary disabled:pointer-events-none disabled:opacity-50"
+                    className="text-textPrimary inline-flex h-[2.375rem] w-[2.375rem] items-center justify-center gap-x-2 rounded-full text-sm font-semibold hover:bg-bgSecondary disabled:pointer-events-none disabled:opacity-50"
                   >
                     <svg
                       className="size-4 flex-shrink-0"
@@ -159,7 +167,7 @@ const NavBar = () => {
                   </Link>
                   <Link
                     href="/chat"
-                    className=" text-textPrimary inline-flex h-[2.375rem] w-[2.375rem] items-center justify-center gap-x-2 rounded-full  text-sm font-semibold hover:bg-bgSecondary disabled:pointer-events-none disabled:opacity-50"
+                    className="text-textPrimary inline-flex h-[2.375rem] w-[2.375rem] items-center justify-center gap-x-2 rounded-full text-sm font-semibold hover:bg-bgSecondary disabled:pointer-events-none disabled:opacity-50"
                   >
                     <svg
                       className="text-textPrimary h-5 w-5"
@@ -192,7 +200,7 @@ const NavBar = () => {
               <button
                 onClick={OpenSideBar}
                 type="button"
-                className="border-borderPrimary text-gray-500 hover:text-gray-600 flex items-center justify-center gap-x-1.5 rounded-lg border px-3 py-2 text-xs"
+                className="border-borderPrimary flex items-center justify-center gap-x-1.5 rounded-lg border px-3 py-2 text-xs text-gray-500 hover:text-gray-600"
                 data-hs-overlay="#application-sidebar"
                 aria-controls="application-sidebar"
                 aria-label="Sidebar"
@@ -246,7 +254,7 @@ const NavBar = () => {
                 {!small && (
                   <button onClick={toggleNavbarSmall}>
                     <svg
-                      className="text-secondary h-8 w-8"
+                      className="h-8 w-8 text-secondary"
                       width="24"
                       height="24"
                       viewBox="0 0 24 24"
@@ -272,11 +280,13 @@ const NavBar = () => {
                 data-hs-accordion-always-open
               >
                 <ul className="space-y-1.5">
-                  <div className={`flex ${small ? "w-[40px]" : ""} justify-center`}>
+                  <div
+                    className={`flex ${small ? "w-[40px]" : ""} justify-center`}
+                  >
                     {small && (
                       <button onClick={toggleNavbarSmall}>
                         <svg
-                          className="text-secondary h-6 w-6"
+                          className="h-6 w-6 text-secondary"
                           width="24"
                           height="24"
                           viewBox="0 0 24 24"
