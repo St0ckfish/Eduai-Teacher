@@ -67,7 +67,7 @@ const Schedule = () => {
         </div>
       </div>
       <div className="flex w-full gap-10 max-[1080px]:grid">
-        <div className="flex h-fit w-[450px] rounded-md bg-white p-4 max-[1080px]:w-full">
+        <div className="flex h-fit w-[450px] rounded-md bg-white p-4 max-[1080px]:w-full max-[800px]:overflow-auto">
           <div className="relative w-full overflow-auto">
             <p className="mb-3 font-semibold">Attendance</p>
             <table className="w-full table-auto overflow-x-auto p-4 text-left text-sm text-black">
