@@ -4,6 +4,10 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { AiFillHome } from "react-icons/ai";
 import { RiCalendarScheduleFill } from "react-icons/ri";
+import { FiFlag } from "react-icons/fi";
+import { HiOutlineSquares2X2 } from "react-icons/hi2";
+import { FaBusAlt } from "react-icons/fa";
+import { CiSquareCheck } from "react-icons/ci";
 import { usePathname } from "next/navigation";
 
 const useWindowDimensions = () => {
@@ -55,11 +59,10 @@ const NavBarLink = ({
         href={href}
       >
         <Icon
-          className={`h-10 w-10 ${small ? "" : "pl-4"} ${
-            isActive
+          className={`h-10 w-10 ${small ? "" : "pl-4"} ${isActive
               ? `${small ? "" : "border-l-2"} border-primary text-primary`
               : ""
-          } text-black`}
+            } text-black`}
         />
         {!small && (
           <p className={`translate-y-0.5 ${isActive ? "text-primary" : ""} text-black`}>
@@ -75,9 +78,19 @@ const NavBar = () => {
   const url = usePathname();
   const [small, setSmall] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [isOpen5, setIsOpen5] = useState(false);
+  const toggleNavbar5 = () => {
+    setIsOpen5(!isOpen5);
+  };
 
   const toggleNavbarSmall = () => {
     setSmall(!small);
+    if (!small == true) {
+      setIsOpen5(true);
+    }
+    if (small == true) {
+      setIsOpen5(false);
+    }
   };
 
   const OpenSideBar = () => {
@@ -95,6 +108,9 @@ const NavBar = () => {
   const navLinks = [
     { href: "/", icon: AiFillHome, label: "Home" },
     { href: "/schedule", icon: RiCalendarScheduleFill, label: "My Schedule" },
+    { href: "/bus", icon: FaBusAlt, label: "Bus Tracker" },
+    { href: "/complaint", icon: FiFlag , label: "Complaint" },
+    { href: "/attendance", icon: CiSquareCheck , label: "My attendance" },
   ];
 
   return (
@@ -117,7 +133,6 @@ const NavBar = () => {
                   <img src="/images/logo.png" alt="#" />
                 </Link>
               </div>
-
               <div className="ms-auto flex w-full items-center justify-end sm:order-3 sm:justify-between sm:gap-x-3">
                 <div className="sm:hidden">
                   <button
@@ -227,11 +242,9 @@ const NavBar = () => {
             <div
               dir={"ltr"}
               id="application-sidebar"
-              className={`hs-overlay hs-overlay-open:translate-x-0 transform transition-all duration-300 [--auto-close:lg] ${
-                small ? "w-[90px]" : "w-[260px]"
-              } drop-shadow-2xl lg:drop-shadow-none ${
-                !isOpen ? "w-0" : ""
-              } fixed inset-y-0 start-0 z-[60] bg-bgPrimary duration-300 ease-in lg:bottom-0 lg:end-auto lg:block lg:translate-x-0`}
+              className={`hs-overlay hs-overlay-open:translate-x-0 transform transition-all duration-300 [--auto-close:lg] ${small ? "w-[90px]" : "w-[260px]"
+                } drop-shadow-2xl lg:drop-shadow-none ${!isOpen ? "w-0" : ""
+                } fixed inset-y-0 start-0 z-[60] bg-bgPrimary duration-300 ease-in lg:bottom-0 lg:end-auto lg:block lg:translate-x-0`}
             >
               <div className="px-8 pt-4">
                 <Link href="/">
@@ -274,9 +287,8 @@ const NavBar = () => {
               </div>
 
               <nav
-                className={`hs-accordion-group flex w-full flex-col flex-wrap p-6 ${
-                  !isOpen ? "hidden" : ""
-                } `}
+                className={`hs-accordion-group flex w-full flex-col flex-wrap p-6 ${!isOpen ? "hidden" : ""
+                  } `}
                 data-hs-accordion-always-open
               >
                 <ul className="space-y-1.5">
@@ -312,6 +324,30 @@ const NavBar = () => {
                       url={url}
                     />
                   ))}
+                  <li className="group relative">
+                    <button
+                      onClick={toggleNavbar5}
+                      className={`flex ${!small ? "w-full" : ""} text-md group mt-4 items-center gap-x-3.5 rounded-lg px-2.5 py-2 font-sans font-bold text-secondary hover:bg-bgSecondary hover:text-primary`}
+                    >
+                      <HiOutlineSquares2X2 className={`h-10 w-10 ${small ? "h-6 w-6" : "pl-4"} ${isOpen5 ? `${small ? "" : "border-l-2"} border-primary text-primary` : ""} text-black`} />
+                      {!small && (
+                        <p className={`text-black ${isOpen5 ? "text-primary" : ""}`}>
+                          Menu
+                        </p>
+                      )}
+                    </button>
+                    {isOpen5 && (
+                      <ul
+                        className={`${small ? "hidden w-fit translate-x-5 whitespace-nowrap rounded-xl bg-bgPrimary p-2 group-hover:grid" : ""} mx-9 mt-2 grid gap-2 text-[14px] font-semibold`}
+                      >
+                        <Link className={`hover:text-primary ${url === "/homework" ? "text-primary" : ""}`} href="/homework" > Homework </Link>
+                        <Link className={`hover:text-primary ${url === "/textbooks" ? "text-primary" : ""}`} href="/textbooks" > Textbooks </Link>
+                        <Link className={`hover:text-primary ${url === "/grades" ? "text-primary" : ""}`} href="/grades"> Grades </Link>
+                        <Link className={`hover:text-primary ${url === "/exam" ? "text-primary" : ""}`} href="/exam"> Exam </Link>
+                        <Link className={`hover:text-primary ${url === "/exercises" ? "text-primary" : ""}`} href="/exercises"> Exercises </Link>
+                      </ul>
+                    )}
+                  </li>
                 </ul>
               </nav>
             </div>
