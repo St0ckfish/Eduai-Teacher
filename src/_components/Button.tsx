@@ -10,7 +10,7 @@ type ButtonAsAnchor = {
   as: 'a';
   href: string;
 } & AnchorHTMLAttributes<HTMLAnchorElement>;
-
+ 
 type ButtonAsLink = {
   as: 'link';
   href: string;
