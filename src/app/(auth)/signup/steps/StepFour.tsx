@@ -3,13 +3,19 @@ import Link from "next/link";
 import React from "react";
 import Button from "~/_components/Button";
 import Input from "~/_components/Input";
-import { stepsDescription } from "../page";
 
 type StepFourProps = {
   prevStep: () => void;
 };
 
 const StepFour: React.FC<StepFourProps> = ({ prevStep }) => {
+  const stepsDescription = [
+    "Location & School", 
+    "Personal Details 1",
+    "Personal Details 2",
+    "Authentication"
+  ];
+  
   return (
     <>
       <div className="flex min-h-screen items-center justify-center bg-bgSecondary duration-300 ease-in">

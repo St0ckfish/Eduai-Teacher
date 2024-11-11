@@ -5,13 +5,9 @@ import StepTwo from './steps/StepTwo';
 import StepThree from './steps/StepThree';
 import StepFour from './steps/StepFour';
 
-export const stepsDescription = [
-  "Location & School", 
-  "Personal Details 1",
-  "Personal Details 2",
-  "Authentication"
-];
+
 const Signup = () => {
+
   const [step, setStep] = useState(1);
 
   const nextStep = () => setStep(step + 1);

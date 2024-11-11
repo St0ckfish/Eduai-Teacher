@@ -3,7 +3,6 @@ import Link from "next/link";
 import React from "react";
 import Button from "~/_components/Button";
 import Input from "~/_components/Input";
-import { stepsDescription } from "../page";
 
 type StepOneProps = {
   nextStep: () => void;
@@ -11,6 +10,13 @@ type StepOneProps = {
 };
 
 const StepOne: React.FC<StepOneProps> = ({ nextStep, prevStep }) => {
+  const stepsDescription = [
+    "Location & School", 
+    "Personal Details 1",
+    "Personal Details 2",
+    "Authentication"
+  ];
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-bgSecondary duration-300 ease-in">
       <div className="absolute left-4 top-4 md:left-8 md:top-8">

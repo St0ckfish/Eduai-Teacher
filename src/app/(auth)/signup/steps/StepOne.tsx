@@ -2,13 +2,19 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import Button from "~/_components/Button";
-import { stepsDescription } from "../page";
 
 type StepOneProps = {
   nextStep: () => void;
 };
 
 const StepOne: React.FC<StepOneProps> = ({ nextStep }) => {
+  const stepsDescription = [
+    "Location & School", 
+    "Personal Details 1",
+    "Personal Details 2",
+    "Authentication"
+  ];
+  
   return (
     <>
       <div className="flex min-h-screen items-center justify-center bg-bgSecondary duration-300 ease-in">
