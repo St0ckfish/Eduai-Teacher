@@ -1,7 +1,5 @@
 const Attendance = () => {
-    return (  
-        <></>
-    );
-}
- 
+  return <></>;
+};
+
 export default Attendance;

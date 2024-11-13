@@ -1,7 +1,5 @@
 const Exercises = () => {
-    return ( 
-        <></>
-     );
-}
- 
+  return <></>;
+};
+
 export default Exercises;

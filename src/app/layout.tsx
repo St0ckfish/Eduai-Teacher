@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import "~/styles/globals.css";
 
 import { GeistSans } from "geist/font/sans";
@@ -6,7 +6,6 @@ import { GeistSans } from "geist/font/sans";
 import { TRPCReactProvider } from "~/trpc/react";
 import NavBar from "../_components/navBar";
 import { usePathname } from "next/navigation";
-
 
 export default function RootLayout({
   children,
@@ -28,7 +27,7 @@ export default function RootLayout({
         <link rel="icon" type="image/x-icon" href="/favicon.ico" />
       </head>
       <body className="bg-bgSecondary">
-      {!isLoginPage && <NavBar />}
+        {!isLoginPage && <NavBar />}
         <TRPCReactProvider>{children}</TRPCReactProvider>
       </body>
     </html>
