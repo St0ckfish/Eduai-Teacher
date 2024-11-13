@@ -9,12 +9,12 @@ type StepOneProps = {
 
 const StepOne: React.FC<StepOneProps> = ({ nextStep }) => {
   const stepsDescription = [
-    "Location & School", 
+    "Location & School",
     "Personal Details 1",
     "Personal Details 2",
-    "Authentication"
+    "Authentication",
   ];
-  
+
   return (
     <>
       <div className="flex min-h-screen items-center justify-center bg-bgSecondary duration-300 ease-in">

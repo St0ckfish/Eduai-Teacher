@@ -11,10 +11,10 @@ type StepOneProps = {
 
 const StepOne: React.FC<StepOneProps> = ({ nextStep, prevStep }) => {
   const stepsDescription = [
-    "Location & School", 
+    "Location & School",
     "Personal Details 1",
     "Personal Details 2",
-    "Authentication"
+    "Authentication",
   ];
 
   return (
@@ -31,7 +31,9 @@ const StepOne: React.FC<StepOneProps> = ({ nextStep, prevStep }) => {
         </Link>
       </div>
       <div className="flex w-full max-w-lg flex-col items-center p-4 md:p-8">
-        <h1 className="mb-6 text-3xl font-bold text-black md:text-4xl">Sign Up</h1>
+        <h1 className="mb-6 text-3xl font-bold text-black md:text-4xl">
+          Sign Up
+        </h1>
 
         {/* Steps */}
         <div className="mb-20 flex w-full items-center justify-between">
@@ -41,12 +43,13 @@ const StepOne: React.FC<StepOneProps> = ({ nextStep, prevStep }) => {
                 <div
                   className={`relative flex h-8 w-8 items-center justify-center rounded-full ${
                     index < 3 ? "bg-primary" : "bg-gray-300"
-                  } text-white font-bold`}
+                  } font-bold text-white`}
                 >
                   {step}
-<span className="absolute -left-[15px] top-10 w-[100px] text-[10px] text-black sm:left-[-22px] sm:w-[120px] sm:text-xs">
-                      {stepsDescription[index]}
-                    </span>                </div>
+                  <span className="absolute -left-[15px] top-10 w-[100px] text-[10px] text-black sm:left-[-22px] sm:w-[120px] sm:text-xs">
+                    {stepsDescription[index]}
+                  </span>{" "}
+                </div>
                 {index < 3 && (
                   <hr className="h-[5px] w-20 bg-primary sm:w-[105px]" />
                 )}
@@ -67,7 +70,11 @@ const StepOne: React.FC<StepOneProps> = ({ nextStep, prevStep }) => {
             <Input placeholder="Password" type="password" className="w-full" />
           </label>
           <label htmlFor="confirm-password">
-            <Input placeholder="Confirm password" type="password" className="w-full" />
+            <Input
+              placeholder="Confirm password"
+              type="password"
+              className="w-full"
+            />
           </label>
 
           {/* Navigation Buttons */}
@@ -75,14 +82,14 @@ const StepOne: React.FC<StepOneProps> = ({ nextStep, prevStep }) => {
             <Button
               type="button"
               onClick={prevStep}
-              className="w-1/2 rounded-lg bg-bgSecondary border border-primary text-primary py-2 text-lg font-bold hover:bg-gray-200 transition"
+              className="w-1/2 rounded-lg border border-primary bg-bgSecondary py-2 text-lg font-bold text-primary transition hover:bg-gray-200"
             >
               Prev
             </Button>
             <Button
               type="button"
               onClick={nextStep}
-              className="w-1/2 rounded-lg bg-primary text-white py-2 text-lg font-bold hover:bg-primary-dark transition"
+              className="hover:bg-primary-dark w-1/2 rounded-lg bg-primary py-2 text-lg font-bold text-white transition"
             >
               Next
             </Button>
@@ -91,7 +98,10 @@ const StepOne: React.FC<StepOneProps> = ({ nextStep, prevStep }) => {
           {/* Sign-in Prompt */}
           <div className="mt-6 flex items-center justify-center space-x-2">
             <p className="text-sm text-gray-500">Already have an account?</p>
-            <Link href="/login" className="text-sm font-semibold text-primary hover:underline">
+            <Link
+              href="/login"
+              className="text-sm font-semibold text-primary hover:underline"
+            >
               Sign In
             </Link>
           </div>

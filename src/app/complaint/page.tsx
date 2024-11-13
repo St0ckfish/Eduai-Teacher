@@ -1,7 +1,5 @@
 const Complaint = () => {
-    return (  
-        <></>
-    );
-}
- 
+  return <></>;
+};
+
 export default Complaint;

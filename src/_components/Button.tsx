@@ -1,43 +1,57 @@
-import React from 'react';
-import type { ReactNode, ButtonHTMLAttributes, AnchorHTMLAttributes } from 'react';
-import Link from 'next/link';
+import React from "react";
+import type {
+  ReactNode,
+  ButtonHTMLAttributes,
+  AnchorHTMLAttributes,
+} from "react";
+import Link from "next/link";
 
 type ButtonAsButton = {
-  as?: 'button';
+  as?: "button";
 } & ButtonHTMLAttributes<HTMLButtonElement>;
 
 type ButtonAsAnchor = {
-  as: 'a';
+  as: "a";
   href: string;
 } & AnchorHTMLAttributes<HTMLAnchorElement>;
- 
+
 type ButtonAsLink = {
-  as: 'link';
+  as: "link";
   href: string;
 } & AnchorHTMLAttributes<HTMLAnchorElement>;
 
 type ButtonProps = {
   children: ReactNode;
   className?: string;
-  theme?: 'reverse';
+  theme?: "reverse";
 } & (ButtonAsButton | ButtonAsAnchor | ButtonAsLink);
 
-const Button = ({ children, className, as = 'button', theme, ...rest }: ButtonProps) => {
+const Button = ({
+  children,
+  className,
+  as = "button",
+  theme,
+  ...rest
+}: ButtonProps) => {
   const defaultClassName =
-    'w-full flex items-center gap-3 justify-center whitespace-nowrap rounded-lg px-6 py-3 font-semibold text-white bg-primary text-center hover:bg-primaryHover hover:shadow-lg duration-200 ease-in';
+    "w-full flex items-center gap-3 justify-center whitespace-nowrap rounded-lg px-6 py-3 font-semibold text-white bg-primary text-center hover:bg-primaryHover hover:shadow-lg duration-200 ease-in";
 
   const reverseClassName =
-    'w-full flex items-center gap-3 justify-center whitespace-nowrap rounded-lg px-6 py-3 font-semibold text-primary border border-primary text-center hover:shadow-lg duration-200 ease-in';
+    "w-full flex items-center gap-3 justify-center whitespace-nowrap rounded-lg px-6 py-3 font-semibold text-primary border border-primary text-center hover:shadow-lg duration-200 ease-in";
 
-  const computedClassName = className ?? (theme === 'reverse' ? reverseClassName : defaultClassName);
+  const computedClassName =
+    className ?? (theme === "reverse" ? reverseClassName : defaultClassName);
 
-  if (as === 'a' && 'href' in rest) {
+  if (as === "a" && "href" in rest) {
     return (
-      <a className={computedClassName} {...(rest as AnchorHTMLAttributes<HTMLAnchorElement>)}>
+      <a
+        className={computedClassName}
+        {...(rest as AnchorHTMLAttributes<HTMLAnchorElement>)}
+      >
         {children}
       </a>
     );
-  } else if (as === 'link' && 'href' in rest) {
+  } else if (as === "link" && "href" in rest) {
     return (
       <Link
         className={computedClassName}
@@ -49,7 +63,10 @@ const Button = ({ children, className, as = 'button', theme, ...rest }: ButtonPr
     );
   } else {
     return (
-      <button className={computedClassName} {...(rest as ButtonHTMLAttributes<HTMLButtonElement>)}>
+      <button
+        className={computedClassName}
+        {...(rest as ButtonHTMLAttributes<HTMLButtonElement>)}
+      >
         {children}
       </button>
     );

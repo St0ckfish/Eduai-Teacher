@@ -10,12 +10,12 @@ type StepFourProps = {
 
 const StepFour: React.FC<StepFourProps> = ({ prevStep }) => {
   const stepsDescription = [
-    "Location & School", 
+    "Location & School",
     "Personal Details 1",
     "Personal Details 2",
-    "Authentication"
+    "Authentication",
   ];
-  
+
   return (
     <>
       <div className="flex min-h-screen items-center justify-center bg-bgSecondary duration-300 ease-in">
@@ -41,12 +41,13 @@ const StepFour: React.FC<StepFourProps> = ({ prevStep }) => {
               {[1, 2, 3, 4].map((step, index) => (
                 <React.Fragment key={step}>
                   <div
-                    className={`relative flex h-8 w-8 items-center justify-center rounded-full bg-primary text-white font-bold`}
+                    className={`relative flex h-8 w-8 items-center justify-center rounded-full bg-primary font-bold text-white`}
                   >
                     {step}
-<span className="absolute -left-[15px] top-10 w-[100px] text-[10px] text-black sm:left-[-22px] sm:w-[120px] sm:text-xs">
+                    <span className="absolute -left-[15px] top-10 w-[100px] text-[10px] text-black sm:left-[-22px] sm:w-[120px] sm:text-xs">
                       {stepsDescription[index]}
-                    </span>                  </div>
+                    </span>{" "}
+                  </div>
                   {index < 3 && (
                     <hr className="h-[5px] w-20 bg-primary sm:w-[105px]" />
                   )}
@@ -88,14 +89,18 @@ const StepFour: React.FC<StepFourProps> = ({ prevStep }) => {
             </label>
 
             <label htmlFor="nationalId" className="block">
-              <Input placeholder="National ID" className="w-full -mt-1" />
+              <Input placeholder="National ID" className="-mt-1 w-full" />
             </label>
 
             <label htmlFor="birth" className="block">
-              <Input type="date" placeholder="Date of birth" className="w-full -mt-7 -mb-6" />
+              <Input
+                type="date"
+                placeholder="Date of birth"
+                className="-mb-6 -mt-7 w-full"
+              />
             </label>
 
-            <div className="flex space-x-2 ">
+            <div className="flex space-x-2">
               <label htmlFor="country_code" className="w-1/3">
                 <select
                   name="country_code"
@@ -110,7 +115,7 @@ const StepFour: React.FC<StepFourProps> = ({ prevStep }) => {
                 <Input
                   type="tel"
                   placeholder="Phone Number"
-                  className="w-full -mt-[4px]"
+                  className="-mt-[4px] w-full"
                   pattern="^\+?[1-9]\d{1,14}$"
                 />
               </label>
@@ -121,13 +126,13 @@ const StepFour: React.FC<StepFourProps> = ({ prevStep }) => {
               <Button
                 type="button"
                 onClick={prevStep}
-                className="w-1/2 rounded-lg bg-bgSecondary border border-primary text-primary py-2 text-lg font-bold hover:bg-gray-200 transition"
+                className="w-1/2 rounded-lg border border-primary bg-bgSecondary py-2 text-lg font-bold text-primary transition hover:bg-gray-200"
               >
                 Prev
               </Button>
               <Button
                 type="button"
-                className="w-1/2 rounded-lg bg-primary text-white py-2 text-lg font-bold hover:bg-primary-dark transition"
+                className="hover:bg-primary-dark w-1/2 rounded-lg bg-primary py-2 text-lg font-bold text-white transition"
               >
                 Sign Up
               </Button>
@@ -136,7 +141,10 @@ const StepFour: React.FC<StepFourProps> = ({ prevStep }) => {
             {/* Sign-in Prompt */}
             <div className="mt-6 flex items-center justify-center space-x-2">
               <p className="text-sm text-gray-500">Already have an account?</p>
-              <Link href="/login" className="text-sm font-semibold text-primary hover:underline">
+              <Link
+                href="/login"
+                className="text-sm font-semibold text-primary hover:underline"
+              >
                 Sign In
               </Link>
             </div>
