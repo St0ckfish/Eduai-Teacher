@@ -29,7 +29,7 @@ export default function Home() {
       <div className="flex flex-col items-start justify-between gap-4 mb-4 m-4 md:flex-row">
         <div className="flex flex-col gap-4 w-full">
           <div className="bg-bgPrimary p-4 w-full rounded-xl">
-            <div className="border-b border-border py-4 mb-4">
+            <div className="border-b border-borderSecondary py-4 mb-4">
               <div className="flex justify-between mb-4">
                 <div className="flex gap-4">
                   <div>
@@ -69,13 +69,13 @@ export default function Home() {
                 </div>
               </div>
               <div className="-mb-4">
-                <Input placeholder="Add comment..." />
+                <Input placeholder="Add comment..."/>
               </div>
             </div>
           </div>
 
           <div className="bg-bgPrimary p-4 w-full rounded-xl">
-            <div className="border-b border-border py-4 mb-4">
+            <div className="border-b border-borderSecondary py-4 mb-4">
               <div className="flex justify-between mb-4">
                 <div className="flex gap-4">
                   <div>
@@ -122,7 +122,7 @@ export default function Home() {
         </div>
 
         <div className="bg-bgPrimary p-4 rounded-md w-full md:w-1/2">
-          <div className="my-2 border-b border-border">
+          <div className="my-2 border-b border-borderSecondary">
             <h1 className="font-semibold text-xl">Today&apos;s Events</h1>
             <div className="my-4">
               <div>
@@ -157,7 +157,7 @@ export default function Home() {
 
             </div>
           </div>
-          <div className="my-2 border-b border-border">
+          <div className="my-2 border-b border-borderSecondary">
             <h1 className="font-semibold text-xl">Upcoming Events</h1>
             <div className="my-4">
               <div>
@@ -194,7 +194,7 @@ export default function Home() {
 
           </div>
 
-          <div className="my-2 border-b border-border">
+          <div className="my-2 border-b border-borderSecondary">
             <h1 className="font-semibold text-xl">Public Holidays Calendar</h1>
             <div className="w-full flex justify-center">
               <div className="flex justify-center items-center mt-4 w-fit shadow-lg">
@@ -202,7 +202,7 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="mt-4 border border-border flex items-center">
+            <div className="mt-4 border border-borderSecondary flex items-center">
               <div className="text-primary border-r-4 border-primary m-4 py-4 pr-4 ">
                 <div className="flex flex-col items-center font-bold">
                   <div>20</div>
@@ -219,7 +219,7 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="mt-4 border border-border flex items-center">
+            <div className="mt-4 border border-borderSecondary flex items-center">
               <div className="text-primary border-r-4 border-primary m-4 py-4 pr-4 ">
                 <div className="flex flex-col items-center font-bold">
                   <div>21</div>

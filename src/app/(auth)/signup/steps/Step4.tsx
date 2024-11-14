@@ -62,7 +62,7 @@ const StepFour: React.FC<StepFourProps> = ({ prevStep }) => {
               <select
                 name="nationality"
                 id="nationality"
-                className="w-full rounded-lg border border-gray-400 bg-bgSecondary p-3 text-gray-700 outline-none transition duration-200 ease-in"
+                className="w-full rounded-lg border border-borderPrimary bg-bgSecondary p-3 text-gray-700 outline-none transition duration-200 ease-in"
               >
                 <option value="nationality">Select Nationality</option>
               </select>
@@ -72,7 +72,7 @@ const StepFour: React.FC<StepFourProps> = ({ prevStep }) => {
               <select
                 name="gender"
                 id="gender"
-                className="w-full rounded-lg border border-gray-400 bg-bgSecondary p-3 text-gray-700 outline-none transition duration-200 ease-in"
+                className="w-full rounded-lg border border-borderPrimary bg-bgSecondary p-3 text-gray-700 outline-none transition duration-200 ease-in"
               >
                 <option value="gender">Select Gender</option>
               </select>
@@ -82,21 +82,21 @@ const StepFour: React.FC<StepFourProps> = ({ prevStep }) => {
               <select
                 name="religion"
                 id="religion"
-                className="w-full rounded-lg border border-gray-400 bg-bgSecondary p-3 text-gray-700 outline-none transition duration-200 ease-in"
+                className="w-full rounded-lg border border-borderPrimary bg-bgSecondary p-3 text-gray-700 outline-none transition duration-200 ease-in"
               >
                 <option value="religion">Select Religion</option>
               </select>
             </label>
 
             <label htmlFor="nationalId" className="block">
-              <Input placeholder="National ID" className="-mt-1 w-full" />
+              <Input placeholder="National ID" className="-mt-1" theme="transparent" />
             </label>
 
             <label htmlFor="birth" className="block">
               <Input
                 type="date"
                 placeholder="Date of birth"
-                className="-mb-6 -mt-7 w-full"
+                className="-mb-6 -mt-7" theme="transparent"
               />
             </label>
 
@@ -105,7 +105,7 @@ const StepFour: React.FC<StepFourProps> = ({ prevStep }) => {
                 <select
                   name="country_code"
                   id="country_code"
-                  className="w-full rounded-lg border border-gray-400 bg-bgSecondary p-3 text-gray-700 outline-none"
+                  className="w-full rounded-lg border border-borderPrimary bg-bgSecondary p-3 text-gray-700 outline-none"
                 >
                   <option value="+20">+20</option>
                 </select>
@@ -115,7 +115,7 @@ const StepFour: React.FC<StepFourProps> = ({ prevStep }) => {
                 <Input
                   type="tel"
                   placeholder="Phone Number"
-                  className="-mt-[4px] w-full"
+                  className="-mt-[4px]" theme="transparent"
                   pattern="^\+?[1-9]\d{1,14}$"
                 />
               </label>

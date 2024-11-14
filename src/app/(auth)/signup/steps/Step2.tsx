@@ -63,20 +63,20 @@ const StepTwo: React.FC<StepOneProps> = ({ nextStep, prevStep }) => {
         {/* Form */}
         <form className="w-full space-y-4">
           <label htmlFor="name_en">
-            <Input placeholder="Full Name (English)" className="w-full" />
+            <Input placeholder="Full Name (English)" theme="transparent"/>
           </label>
           <label htmlFor="name_fr">
-            <Input placeholder="Full Name (French)" className="w-full" />
+            <Input placeholder="Full Name (French)" theme="transparent" />
           </label>
           <label htmlFor="name_ar">
-            <Input placeholder="Full Name (Arabic)" className="w-full" />
+            <Input placeholder="Full Name (Arabic)" theme="transparent" />
           </label>
 
           <label htmlFor="qualification">
             <select
               name="qualification"
               id="qualification"
-              className="w-full rounded-lg border border-gray-400 bg-bgSecondary p-3 text-gray-700 outline-none transition duration-200 ease-in"
+              className="w-full rounded-lg border border-bgPowderBlue bg-bgSecondary p-3 text-gray-700 outline-none transition duration-200 ease-in"
             >
               <option value="qualification">Qualification</option>
             </select>
@@ -86,7 +86,7 @@ const StepTwo: React.FC<StepOneProps> = ({ nextStep, prevStep }) => {
             <textarea
               id="area"
               placeholder="Write a brief summary about yourself.(Optional)"
-              className="mt-6 w-full rounded-lg border border-gray-400 bg-bgSecondary p-3 text-gray-700 outline-none transition duration-200 ease-in"
+              className="mt-6 w-full rounded-lg border border-bgPowderBlue bg-bgSecondary p-3 text-gray-700 outline-none transition duration-200 ease-in"
             ></textarea>
           </label>
 

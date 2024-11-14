@@ -34,7 +34,7 @@ const Attendance = () => {
               {tenItmes.map((_, index) => (
                 <div
                   key={index}
-                  className="rounded-xl border border-l-8 border-border border-l-primary p-4"
+                  className="rounded-xl border border-l-8 border-borderSecondary border-l-primary p-4"
                 >
                   <h2 className="text-xl font-semibold">
                     10 May 2024 (Wednesday)
@@ -71,7 +71,7 @@ const Attendance = () => {
               {threeItmes.map((_, index) => (
                 <div
                   key={index}
-                  className="my-2 mb-4 rounded-xl border border-l-8 border-border border-l-bgGray p-4"
+                  className="my-2 mb-4 rounded-xl border border-l-8 border-borderSecondary border-l-bgGray p-4"
                 >
                   <h2 className="text-xl font-semibold">
                     10 May 2024 (Wednesday)
@@ -103,7 +103,7 @@ const Attendance = () => {
             <div className="mb-4 rounded-xl bg-bgPrimary p-4">
               <h1 className="mb-4 text-2xl font-semibold">Leave</h1>
 
-              <div className="rounded-xl border border-l-8 border-border border-l-primary p-4">
+              <div className="rounded-xl border border-l-8 border-borderSecondary border-l-primary p-4">
                 <h2 className="text-xl font-semibold">
                   11 May 2024 - 14 May 2024 (Saturday - Tuesday )
                 </h2>
@@ -133,7 +133,7 @@ const Attendance = () => {
               {threeItmes.map((_, index) => (
                 <div
                   key={index}
-                  className="mb-4 rounded-xl border border-l-8 border-border border-l-primary p-4"
+                  className="mb-4 rounded-xl border border-l-8 border-borderSecondary border-l-primary p-4"
                 >
                   <h2 className="text-xl font-semibold">
                     10 May 2024 (Wednesday)

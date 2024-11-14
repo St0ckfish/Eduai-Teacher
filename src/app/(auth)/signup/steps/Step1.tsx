@@ -65,7 +65,7 @@ const StepOne: React.FC<StepOneProps> = ({ nextStep }) => {
               <select
                 name="country"
                 id="country"
-                className="w-full rounded-lg border border-gray-400 bg-bgSecondary p-3 text-gray-700 outline-none transition duration-200 ease-in"
+                className="w-full rounded-lg border border-bgPowderBlue bg-bgSecondary p-3 text-gray-700 outline-none transition duration-200 ease-in"
               >
                 <option value="country">Select Country</option>
               </select>
@@ -75,7 +75,7 @@ const StepOne: React.FC<StepOneProps> = ({ nextStep }) => {
               <select
                 name="school"
                 id="school"
-                className="w-full rounded-lg border border-gray-400 bg-bgSecondary p-3 text-gray-700 outline-none transition duration-200 ease-in"
+                className="w-full rounded-lg border border-bgPowderBlue bg-bgSecondary p-3 text-gray-700 outline-none transition duration-200 ease-in"
               >
                 <option value="school">Select School</option>
               </select>

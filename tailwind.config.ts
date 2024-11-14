@@ -16,7 +16,7 @@ export default {
         primary: "#3E5AF0",
         primaryHover: "#2a41c0",
         bgSecondary: "#f5f6fa",
-        bgPowderBlue: "#B4C0CC",
+        bgPowderBlue: "#B4C0CC", 
         bgGray: "#E0E0E0",
         bgPrimary: "#ffffff",
         textSecondary: "#89939e",
@@ -24,6 +24,8 @@ export default {
         info: "#A3D139",
         warning: "#FF7F74",
         lavender: "#AC94EC",
+        borderPrimary: "#677489",
+        borderSecondary: "#E2E8F0",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         card: {

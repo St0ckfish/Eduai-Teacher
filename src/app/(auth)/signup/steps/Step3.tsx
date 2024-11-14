@@ -61,19 +61,19 @@ const StepOne: React.FC<StepOneProps> = ({ nextStep, prevStep }) => {
         {/* Form */}
         <form className="w-full space-y-4">
           <label htmlFor="username">
-            <Input placeholder="Username" className="w-full" />
+            <Input placeholder="Username" theme="transparent" />
           </label>
           <label htmlFor="email">
-            <Input placeholder="E-mail" className="w-full" />
+            <Input placeholder="E-mail" theme="transparent" />
           </label>
           <label htmlFor="password">
-            <Input placeholder="Password" type="password" className="w-full" />
+            <Input placeholder="Password" type="password" theme="transparent" />
           </label>
           <label htmlFor="confirm-password">
             <Input
               placeholder="Confirm password"
               type="password"
-              className="w-full"
+              theme="transparent"
             />
           </label>
 
