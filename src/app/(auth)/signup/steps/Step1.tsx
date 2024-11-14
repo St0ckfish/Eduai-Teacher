@@ -86,7 +86,6 @@ const StepOne: React.FC<StepOneProps> = ({ nextStep }) => {
               <Button
                 type="button"
                 onClick={nextStep}
-                className="hover:bg-primary-dark w-full rounded-lg bg-primary py-2 text-lg font-bold text-white transition"
               >
                 Next
               </Button>

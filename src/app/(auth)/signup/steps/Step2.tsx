@@ -95,14 +95,13 @@ const StepTwo: React.FC<StepOneProps> = ({ nextStep, prevStep }) => {
             <Button
               type="button"
               onClick={prevStep}
-              className="w-1/2 rounded-lg border border-primary bg-bgSecondary py-2 text-lg font-bold text-primary transition hover:bg-gray-200"
+              theme="outline"
             >
               Prev
             </Button>
             <Button
               type="button"
               onClick={nextStep}
-              className="hover:bg-primary-dark w-1/2 rounded-lg bg-primary py-2 text-lg font-bold text-white transition"
             >
               Next
             </Button>

@@ -17,6 +17,7 @@ export default {
         primaryHover: "#2a41c0",
         bgSecondary: "#f5f6fa",
         bgPrimary: "#ffffff",
+        textSecondary: "#89939e",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         card: {

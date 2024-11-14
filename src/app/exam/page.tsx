@@ -8,7 +8,7 @@ const Exam = () => {
       <div className="flex w-full items-center justify-between gap-7">
         <div className="flex w-[400px] items-center gap-10">
           <Button>Previous Exams</Button>
-          <Button theme="reverse">Upcoming Exams</Button>
+          <Button theme="outline">Upcoming Exams</Button>
         </div>
 
         <div className="flex w-[300px]">
