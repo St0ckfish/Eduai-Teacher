@@ -23,7 +23,7 @@ type ButtonAsLink = {
 type ButtonProps = {
   children: ReactNode;
   className?: string;
-  theme?: "outline";
+  theme?: "outline" | "gray";
 } & (ButtonAsButton | ButtonAsAnchor | ButtonAsLink);
 
 /**
@@ -47,14 +47,13 @@ const Button = ({
   ...rest
 }: ButtonProps) => {
   const baseClassName =
-  "w-full flex items-center gap-3 justify-center whitespace-nowrap rounded-lg px-6 py-3 font-semibold text-center hover:shadow-lg duration-200 ease-in";
+    "w-full flex items-center gap-3 justify-center whitespace-nowrap rounded-lg px-6 py-3 font-semibold text-center hover:shadow-lg duration-200 ease-in";
 
   const defaultClassName = `${baseClassName} text-white bg-primary hover:bg-primaryHover`;
-
   const outlineClassName = `${baseClassName} text-primary border border-primary`;
+  const grayClassName = `${baseClassName} text-white bg-textSecondary hover:bg-gray-600`;
 
-  const computedClassName =
-    className ?? (theme === "outline" ? outlineClassName : defaultClassName);
+  const computedClassName = `${theme === "outline" ? outlineClassName : theme === "gray" ? grayClassName : defaultClassName} ${className ?? ""}`;
 
   if (as === "a" && "href" in rest) {
     return (

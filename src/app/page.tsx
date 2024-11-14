@@ -26,7 +26,7 @@ export default function Home() {
 
   return (
     <Container>
-      <div className="flex flex-col items-start justify-between gap-4 mb-4 md:flex-row">
+      <div className="flex flex-col items-start justify-between gap-4 mb-4 m-4 md:flex-row">
         <div className="flex flex-col gap-4 w-full">
           <div className="bg-bgPrimary p-4 w-full rounded-xl">
             <div className="border-b border-border py-4 mb-4">
@@ -121,12 +121,12 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="bg-bgPrimary border p-4 rounded w-full md:w-1/2">
+        <div className="bg-bgPrimary p-4 rounded-md w-full md:w-1/2">
           <div className="my-2 border-b border-border">
             <h1 className="font-semibold text-xl">Today&apos;s Events</h1>
             <div className="my-4">
               <div>
-                <div className="flex justify-between p-2 rounded text-primary bg-[#E7ECFB]">
+                <div className="flex justify-between p-2 rounded-md text-primary bg-[#E7ECFB]">
                   <div>Today</div>
                   <div className="flex gap-1">
                     <div className="mt-[2px]"><AiOutlineClockCircle size={18} /></div>
@@ -161,7 +161,7 @@ export default function Home() {
             <h1 className="font-semibold text-xl">Upcoming Events</h1>
             <div className="my-4">
               <div>
-                <div className="flex justify-between p-2 rounded text-primary bg-[#E7ECFB]">
+                <div className="flex justify-between p-2 rounded-md text-primary bg-[#E7ECFB]">
                   <div>Sunday - 4 April 2024</div>
                   <div className="flex gap-1">
                     <div className="mt-[2px]"><AiOutlineClockCircle size={18} /></div>

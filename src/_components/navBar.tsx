@@ -9,6 +9,7 @@ import { HiOutlineSquares2X2 } from "react-icons/hi2";
 import { FaBusAlt } from "react-icons/fa";
 import { CiSquareCheck } from "react-icons/ci";
 import { usePathname } from "next/navigation";
+import { MdAttachMoney } from 'react-icons/md';
 
 const useWindowDimensions = () => {
   const isClient = typeof window === "object";
@@ -112,6 +113,7 @@ const NavBar = () => {
     { href: "/", icon: AiFillHome, label: "Home" },
     { href: "/schedule", icon: RiCalendarScheduleFill, label: "My Schedule" },
     { href: "/bus", icon: FaBusAlt, label: "Bus Tracker" },
+    { href: "/finance", icon: MdAttachMoney, label: "Finance" },
     { href: "/complaint", icon: FiFlag, label: "Complaint" },
     { href: "/attendance", icon: CiSquareCheck, label: "My attendance" },
   ];
