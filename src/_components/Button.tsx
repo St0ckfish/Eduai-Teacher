@@ -51,7 +51,7 @@ const Button = ({
 
   const defaultClassName = `${baseClassName} text-white bg-primary hover:bg-primaryHover`;
   const outlineClassName = `${baseClassName} text-primary border border-primary`;
-  const grayClassName = `${baseClassName} text-white bg-textSecondary hover:bg-gray-600`;
+  const grayClassName = `${baseClassName} text-white bg-bgPowderBlue hover:bg-textSecondary`;
 
   const computedClassName = `${theme === "outline" ? outlineClassName : theme === "gray" ? grayClassName : defaultClassName} ${className ?? ""}`;
 
