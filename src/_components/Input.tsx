@@ -10,7 +10,9 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   error?: string | undefined;
   className?: string;
   dir?: string;
+  theme?: "solid" | "transparent";
 }
+
 
 const Input: React.FC<InputProps> = ({
   label,
@@ -18,7 +20,8 @@ const Input: React.FC<InputProps> = ({
   dir = "ltr",
   error,
   register,
-  className,
+  className = "",
+  theme = "solid",
   ...props
 }) => {
   const [inputType, setInputType] = useState(type);
@@ -27,26 +30,34 @@ const Input: React.FC<InputProps> = ({
     setInputType((prevType) => (prevType === "password" ? "text" : "password"));
   };
 
+  const themeClasses =
+    theme === "transparent"
+      ? "bg-transparent border-borderPrimary"
+      : "bg-white border-borderSecondary";
+
   return (
-    <label className={`grid w-full gap-1 text-end ${className}`}>
-      <p className="text-purpleMain text-start font-medium">{label}</p>
+    <label className={`grid w-full gap-1 text-end`}>
+      {label && <p className="text-purpleMain text-start font-medium">{label}</p>}
       <div className="relative w-full">
         <input
           {...props}
           type={inputType}
           {...register}
           dir={dir}
-          className={`bg-authenticationWhite w-full rounded-lg border border-[#677489] bg-bgSecondary px-4 py-3 outline-none ${error ? "border-error border" : ""}`}
+          className={`w-full rounded-lg border px-4 py-3 outline-none ${
+            error ? "border-error" : themeClasses
+          } ${className}`}
         />
         {error ? (
-          <small className={"text-error mr-2 text-sm"}>{error}</small>
+          <small className="text-error mr-2 text-sm">{error}</small>
         ) : (
-          <small className={"mr-2 text-sm opacity-0"}>No Error</small>
+          <small className="mr-2 text-sm opacity-0">No Error</small>
         )}
         {type === "password" && (
           <button
             type="button"
             onClick={handleTogglePassword}
+            aria-label="Toggle password visibility"
             className="absolute inset-y-0 bottom-6 right-0 flex items-center px-2"
           >
             {inputType === "password" ? (

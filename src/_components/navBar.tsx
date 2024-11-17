@@ -9,6 +9,7 @@ import { HiOutlineSquares2X2 } from "react-icons/hi2";
 import { FaBusAlt } from "react-icons/fa";
 import { CiSquareCheck } from "react-icons/ci";
 import { usePathname } from "next/navigation";
+import { MdAttachMoney } from 'react-icons/md';
 
 const useWindowDimensions = () => {
   const isClient = typeof window === "object";
@@ -112,6 +113,7 @@ const NavBar = () => {
     { href: "/", icon: AiFillHome, label: "Home" },
     { href: "/schedule", icon: RiCalendarScheduleFill, label: "My Schedule" },
     { href: "/bus", icon: FaBusAlt, label: "Bus Tracker" },
+    { href: "/finance", icon: MdAttachMoney, label: "Finance" },
     { href: "/complaint", icon: FiFlag, label: "Complaint" },
     { href: "/attendance", icon: CiSquareCheck, label: "My attendance" },
   ];
@@ -207,7 +209,7 @@ const NavBar = () => {
               </div>
             </nav>
           </header>
-          <div className="border-borderPrimary sticky inset-x-0 top-0 z-20 border-y bg-bgPrimary px-4 sm:px-6 md:px-8 lg:hidden">
+          <div className="border-borderPrimaryPrimary sticky inset-x-0 top-0 z-20 border-y bg-bgPrimary px-4 sm:px-6 md:px-8 lg:hidden">
             <div className="flex items-center justify-between py-2">
               <ol className="ms-3 flex items-center whitespace-nowrap">
                 <li className="text-textPrimary flex items-center text-sm">
@@ -218,7 +220,7 @@ const NavBar = () => {
               <button
                 onClick={OpenSideBar}
                 type="button"
-                className="border-borderPrimary flex items-center justify-center gap-x-1.5 rounded-lg border px-3 py-2 text-xs text-gray-500 hover:text-gray-600"
+                className="border-borderPrimaryPrimary flex items-center justify-center gap-x-1.5 rounded-lg border px-3 py-2 text-xs text-gray-500 hover:text-gray-600"
                 data-hs-overlay="#application-sidebar"
                 aria-controls="application-sidebar"
                 aria-label="Sidebar"

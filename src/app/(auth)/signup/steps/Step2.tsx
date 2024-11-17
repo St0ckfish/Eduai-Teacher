@@ -9,7 +9,7 @@ type StepOneProps = {
   prevStep: () => void;
 };
 
-const StepOne: React.FC<StepOneProps> = ({ nextStep, prevStep }) => {
+const StepTwo: React.FC<StepOneProps> = ({ nextStep, prevStep }) => {
   const stepsDescription = [
     "Location & School",
     "Personal Details 1",
@@ -42,16 +42,18 @@ const StepOne: React.FC<StepOneProps> = ({ nextStep, prevStep }) => {
               <React.Fragment key={step}>
                 <div
                   className={`relative flex h-8 w-8 items-center justify-center rounded-full ${
-                    index < 3 ? "bg-primary" : "bg-gray-300"
+                    index < 2 ? "bg-primary" : "bg-gray-300"
                   } font-bold text-white`}
                 >
                   {step}
                   <span className="absolute -left-[15px] top-10 w-[100px] text-[10px] text-black sm:left-[-22px] sm:w-[120px] sm:text-xs">
                     {stepsDescription[index]}
-                  </span>{" "}
+                  </span>
                 </div>
                 {index < 3 && (
-                  <hr className="h-[5px] w-20 bg-primary sm:w-[105px]" />
+                  <hr
+                    className={`h-[5px] w-20 ${index < 2 ? "bg-primary" : "bg-gray-300"} sm:w-[105px]`}
+                  />
                 )}
               </React.Fragment>
             ))}
@@ -60,21 +62,32 @@ const StepOne: React.FC<StepOneProps> = ({ nextStep, prevStep }) => {
 
         {/* Form */}
         <form className="w-full space-y-4">
-          <label htmlFor="username">
-            <Input placeholder="Username" className="w-full" />
+          <label htmlFor="name_en">
+            <Input placeholder="Full Name (English)" theme="transparent"/>
           </label>
-          <label htmlFor="email">
-            <Input placeholder="E-mail" className="w-full" />
+          <label htmlFor="name_fr">
+            <Input placeholder="Full Name (French)" theme="transparent" />
           </label>
-          <label htmlFor="password">
-            <Input placeholder="Password" type="password" className="w-full" />
+          <label htmlFor="name_ar">
+            <Input placeholder="Full Name (Arabic)" theme="transparent" />
           </label>
-          <label htmlFor="confirm-password">
-            <Input
-              placeholder="Confirm password"
-              type="password"
-              className="w-full"
-            />
+
+          <label htmlFor="qualification">
+            <select
+              name="qualification"
+              id="qualification"
+              className="w-full rounded-lg border border-bgPowderBlue bg-bgSecondary p-3 text-gray-700 outline-none transition duration-200 ease-in"
+            >
+              <option value="qualification">Qualification</option>
+            </select>
+          </label>
+
+          <label htmlFor="area">
+            <textarea
+              id="area"
+              placeholder="Write a brief summary about yourself.(Optional)"
+              className="mt-6 w-full rounded-lg border border-bgPowderBlue bg-bgSecondary p-3 text-gray-700 outline-none transition duration-200 ease-in"
+            ></textarea>
           </label>
 
           {/* Navigation Buttons */}
@@ -82,14 +95,13 @@ const StepOne: React.FC<StepOneProps> = ({ nextStep, prevStep }) => {
             <Button
               type="button"
               onClick={prevStep}
-              className="w-1/2 rounded-lg border border-primary bg-bgSecondary py-2 text-lg font-bold text-primary transition hover:bg-gray-200"
+              theme="outline"
             >
               Prev
             </Button>
             <Button
               type="button"
               onClick={nextStep}
-              className="hover:bg-primary-dark w-1/2 rounded-lg bg-primary py-2 text-lg font-bold text-white transition"
             >
               Next
             </Button>
@@ -111,4 +123,4 @@ const StepOne: React.FC<StepOneProps> = ({ nextStep, prevStep }) => {
   );
 };
 
-export default StepOne;
+export default StepTwo;

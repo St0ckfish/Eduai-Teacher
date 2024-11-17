@@ -23,8 +23,21 @@ type ButtonAsLink = {
 type ButtonProps = {
   children: ReactNode;
   className?: string;
-  theme?: "reverse";
+  theme?: "outline" | "gray";
 } & (ButtonAsButton | ButtonAsAnchor | ButtonAsLink);
+
+/**
+ * A versatile Button component that can render as a <button>, <a> or a Link.
+ * 
+ * @param {ButtonProps} props - The props for the Button component.
+ * @param {ReactNode} props.children - The content to be rendered inside the button.
+ * @param {string} [props.className] - Additional CSS classes to apply.
+ * @param {("button" | "a" | "link")} [props.as="button"] - The HTML element type to render.
+ * @param {("outline")} [props.theme] - The theme variant of the button ("outline").
+ * @param {object} [props.rest] - Additional HTML attributes to spread on the rendered element.
+ * 
+ * @returns {JSX.Element} The rendered button, anchor, or link element.
+ */
 
 const Button = ({
   children,
@@ -33,14 +46,14 @@ const Button = ({
   theme,
   ...rest
 }: ButtonProps) => {
-  const defaultClassName =
-    "w-full flex items-center gap-3 justify-center whitespace-nowrap rounded-lg px-6 py-3 font-semibold text-white bg-primary text-center hover:bg-primaryHover hover:shadow-lg duration-200 ease-in";
+  const baseClassName =
+    "w-full flex items-center gap-3 justify-center whitespace-nowrap rounded-lg px-6 py-3 font-semibold text-center hover:shadow-lg duration-200 ease-in";
 
-  const reverseClassName =
-    "w-full flex items-center gap-3 justify-center whitespace-nowrap rounded-lg px-6 py-3 font-semibold text-primary border border-primary text-center hover:shadow-lg duration-200 ease-in";
+  const defaultClassName = `${baseClassName} text-white bg-primary hover:bg-primaryHover`;
+  const outlineClassName = `${baseClassName} text-primary border border-primary`;
+  const grayClassName = `${baseClassName} text-white bg-bgPowderBlue hover:bg-textSecondary`;
 
-  const computedClassName =
-    className ?? (theme === "reverse" ? reverseClassName : defaultClassName);
+  const computedClassName = `${theme === "outline" ? outlineClassName : theme === "gray" ? grayClassName : defaultClassName} ${className ?? ""}`;
 
   if (as === "a" && "href" in rest) {
     return (

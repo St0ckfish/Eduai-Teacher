@@ -1,15 +1,16 @@
 "use client";
 import { useState } from "react";
-import StepOne from "./steps/StepOne";
-import StepTwo from "./steps/StepTwo";
-import StepThree from "./steps/StepThree";
-import StepFour from "./steps/StepFour";
+import StepOne from "./steps/Step1";
+import StepTwo from "./steps/Step2";
+import StepThree from "./steps/Step3";
+import StepFour from "./steps/Step4";
 
 const Signup = () => {
   const [step, setStep] = useState(1);
 
   const nextStep = () => setStep((e) => e + 1);
   const prevStep = () => setStep((e) => e - 1);
+
 
   const renderStep = () => {
     switch (step) {
