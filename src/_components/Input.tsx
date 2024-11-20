@@ -13,7 +13,6 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   theme?: "solid" | "transparent";
 }
 
-
 const Input: React.FC<InputProps> = ({
   label,
   type = "text",
@@ -32,27 +31,22 @@ const Input: React.FC<InputProps> = ({
 
   const themeClasses =
     theme === "transparent"
-      ? "bg-transparent border-borderPrimary"
+      ? "bg-transparent border-bgPowderBlue"
       : "bg-white border-borderSecondary";
 
   return (
     <label className={`grid w-full gap-1 text-end`}>
-      {label && <p className="text-purpleMain text-start font-medium">{label}</p>}
-      <div className="relative w-full">
+      {label && <p className="text-purpleMain font-medium">{label}</p>}
+      <div className="relative w-full text-start">
         <input
           {...props}
           type={inputType}
           {...register}
           dir={dir}
-          className={`w-full rounded-lg border px-4 py-3 outline-none ${
-            error ? "border-error" : themeClasses
+          className={`w-full rounded-lg border px-4 py-3 ${inputType === "date" ? "mb-1" : ""} outline-none ${
+            error ? "border-error bg-transparent" : themeClasses
           } ${className}`}
         />
-        {error ? (
-          <small className="text-error mr-2 text-sm">{error}</small>
-        ) : (
-          <small className="mr-2 text-sm opacity-0">No Error</small>
-        )}
         {type === "password" && (
           <button
             type="button"
@@ -62,7 +56,7 @@ const Input: React.FC<InputProps> = ({
           >
             {inputType === "password" ? (
               <svg
-                className="text-supTitle h-5 w-5 outline-none"
+                className="h-5 w-5 translate-y-3 text-bgPowderBlue outline-none"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
@@ -75,7 +69,7 @@ const Input: React.FC<InputProps> = ({
               </svg>
             ) : (
               <svg
-                className="text-supTitle h-5 w-5 outline-none"
+                className="h-5 w-5 translate-y-3 text-bgPowderBlue outline-none"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"

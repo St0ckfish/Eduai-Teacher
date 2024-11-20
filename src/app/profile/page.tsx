@@ -30,7 +30,9 @@ const EditProfile = () => {
                 </a>
               </div>
               <div>
-                <a href="/password" className="text-xl">Change Password </a>
+                <a href="/password" className="text-xl">
+                  Change Password{" "}
+                </a>
               </div>
             </div>
 
@@ -52,7 +54,7 @@ const EditProfile = () => {
                     name="country_code"
                     id="country_code"
                     className="w-full rounded-lg border border-borderSecondary bg-bgPrimary p-3 text-textSecondary outline-none transition duration-200 ease-in"
-                    >
+                  >
                     <option value="+20">+20</option>
                   </select>
                 </div>
@@ -67,9 +69,7 @@ const EditProfile = () => {
                 </label>
               </div>
               <div>
-                <label htmlFor="gender" >
-                  Gender
-                </label>
+                <label htmlFor="gender">Gender</label>
                 <select
                   name="gender"
                   id="gender"
@@ -79,9 +79,7 @@ const EditProfile = () => {
                 </select>
               </div>
               <div>
-                <label htmlFor="nationality" >
-                  Nationality
-                </label>
+                <label htmlFor="nationality">Nationality</label>
                 <select
                   name="nationality"
                   id="nationality"
@@ -91,9 +89,7 @@ const EditProfile = () => {
                 </select>
               </div>
               <div>
-                <label htmlFor="qualifications" >
-                  Qualifications
-                </label>
+                <label htmlFor="qualifications">Qualifications</label>
                 <select
                   name="qualifications"
                   id="qualifications"
@@ -103,9 +99,7 @@ const EditProfile = () => {
                 </select>
               </div>
               <div>
-                <label htmlFor="subject" >
-                Subject
-                </label>
+                <label htmlFor="subject">Subject</label>
                 <select
                   name="subject"
                   id="subject"
@@ -114,7 +108,6 @@ const EditProfile = () => {
                   <option value="subject">Select Subject</option>
                 </select>
               </div>
-              
             </div>
           </div>
         </div>

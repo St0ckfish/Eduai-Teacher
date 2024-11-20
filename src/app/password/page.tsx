@@ -38,9 +38,7 @@ const ChangePassword = () => {
 
             <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
               <div>
-                <label htmlFor="current_password">
-                   Current Password
-                </label>
+                <label htmlFor="current_password">Current Password</label>
                 <Input
                   placeholder="Enter current password"
                   type="password"
@@ -48,9 +46,7 @@ const ChangePassword = () => {
                 />
               </div>
               <div>
-                <label htmlFor="new_password">
-                   New Password
-                </label>
+                <label htmlFor="new_password">New Password</label>
                 <Input
                   placeholder="Enter new password"
                   type="password"
@@ -59,7 +55,7 @@ const ChangePassword = () => {
               </div>
               <div>
                 <label htmlFor="confirm_new_password">
-                   Confirm New Password
+                  Confirm New Password
                 </label>
                 <Input
                   placeholder="confirm the password"

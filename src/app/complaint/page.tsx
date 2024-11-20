@@ -1,9 +1,12 @@
+"use client";
 import Container from "~/_components/Container";
 import { AiOutlineDown } from "react-icons/ai";
 import { BsArrowDownLeft, BsArrowUpRight } from "react-icons/bs";
 import Input from "~/_components/Input";
+import { useGetAllAdvices } from "~/APIs/hooks/useAdvice";
 
 const Complaint = () => {
+  const { data, isLoading, error } = useGetAllAdvices({ page: 1, limit: 10 });
   return (
     <>
       <Container>
@@ -118,47 +121,49 @@ const Complaint = () => {
               </div>
             </div>
             <div className="mt-4 flex justify-center gap-1">
-                <div>Show more </div>
-                <div className="mt-[2px]">
-                  <AiOutlineDown size={20} />{" "}
-                </div>
+              <div>Show more </div>
+              <div className="mt-[2px]">
+                <AiOutlineDown size={20} />{" "}
               </div>
+            </div>
           </div>
           <div className="w-full rounded-xl bg-bgPrimary p-4 md:w-1/2">
             <h1 className="text-2xl font-semibold">Add Complaint</h1>
             <form className="w-full">
-            <label htmlFor="class" className="mt-4">
-            <select
-              name="class"
-              id="class"
-              className="w-full rounded-lg border bg-bgPrimary border-borderSecondary mt-4 p-3 text-gray-700 outline-none transition duration-200 ease-in"
-            >
-              <option value="class">Select Class</option>
-            </select>
-          </label>
-          <label htmlFor="student">
-            <select
-              name="student"
-              id="student"
-              className="w-full rounded-lg border bg-bgPrimary border-borderSecondary mt-4 p-3 text-gray-700 outline-none transition duration-200 ease-in"
-            >
-              <option value="student">Select Student</option>
-            </select>
-          </label>
-          <label htmlFor="subject">
-            <Input placeholder="Subject" theme="transparent" className="mt-4" />
-          </label>
+              <label htmlFor="class" className="mt-4">
+                <select
+                  name="class"
+                  id="class"
+                  className="mt-4 w-full rounded-lg border border-borderSecondary bg-bgPrimary p-3 text-gray-700 outline-none transition duration-200 ease-in"
+                >
+                  <option value="class">Select Class</option>
+                </select>
+              </label>
+              <label htmlFor="student">
+                <select
+                  name="student"
+                  id="student"
+                  className="mt-4 w-full rounded-lg border border-borderSecondary bg-bgPrimary p-3 text-gray-700 outline-none transition duration-200 ease-in"
+                >
+                  <option value="student">Select Student</option>
+                </select>
+              </label>
+              <label htmlFor="subject">
+                <Input
+                  placeholder="Subject"
+                  theme="transparent"
+                  className="mt-4"
+                />
+              </label>
 
-          
-
-          <label htmlFor="area">
-            <textarea
-              id="area"
-              placeholder="Write the problem"
-              className="-mt-2 w-full rounded-lg border bg-bgPrimary border-borderSecondary p-3 text-gray-700 outline-none transition duration-200 ease-in"
-            ></textarea>
-          </label>
-        </form>
+              <label htmlFor="area">
+                <textarea
+                  id="area"
+                  placeholder="Write the problem"
+                  className="-mt-2 w-full rounded-lg border border-borderSecondary bg-bgPrimary p-3 text-gray-700 outline-none transition duration-200 ease-in"
+                ></textarea>
+              </label>
+            </form>
           </div>
         </div>
       </Container>

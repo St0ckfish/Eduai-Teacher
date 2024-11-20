@@ -65,7 +65,7 @@ const Exam = () => {
                 <tr className="bg-bgSecondary font-semibold hover:bg-primary hover:text-white">
                   <th
                     scope="row"
-                    className="text-textSecondary whitespace-nowrap rounded-s-2xl px-6 py-4 font-medium"
+                    className="whitespace-nowrap rounded-s-2xl px-6 py-4 font-medium text-textSecondary"
                   >
                     Class 5/2
                   </th>

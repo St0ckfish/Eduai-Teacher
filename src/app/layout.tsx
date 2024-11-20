@@ -1,16 +1,19 @@
 "use client";
 import "~/styles/globals.css";
-
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { GeistSans } from "geist/font/sans";
-
+import Notification from "~/_components/Notifications";
+import "react-toastify/dist/ReactToastify.css";
 import { TRPCReactProvider } from "~/trpc/react";
 import NavBar from "../_components/navBar";
 import { usePathname } from "next/navigation";
+import { useState } from "react";
 
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   const pathname = usePathname();
+  const [queryClient] = useState(() => new QueryClient());
   const isLoginPage =
     pathname === "/login" ||
     pathname === "/signup" ||
@@ -27,8 +30,11 @@ export default function RootLayout({
         <link rel="icon" type="image/x-icon" href="/favicon.ico" />
       </head>
       <body className="bg-bgSecondary">
-        {!isLoginPage && <NavBar />}
-        <TRPCReactProvider>{children}</TRPCReactProvider>
+        <QueryClientProvider client={queryClient}>
+          {!isLoginPage && <NavBar />}
+          <Notification />
+          <TRPCReactProvider>{children}</TRPCReactProvider>
+        </QueryClientProvider>
       </body>
     </html>
   );

@@ -1,21 +1,67 @@
+/* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
+import type { Control, FieldErrors, FieldValues } from "react-hook-form";
 import Button from "~/_components/Button";
 import Input from "~/_components/Input";
+import SearchableSelect from "~/_components/SearchSelect";
+import Spinner from "~/_components/Spinner";
+import { useGetAllCountries, useGetAllNationalities } from "~/APIs/hooks/useAuth";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "~/components/ui/select";
 
 type StepFourProps = {
   prevStep: () => void;
+  control: Control;
+  errors: FieldErrors<FieldValues>;
 };
 
-const StepFour: React.FC<StepFourProps> = ({ prevStep }) => {
+const StepFour: React.FC<StepFourProps> = ({ prevStep, errors, control }) => {
+  interface CountryResponse {
+    data: Record<string, string>;
+  }
+  const { data, isLoading } = useGetAllCountries() as {
+    data: CountryResponse;
+    isLoading: boolean;
+  };
+  const { data: nationalities, isLoading: isNationalities } = useGetAllNationalities() as {
+    data: Record<string, string>;
+    isLoading: boolean;
+  };
+
+  const optionsNationalities =
+  (nationalities?.data &&
+  Object.entries(nationalities.data).map(([key, value]) => ({
+    value: key,
+    label: `${value}`,
+  }))) || [];
+
+  const countryOptions =
+    data?.data &&
+    Object.entries(data.data).map(([key, value]) => ({
+      value: key,
+      label: `+${key} (${value})`,
+    }));
+
   const stepsDescription = [
     "Location & School",
     "Personal Details 1",
     "Personal Details 2",
     "Authentication",
   ];
-
+  if (isLoading || isNationalities) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-bgSecondary duration-300 ease-in">
+        <Spinner />
+      </div>
+    );
+  }
   return (
     <>
       <div className="flex min-h-screen items-center justify-center bg-bgSecondary duration-300 ease-in">
@@ -59,63 +105,62 @@ const StepFour: React.FC<StepFourProps> = ({ prevStep }) => {
           {/* Form */}
           <form className="w-full space-y-6">
             <label htmlFor="nationality" className="block">
-              <select
-                name="nationality"
-                id="nationality"
-                className="w-full rounded-lg border border-borderPrimary bg-bgSecondary p-3 text-gray-700 outline-none transition duration-200 ease-in"
-              >
-                <option value="nationality">Select Nationality</option>
-              </select>
+              
+                <SearchableSelect
+                  control={control}
+                  errors={errors}
+                  name="nationality"
+                  placeholder="Select Nationality"
+                  options={optionsNationalities}
+                />
             </label>
 
             <label htmlFor="gender" className="block">
-              <select
-                name="gender"
-                id="gender"
-                className="w-full rounded-lg border border-borderPrimary bg-bgSecondary p-3 text-gray-700 outline-none transition duration-200 ease-in"
-              >
-                <option value="gender">Select Gender</option>
-              </select>
+              <Select>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select Gender" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="MALE">MALE</SelectItem>
+                  <SelectItem value="FEMALE">Female</SelectItem>
+                </SelectContent>
+              </Select>
             </label>
-
-            <label htmlFor="religion" className="block">
-              <select
-                name="religion"
-                id="religion"
-                className="w-full rounded-lg border border-borderPrimary bg-bgSecondary p-3 text-gray-700 outline-none transition duration-200 ease-in"
-              >
-                <option value="religion">Select Religion</option>
-              </select>
-            </label>
-
+            
             <label htmlFor="nationalId" className="block">
-              <Input placeholder="National ID" className="-mt-1" theme="transparent" />
+              <Input
+                placeholder="National ID"
+                className="-mt-1"
+                theme="transparent"
+              />
             </label>
 
             <label htmlFor="birth" className="block">
               <Input
                 type="date"
                 placeholder="Date of birth"
-                className="-mb-6 -mt-7" theme="transparent"
+                className="-mb-6 -mt-7"
+                theme="transparent"
               />
             </label>
 
-            <div className="flex space-x-2">
+            <div className="items- flex space-x-2">
               <label htmlFor="country_code" className="w-1/3">
-                <select
-                  name="country_code"
-                  id="country_code"
-                  className="w-full rounded-lg border border-borderPrimary bg-bgSecondary p-3 text-gray-700 outline-none"
-                >
-                  <option value="+20">+20</option>
-                </select>
+                <SearchableSelect
+                  control={control}
+                  errors={errors}
+                  name="countryCode"
+                  placeholder="Select Country"
+                  options={countryOptions}
+                />
               </label>
 
-              <label htmlFor="phone" className="w-2/3">
+              <label htmlFor="phone" className="w-2/3 translate-y-1">
                 <Input
                   type="tel"
                   placeholder="Phone Number"
-                  className="-mt-[4px]" theme="transparent"
+                  className="-mt-[4px]"
+                  theme="transparent"
                   pattern="^\+?[1-9]\d{1,14}$"
                 />
               </label>
@@ -123,18 +168,10 @@ const StepFour: React.FC<StepFourProps> = ({ prevStep }) => {
 
             {/* Navigation Buttons */}
             <div className="mt-8 flex justify-center space-x-4">
-              <Button
-                type="button"
-                onClick={prevStep}
-                theme="outline"
-              >
+              <Button type="button" onClick={prevStep} theme="outline">
                 Prev
               </Button>
-              <Button
-                type="button"
-              >
-                Sign Up
-              </Button>
+              <Button type="button">Sign Up</Button>
             </div>
 
             {/* Sign-in Prompt */}

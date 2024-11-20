@@ -9,20 +9,20 @@ const Attendance = () => {
   return (
     <>
       <Container>
-        <div className="mx-4 flex justify-between text-xl font-semibold flex-col md:flex-row md:space-x-5">
-          <div className="flex-1 rounded-3xl border-2 border-primary bg-primary bg-opacity-5 p-4 mb-2">
+        <div className="mx-4 flex flex-col justify-between text-xl font-semibold md:flex-row md:space-x-5">
+          <div className="mb-2 flex-1 rounded-3xl border-2 border-primary bg-primary bg-opacity-5 p-4">
             <h1 className="mb-4">Total Attendance</h1>
             <p className="text-primary">150</p>
           </div>
-          <div className="flex-1 rounded-3xl border-2 border-warning bg-warning bg-opacity-5 p-4 mb-2">
+          <div className="mb-2 flex-1 rounded-3xl border-2 border-warning bg-warning bg-opacity-5 p-4">
             <h1 className="mb-4">Total Absence</h1>
             <p className="text-warning">2</p>
           </div>
-          <div className="flex-1 rounded-3xl border-2 border-success bg-info bg-opacity-5 p-4 mb-2">
+          <div className="mb-2 flex-1 rounded-3xl border-2 border-success bg-info bg-opacity-5 p-4">
             <h1 className="mb-4">Total Leave</h1>
             <p className="text-info">4</p>
           </div>
-          <div className="flex-1 rounded-3xl border-2 border-lavender bg-lavender bg-opacity-5 p-4 mb-2">
+          <div className="mb-2 flex-1 rounded-3xl border-2 border-lavender bg-lavender bg-opacity-5 p-4">
             <h1 className="mb-4">Early Departure</h1>
             <p className="text-lavender">10</p>
           </div>
