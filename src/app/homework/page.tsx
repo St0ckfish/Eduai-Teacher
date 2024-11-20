@@ -3,6 +3,7 @@
 import Container from "~/_components/Container";
 import * as React from "react";
 import { Calendar } from "~/components/ui/calendar";
+import { Text } from "~/_components/Text";
 
 function CalendarDemo() {
   const [date, setDate] = React.useState<Date | undefined>(new Date());
@@ -24,9 +25,9 @@ const Homework = () => {
           <CalendarDemo />
         </div>
 
-        <div className="grid w-full gap-2 rounded-md bg-white p-4">
+        <div className="grid w-full gap-2 rounded-md bg-bgPrimary p-4">
           <div className="flex w-full items-start justify-between">
-            <p className="mb-3 font-semibold">Homework</p>
+            <Text font={"bold"} size={"2xl"}>Homework</Text>
             <button className="flex items-center gap-2 font-medium text-primary">
               <svg
                 className="h-6 w-6 text-primary"
@@ -44,10 +45,10 @@ const Homework = () => {
               Add Material
             </button>
           </div>
-          <div className="rounded-md border border-gray-200 p-4">
-            <div className="grid h-full gap-2 border-l-2 border-primary px-3">
+          <div className="rounded-md border border-borderPrimary p-4">
+            <div className="grid h-full gap-2 border-l-4 border-primary px-3">
               <div className="flex items-start justify-between">
-                <p className="mb-3 font-semibold">Title</p>
+                <Text font="bold" size="xl">Title</Text>
                 <button>
                   <svg
                     className="h-6 w-6 text-black"
@@ -65,20 +66,20 @@ const Homework = () => {
                   </svg>
                 </button>
               </div>
-              <div className="text-gray-400">
-                <p>
+              <div>
+                <Text color="gray">
                   Lorem ipsum dolor sit amet consectetur, adipisicing elit.
                   Eveniet, dolorum velit beatae sed aspernatur non! Tempore
                   earum, voluptas optio odit obcaecati repellat libero
                   voluptatum aut, similique culpa et minima accusamus.
-                </p>
+                </Text>
               </div>
             </div>
           </div>
-          <div className="rounded-md border border-gray-200 p-4">
-            <div className="grid h-full gap-2 border-l-2 border-primary px-3">
+          <div className="rounded-md border border-borderPrimary p-4">
+            <div className="grid h-full gap-2 border-l-4 border-primary px-3">
               <div className="flex items-start justify-between">
-                <p className="mb-3 font-semibold">Title</p>
+                <Text font="bold" size="xl">Title</Text>
                 <button>
                   <svg
                     className="h-6 w-6 text-black"
@@ -96,13 +97,13 @@ const Homework = () => {
                   </svg>
                 </button>
               </div>
-              <div className="text-gray-400">
-                <p>
+              <div>
+                <Text color="gray">
                   Lorem ipsum dolor sit amet consectetur, adipisicing elit.
                   Eveniet, dolorum velit beatae sed aspernatur non! Tempore
                   earum, voluptas optio odit obcaecati repellat libero
                   voluptatum aut, similique culpa et minima accusamus.
-                </p>
+                </Text>
               </div>
             </div>
           </div>

@@ -28,14 +28,14 @@ type ButtonProps = {
 
 /**
  * A versatile Button component that can render as a <button>, <a> or a Link.
- * 
+ *
  * @param {ButtonProps} props - The props for the Button component.
  * @param {ReactNode} props.children - The content to be rendered inside the button.
  * @param {string} [props.className] - Additional CSS classes to apply.
  * @param {("button" | "a" | "link")} [props.as="button"] - The HTML element type to render.
  * @param {("outline")} [props.theme] - The theme variant of the button ("outline").
  * @param {object} [props.rest] - Additional HTML attributes to spread on the rendered element.
- * 
+ *
  * @returns {JSX.Element} The rendered button, anchor, or link element.
  */
 

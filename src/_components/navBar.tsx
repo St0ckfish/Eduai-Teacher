@@ -13,6 +13,7 @@ import { MdAttachMoney } from "react-icons/md";
 import { useTheme } from "next-themes";
 import Spinner from "./Spinner";
 import { Switch } from "~/components/ui/switch";
+import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 
 const useWindowDimensions = () => {
   const isClient = typeof window === "object";
@@ -80,6 +81,10 @@ const NavBarLink = ({
 };
 
 const NavBar = () => {
+  const [profile, setProfile] = useState(false);
+  const toggleProfile = () => {
+    setProfile(!profile);
+  };
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
@@ -226,7 +231,80 @@ const NavBar = () => {
                       />
                     </svg>
                   </Link>
-                  <div className="hs-dropdown relative inline-flex [--placement:bottom-right]"></div>
+
+                  <div className="hs-dropdown relative inline-flex [--placement:bottom-right]">
+                    <DropdownMenu.Root>
+                      <DropdownMenu.Trigger asChild>
+                        <button
+                          onClick={toggleProfile}
+                          id="hs-dropdown-with-header"
+                          type="button"
+                          className="border-bgSeconday hover:bg-thead inline-flex h-[2.375rem] w-[2.375rem] items-center justify-center gap-x-2 rounded-full border text-sm font-semibold text-gray-800 outline-none disabled:pointer-events-none disabled:opacity-50"
+                        >
+                          <div>
+                            <img
+                              className="inline-block h-[38px] w-[38px] rounded-full ring-2 ring-bgSecondary"
+                              src="/images/userr.png"
+                              alt="User Avatar"
+                            />
+                          </div>
+                        </button>
+                      </DropdownMenu.Trigger>
+
+                      {profile && (
+                        <DropdownMenu.Content
+                          className={`text-textPrimary fixed right-[20px] top-[20px] min-w-60 rounded-lg bg-bgPrimary p-2 shadow-md`}
+                          aria-labelledby="hs-dropdown-with-header"
+                          align="end"
+                          sideOffset={5}
+                        >
+                          <div className="rounded-t-lg bg-bgPrimary px-5 py-3">
+                            <p className="text-textPrimary text-sm">
+                              Signed in as
+                            </p>
+                            <p className="text-textPrimary text-sm font-medium">
+                              Example@gmail.com
+                            </p>
+                          </div>
+                          <div className="mt-2 py-2">
+                            <DropdownMenu.Item asChild>
+                              <Link
+                                className="text-textPrimary flex items-center gap-x-3.5 rounded-lg border-none px-3 py-2 text-sm outline-none hover:bg-bgSecondary"
+                                href="/profile"
+                              >
+                                <svg
+                                  className="h-4 w-4 flex-shrink-0"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  width="24"
+                                  height="24"
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  strokeWidth="2"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                >
+                                  <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                                  <circle cx="9" cy="7" r="4" />
+                                  <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                                  <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                                </svg>
+                                Profile
+                              </Link>
+                            </DropdownMenu.Item>
+                            <DropdownMenu.Item asChild>
+                              <a
+                                className="text-textPrimary flex items-center gap-x-3.5 rounded-lg border-none px-3 py-2 text-sm outline-none hover:bg-error hover:text-white"
+                                href="/login"
+                              >
+                                Sign out
+                              </a>
+                            </DropdownMenu.Item>
+                          </div>
+                        </DropdownMenu.Content>
+                      )}
+                    </DropdownMenu.Root>
+                  </div>
                 </div>
               </div>
             </nav>

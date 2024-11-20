@@ -11,8 +11,8 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   className?: string;
   dir?: string;
   theme?: "solid" | "transparent";
+  border?: "primary" | "gray";
 }
-
 
 const Input: React.FC<InputProps> = ({
   label,
@@ -22,6 +22,7 @@ const Input: React.FC<InputProps> = ({
   register,
   className = "",
   theme = "solid",
+  border,
   ...props
 }) => {
   const [inputType, setInputType] = useState(type);
@@ -32,8 +33,10 @@ const Input: React.FC<InputProps> = ({
 
   const themeClasses =
     theme === "transparent"
-      ? "bg-transparent border-borderSecondary"
-      : "bg-bgSecondary border-borderPrimary";
+      ? "bg-transparent"
+      : "bg-bgSecondary";
+
+  const borderClass = border === "gray" ? "border-borderPrimary" : "border-borderSecondary";
 
   return (
     <label className={`grid w-full gap-1 text-end`}>
@@ -44,15 +47,12 @@ const Input: React.FC<InputProps> = ({
           type={inputType}
           {...register}
           dir={dir}
-          className={`w-full rounded-lg border px-4 py-3 outline-none text-textPrimary placeholder:text-textSecondary ${
-            error ? "border-error" : themeClasses
+          className={`w-full rounded-lg border px-4 py-3 ${
+            inputType === "date" ? "mb-1" : ""
+          } outline-none text-textPrimary placeholder:text-textSecondary ${
+            error ? "border-error bg-transparent" : `${themeClasses} ${borderClass}`
           } ${className}`}
         />
-        {error ? (
-          <small className="text-error mr-2 text-sm">{error}</small>
-        ) : (
-          <small className="mr-2 text-sm opacity-0">No Error</small>
-        )}
         {type === "password" && (
           <button
             type="button"
@@ -62,7 +62,7 @@ const Input: React.FC<InputProps> = ({
           >
             {inputType === "password" ? (
               <svg
-                className="text-supTitle h-5 w-5 outline-none"
+                className="h-5 w-5 translate-y-3 text-bgPowderBlue outline-none"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
@@ -75,7 +75,7 @@ const Input: React.FC<InputProps> = ({
               </svg>
             ) : (
               <svg
-                className="text-supTitle h-5 w-5 outline-none"
+                className="h-5 w-5 translate-y-3 text-bgPowderBlue outline-none"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"

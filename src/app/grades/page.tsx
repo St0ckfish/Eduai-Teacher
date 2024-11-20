@@ -8,7 +8,7 @@ const Grades = () => {
       <div className="flex w-full items-center justify-between gap-10">
         <div className="flex w-[300px]">
           <select
-            className="flex w-full items-center gap-3 whitespace-nowrap rounded-lg bg-white px-6 py-4 font-semibold outline-none duration-200 ease-in hover:shadow-lg"
+            className="flex w-full items-center gap-3 whitespace-nowrap rounded-lg bg-bgPrimary px-6 py-4 font-semibold outline-none duration-200 ease-in hover:shadow-lg"
             name=""
             id=""
           >

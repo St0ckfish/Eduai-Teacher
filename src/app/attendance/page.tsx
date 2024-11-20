@@ -9,8 +9,8 @@ const Attendance = () => {
   return (
     <>
       <Container>
-        <div className="mx-4 flex justify-between text-xl font-semibold flex-col md:flex-row md:space-x-5">
-          <div className="flex-1 rounded-3xl border-2 border-primary bg-primary/5 p-4 mb-2">
+        <div className="mx-4 flex flex-col justify-between text-xl font-semibold md:flex-row md:space-x-5">
+          <div className="mb-2 flex-1 rounded-3xl border-2 border-primary bg-primary/5 p-4">
             <h1 className="mb-4">Total Attendance</h1>
             <p className="text-primary">150</p>
           </div>

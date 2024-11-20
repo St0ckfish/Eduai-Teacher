@@ -1,13 +1,14 @@
 import Image from "next/image";
 import Container from "~/_components/Container";
 import Input from "~/_components/Input";
+import { Text } from "~/_components/Text";
 
 const EditProfile = () => {
   return (
     <>
       <Container>
         <div className="w-full overflow-x-hidden rounded-xl bg-bgPrimary p-4">
-          <h1 className="text-2xl font-semibold">Edit Profile</h1>
+          <Text font={"bold"} size={"4xl"}>Edit Profile</Text>
           <div className="mt-4 flex flex-col items-center">
             <div>
               <Image
@@ -18,8 +19,8 @@ const EditProfile = () => {
               />
             </div>
             <div className="flex flex-col items-center">
-              <h1 className="my-2 text-xl">Ahmed Abdelfadeel</h1>
-              <p className="mb-2 text-textSecondary">@abufadel</p>
+              <Text font={"bold"} size={"2xl"} className="mt-2">Ahmed Abdelfadeel</Text>
+              <Text size={"xl"} color="gray" className="mb-2">@abufadel</Text>
             </div>
           </div>
           <div className="m-auto w-4/5">
@@ -30,18 +31,30 @@ const EditProfile = () => {
                 </a>
               </div>
               <div>
-                <a href="/password" className="text-xl">Change Password </a>
+                <a href="/password" className="text-xl">
+                  Change Password{" "}
+                </a>
               </div>
             </div>
 
             <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
               <div>
                 <label htmlFor="full_name">Fall Name</label>
-                <Input name="full_name" placeholder="Enter your first name" />
+                <Input
+                  name="full_name"
+                  placeholder="Enter your first name"
+                  theme="transparent"
+                  border="gray"
+                />
               </div>
               <div>
                 <label htmlFor="last_name">Last Name</label>
-                <Input name="last_name" placeholder="Enter your last name" />
+                <Input
+                  name="last_name"
+                  placeholder="Enter your last name"
+                  theme="transparent"
+                  border="gray"
+                />
               </div>
               <div className="flex space-x-2">
                 <div>
@@ -51,8 +64,8 @@ const EditProfile = () => {
                   <select
                     name="country_code"
                     id="country_code"
-                    className="w-full rounded-lg border border-borderSecondary bg-bgPrimary p-3 text-textSecondary outline-none transition duration-200 ease-in"
-                    >
+                    className="w-full rounded-lg border border-borderPrimary bg-bgPrimary p-3 text-textSecondary outline-none transition duration-200 ease-in"
+                  >
                     <option value="+20">+20</option>
                   </select>
                 </div>
@@ -63,58 +76,51 @@ const EditProfile = () => {
                     placeholder="Phone Number"
                     className="-mt-[4px]"
                     pattern="^\+?[1-9]\d{1,14}$"
+                    theme="transparent"
+                    border="gray"
                   />
                 </label>
               </div>
               <div>
-                <label htmlFor="gender" >
-                  Gender
-                </label>
+                <label htmlFor="gender">Gender</label>
                 <select
                   name="gender"
                   id="gender"
-                  className="w-full rounded-lg border border-borderSecondary bg-bgPrimary p-3 text-textSecondary outline-none transition duration-200 ease-in"
+                  className="w-full rounded-lg border border-borderPrimary bg-bgPrimary p-3 text-textSecondary outline-none transition duration-200 ease-in"
                 >
                   <option value="gender">Select Gender</option>
                 </select>
               </div>
               <div>
-                <label htmlFor="nationality" >
-                  Nationality
-                </label>
+                <label htmlFor="nationality">Nationality</label>
                 <select
                   name="nationality"
                   id="nationality"
-                  className="w-full rounded-lg border border-borderSecondary bg-bgPrimary p-3 text-textSecondary outline-none transition duration-200 ease-in"
+                  className="w-full rounded-lg border border-borderPrimary bg-bgPrimary p-3 text-textSecondary outline-none transition duration-200 ease-in"
                 >
                   <option value="nationality">Select Nationality</option>
                 </select>
               </div>
               <div>
-                <label htmlFor="qualifications" >
-                  Qualifications
-                </label>
+                <label htmlFor="qualifications">Qualifications</label>
                 <select
                   name="qualifications"
                   id="qualifications"
-                  className="w-full rounded-lg border border-borderSecondary bg-bgPrimary p-3 text-textSecondary outline-none transition duration-200 ease-in"
+                  className="w-full rounded-lg border border-borderPrimary bg-bgPrimary p-3 text-textSecondary outline-none transition duration-200 ease-in"
                 >
                   <option value="qualifications">Select Qualifications</option>
                 </select>
               </div>
               <div>
-                <label htmlFor="subject" >
-                Subject
-                </label>
+                <label htmlFor="subject">Subject</label>
                 <select
                   name="subject"
                   id="subject"
-                  className="w-full rounded-lg border border-borderSecondary bg-bgPrimary p-3 text-textSecondary outline-none transition duration-200 ease-in"
+                  className="w-full rounded-lg border border-borderPrimary bg-bgPrimary p-3 text-textSecondary outline-none transition duration-200 ease-in"
                 >
                   <option value="subject">Select Subject</option>
                 </select>
               </div>
-              
             </div>
           </div>
         </div>
