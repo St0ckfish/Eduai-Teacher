@@ -3,6 +3,7 @@ import Link from "next/link";
 import React from "react";
 import Button from "~/_components/Button";
 import Input from "~/_components/Input";
+import { Text } from "~/_components/Text";
 
 type StepOneProps = {
   nextStep: () => void;
@@ -31,9 +32,9 @@ const StepOne: React.FC<StepOneProps> = ({ nextStep, prevStep }) => {
         </Link>
       </div>
       <div className="flex w-full max-w-lg flex-col items-center p-4 md:p-8">
-        <h1 className="mb-6 text-3xl font-bold text-black md:text-4xl">
+        <Text font={"bold"} size={"4xl"} className="mb-4">
           Sign Up
-        </h1>
+        </Text>
 
         {/* Steps */}
         <div className="mb-20 flex w-full items-center justify-between">
@@ -42,13 +43,13 @@ const StepOne: React.FC<StepOneProps> = ({ nextStep, prevStep }) => {
               <React.Fragment key={step}>
                 <div
                   className={`relative flex h-8 w-8 items-center justify-center rounded-full ${
-                    index < 3 ? "bg-primary" : "bg-gray-300"
+                    index < 3 ? "bg-primary" : "bg-bgPowderBlue"
                   } font-bold text-white`}
                 >
                   {step}
-                  <span className="absolute -left-[15px] top-10 w-[100px] text-[10px] text-black sm:left-[-22px] sm:w-[120px] sm:text-xs">
+                  <Text className="absolute -left-[15px] top-10 w-[100px] text-[10px] font-medium text-textPrimary sm:left-[-22px] sm:w-[120px] sm:text-xs">
                     {stepsDescription[index]}
-                  </span>{" "}
+                  </Text>
                 </div>
                 {index < 3 && (
                   <hr className="h-[5px] w-20 bg-primary sm:w-[105px]" />
@@ -79,24 +80,19 @@ const StepOne: React.FC<StepOneProps> = ({ nextStep, prevStep }) => {
 
           {/* Navigation Buttons */}
           <div className="mt-8 flex justify-center space-x-4">
-            <Button
-              type="button"
-              onClick={prevStep}
-              theme="outline"
-            >
+            <Button type="button" onClick={prevStep} theme="outline">
               Prev
             </Button>
-            <Button
-              type="button"
-              onClick={nextStep}
-            >
+            <Button type="button" onClick={nextStep}>
               Next
             </Button>
           </div>
 
           {/* Sign-in Prompt */}
           <div className="mt-6 flex items-center justify-center space-x-2">
-            <p className="text-sm text-gray-500">Already have an account?</p>
+            <Text font={"medium"} color={"muted"}>
+              Already have an account?
+            </Text>
             <Link
               href="/login"
               className="text-sm font-semibold text-primary hover:underline"

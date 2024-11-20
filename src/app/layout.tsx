@@ -6,6 +6,7 @@ import { GeistSans } from "geist/font/sans";
 import { TRPCReactProvider } from "~/trpc/react";
 import NavBar from "../_components/navBar";
 import { usePathname } from "next/navigation";
+import ThemeProvider from "./providers/themeProvider";
 
 export default function RootLayout({
   children,
@@ -20,15 +21,21 @@ export default function RootLayout({
     pathname === "/confirm-account" ||
     pathname === "/choose-account";
   return (
-    <html lang="en" className={`${GeistSans.variable}`}>
+    <html
+      lang="en"
+      className={`${GeistSans.variable}`}
+      suppressHydrationWarning
+    >
       <head>
         <title>EduAI Teacher</title>
         <meta name="description" content="Edu AI-Admin" />
         <link rel="icon" type="image/x-icon" href="/favicon.ico" />
       </head>
       <body className="bg-bgSecondary">
-        {!isLoginPage && <NavBar />}
-        <TRPCReactProvider>{children}</TRPCReactProvider>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          {!isLoginPage && <NavBar />}
+          <TRPCReactProvider>{children}</TRPCReactProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

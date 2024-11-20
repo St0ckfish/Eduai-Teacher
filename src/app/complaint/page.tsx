@@ -146,7 +146,7 @@ const Complaint = () => {
             </select>
           </label>
           <label htmlFor="subject">
-            <Input placeholder="Subject" theme="transparent" className="mt-4" />
+            <Input placeholder="Subject" className="mt-4" />
           </label>
 
           

@@ -32,19 +32,19 @@ const Input: React.FC<InputProps> = ({
 
   const themeClasses =
     theme === "transparent"
-      ? "bg-transparent border-borderPrimary"
-      : "bg-white border-borderSecondary";
+      ? "bg-transparent border-borderSecondary"
+      : "bg-bgSecondary border-borderPrimary";
 
   return (
     <label className={`grid w-full gap-1 text-end`}>
-      {label && <p className="text-purpleMain text-start font-medium">{label}</p>}
+      {label && <p className="text-textPrimary text-start font-medium">{label}</p>}
       <div className="relative w-full">
         <input
           {...props}
           type={inputType}
           {...register}
           dir={dir}
-          className={`w-full rounded-lg border px-4 py-3 outline-none ${
+          className={`w-full rounded-lg border px-4 py-3 outline-none text-textPrimary placeholder:text-textSecondary ${
             error ? "border-error" : themeClasses
           } ${className}`}
         />

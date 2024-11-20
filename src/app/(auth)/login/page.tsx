@@ -1,51 +1,47 @@
+import Input from "~/_components/Input";
+import { Text } from "~/_components/Text";
+
 /* eslint-disable @next/next/no-img-element */
 const Login = () => {
   return (
     <>
       <div className="grid h-screen grid-cols-2 items-center justify-center bg-bgSecondary duration-300 ease-in max-[1040px]:grid-cols-1">
-        <div className="flex h-full w-full justify-end">
-          <div className="flex h-full w-[700px] items-center justify-end max-[1040px]:hidden">
+        <div className="flex h-full w-full justify-end max-[1040px]:hidden">
+          <div className="flex h-full w-[700px] items-center justify-end">
             <img className="h-full w-full" src="images/login.png" alt="#" />
           </div>
         </div>
         <div className="gird items-center justify-center text-center">
           <div className="mb-10 grid">
-            <h1 className="font-sans text-[28px] font-bold text-black">
+            <Text font={"bold"} size={"4xl"} className="mb-2">
               Log in
-            </h1>
-            <p className="font-sans text-[20px] font-semibold text-gray-400">
+            </Text>
+            <Text font={"medium"} size={"lg"} color={"gray"}>
               Sign in to enjoy the feature of EduAI
-            </p>
+            </Text>
           </div>
           <div className="grid items-center justify-center">
-            <form className="grid gap-10">
+            <form className="grid gap-5">
               <label
                 htmlFor="email"
-                className="grid text-start font-sans text-[18px] font-semibold text-black"
               >
-                <input
-                  id="email"
-                  placeholder="Enter Your Email"
-                  className={`text-textPrimary w-[450px] rounded-xl border px-4 py-3 outline-none max-[471px]:w-[350px]`}
-                />
+                <Input theme="transparent" id="email" placeholder="Enter Your Email" />
               </label>
               <label
                 htmlFor="password"
-                className="grid text-start font-sans text-[18px] font-semibold text-black"
               >
-                <input
+                <Input
+                  theme="transparent"
                   id="password"
                   placeholder="Enter Your Password"
-                  className={`text-textPrimary w-[450px] rounded-xl border px-4 py-3 outline-none max-[471px]:w-[350px]`}
                   type="password"
                 />
               </label>
               <div className="flex justify-end text-end">
-                <a
-                  href="/forget-password"
-                  className="flex font-sans text-[12px] font-medium text-gray-400 hover:underline"
-                >
-                  Forgot password ?
+                <a href="/forget-password">
+                  <Text font={"medium"} size={"md"} color={"muted"}>
+                    Forgot Password ?
+                  </Text>
                 </a>
               </div>
               <div className="flex justify-center text-center">
@@ -57,9 +53,9 @@ const Login = () => {
                 </button>
               </div>
               <div className="flex items-center justify-center gap-2 text-center">
-                <p className="font-sans font-medium text-black">
+                <Text font={"medium"} size={"md"} color={"muted"}>
                   Need an account?
-                </p>
+                </Text>
                 <a
                   href="/signup"
                   className="flex font-sans font-medium text-primary hover:underline"

@@ -10,19 +10,19 @@ const Attendance = () => {
     <>
       <Container>
         <div className="mx-4 flex justify-between text-xl font-semibold flex-col md:flex-row md:space-x-5">
-          <div className="flex-1 rounded-3xl border-2 border-primary bg-primary bg-opacity-5 p-4 mb-2">
+          <div className="flex-1 rounded-3xl border-2 border-primary bg-primary/5 p-4 mb-2">
             <h1 className="mb-4">Total Attendance</h1>
             <p className="text-primary">150</p>
           </div>
-          <div className="flex-1 rounded-3xl border-2 border-warning bg-warning bg-opacity-5 p-4 mb-2">
+          <div className="flex-1 rounded-3xl border-2 border-softRed bg-softRed/5 p-4 mb-2">
             <h1 className="mb-4">Total Absence</h1>
-            <p className="text-warning">2</p>
+            <p className="text-softRed">2</p>
           </div>
-          <div className="flex-1 rounded-3xl border-2 border-success bg-info bg-opacity-5 p-4 mb-2">
+          <div className="flex-1 rounded-3xl border-2 border-limeGreen bg-limeGreen/10 p-4 mb-2">
             <h1 className="mb-4">Total Leave</h1>
-            <p className="text-info">4</p>
+            <p className="text-limeGreen">4</p>
           </div>
-          <div className="flex-1 rounded-3xl border-2 border-lavender bg-lavender bg-opacity-5 p-4 mb-2">
+          <div className="flex-1 rounded-3xl border-2 border-lavender bg-lavender/10 p-4 mb-2">
             <h1 className="mb-4">Early Departure</h1>
             <p className="text-lavender">10</p>
           </div>
@@ -34,20 +34,20 @@ const Attendance = () => {
               {tenItmes.map((_, index) => (
                 <div
                   key={index}
-                  className="rounded-xl border border-l-8 border-borderSecondary border-l-primary p-4"
+                  className="rounded-xl border border-l-8 border-borderPrimary border-l-primary p-4"
                 >
                   <h2 className="text-xl font-semibold">
                     10 May 2024 (Wednesday)
                   </h2>
                   <div className="mt-2 flex justify-between gap-2">
                     <div className="flex items-center gap-2">
-                      <div className="w-fit rounded-xl bg-primary bg-opacity-5 p-2">
+                      <div className="w-fit rounded-xl bg-primary/5 p-2">
                         <FiLogIn className="text-primary" />
                       </div>
                       <div className="text-xl">07:00 am</div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <div className="w-fit rounded-xl bg-primary bg-opacity-5 p-2">
+                      <div className="w-fit rounded-xl bg-primary/5 p-2">
                         <FiLogOut className="text-primary" />
                       </div>
                       <div className="text-xl">02:00 pm</div>
@@ -71,7 +71,7 @@ const Attendance = () => {
               {threeItmes.map((_, index) => (
                 <div
                   key={index}
-                  className="my-2 mb-4 rounded-xl border border-l-8 border-borderSecondary border-l-bgGray p-4"
+                  className="my-2 mb-4 rounded-xl border border-l-8 border-borderPrimary border-l-bgGray p-4"
                 >
                   <h2 className="text-xl font-semibold">
                     10 May 2024 (Wednesday)
@@ -79,13 +79,13 @@ const Attendance = () => {
                   <div className="mt-2 flex justify-between gap-2">
                     <div className="flex items-center gap-2">
                       <div className="w-fit rounded-xl bg-bgGray p-2">
-                        <FiLogIn />
+                        <FiLogIn className="text-textSecondary " />
                       </div>
                       <div className="text-xl">07:00 am</div>
                     </div>
                     <div className="flex items-center gap-2">
                       <div className="w-fit rounded-xl bg-bgGray p-2">
-                        <FiLogOut />
+                        <FiLogOut className="text-textSecondary " />
                       </div>
                       <div className="text-xl">02:00 pm</div>
                     </div>
@@ -103,7 +103,7 @@ const Attendance = () => {
             <div className="mb-4 rounded-xl bg-bgPrimary p-4">
               <h1 className="mb-4 text-2xl font-semibold">Leave</h1>
 
-              <div className="rounded-xl border border-l-8 border-borderSecondary border-l-primary p-4">
+              <div className="rounded-xl border border-l-8 border-borderPrimary border-l-primary p-4">
                 <h2 className="text-xl font-semibold">
                   11 May 2024 - 14 May 2024 (Saturday - Tuesday )
                 </h2>
@@ -133,21 +133,21 @@ const Attendance = () => {
               {threeItmes.map((_, index) => (
                 <div
                   key={index}
-                  className="mb-4 rounded-xl border border-l-8 border-borderSecondary border-l-primary p-4"
+                  className="mb-4 rounded-xl border border-l-8 border-borderPrimary border-l-primary p-4"
                 >
                   <h2 className="text-xl font-semibold">
                     10 May 2024 (Wednesday)
                   </h2>
                   <div className="mt-2 flex justify-between gap-2">
                     <div className="flex items-center gap-2">
-                      <div className="w-fit rounded-xl bg-primary bg-opacity-5 p-2">
+                      <div className="w-fit rounded-xl bg-primary/5 p-2">
                         <FiLogIn className="text-primary" />
                       </div>
                       <div className="text-xl">09:00 am</div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <div className="w-fit rounded-xl bg-warning bg-opacity-5 p-2">
-                        <FiLogOut className="text-warning" />
+                      <div className="w-fit rounded-xl bg-softRed/5 p-2">
+                        <FiLogOut className="text-softRed" />
                       </div>
                       <div className="text-xl">02:00 pm</div>
                     </div>

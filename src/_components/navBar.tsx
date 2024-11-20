@@ -4,12 +4,15 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { AiFillHome } from "react-icons/ai";
 import { RiCalendarScheduleFill } from "react-icons/ri";
-import { FiFlag } from "react-icons/fi";
+import { FiFlag, FiMoon, FiSun } from "react-icons/fi";
 import { HiOutlineSquares2X2 } from "react-icons/hi2";
 import { FaBusAlt } from "react-icons/fa";
 import { CiSquareCheck } from "react-icons/ci";
 import { usePathname } from "next/navigation";
-import { MdAttachMoney } from 'react-icons/md';
+import { MdAttachMoney } from "react-icons/md";
+import { useTheme } from "next-themes";
+import Spinner from "./Spinner";
+import { Switch } from "~/components/ui/switch";
 
 const useWindowDimensions = () => {
   const isClient = typeof window === "object";
@@ -56,7 +59,7 @@ const NavBarLink = ({
   return (
     <li>
       <Link
-        className={`flex ${small ? "w-[40px]" : ""} text-md group mt-4 items-center gap-x-3.5 rounded-lg px-2.5 py-2 font-sans font-semibold text-gray-500 hover:bg-bgSecondary hover:text-primary`}
+        className={`flex ${small ? "w-[40px]" : ""} text-md text-navLinks group mt-4 items-center gap-x-3.5 rounded-lg px-2.5 py-2 font-sans font-semibold hover:bg-bgSecondary hover:text-primary`}
         href={href}
       >
         <Icon
@@ -64,12 +67,10 @@ const NavBarLink = ({
             isActive
               ? `${small ? "" : "border-l-2"} border-primary text-primary`
               : ""
-          } text-black`}
+          }`}
         />
         {!small && (
-          <p
-            className={`translate-y-0.5 ${isActive ? "text-primary" : ""} text-black`}
-          >
+          <p className={`translate-y-0.5 ${isActive ? "text-primary" : ""}`}>
             {label}
           </p>
         )}
@@ -79,10 +80,20 @@ const NavBarLink = ({
 };
 
 const NavBar = () => {
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+  const { theme, setTheme } = useTheme();
   const url = usePathname();
   const [small, setSmall] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [isOpen5, setIsOpen5] = useState(false);
+
+  const handleThemeChange = (value: boolean) => {
+    setTheme(value ? "dark" : "light");
+  };
   const toggleNavbar5 = () => {
     setIsOpen5(!isOpen5);
   };
@@ -117,6 +128,13 @@ const NavBar = () => {
     { href: "/complaint", icon: FiFlag, label: "Complaint" },
     { href: "/attendance", icon: CiSquareCheck, label: "My attendance" },
   ];
+
+  if (!isClient)
+    return (
+      <div className="absolute left-0 top-0 z-[9999] flex h-screen w-full items-center justify-center bg-bgPrimary">
+        <Spinner />
+      </div>
+    );
 
   return (
     <>
@@ -165,9 +183,14 @@ const NavBar = () => {
                 <div className="hidden sm:block"></div>
 
                 <div className="flex flex-row items-center justify-end gap-2">
+                  <Switch
+                    checked={theme === "dark"} 
+                    onCheckedChange={handleThemeChange} 
+                    className="mx-1" 
+                  />
                   <Link
                     href="/notifies"
-                    className="text-textPrimary inline-flex h-[2.375rem] w-[2.375rem] items-center justify-center gap-x-2 rounded-full text-sm font-semibold hover:bg-bgSecondary disabled:pointer-events-none disabled:opacity-50"
+                    className="inline-flex h-[2.375rem] w-[2.375rem] items-center justify-center gap-x-2 rounded-full text-sm font-semibold text-textPrimary hover:bg-bgSecondary disabled:pointer-events-none disabled:opacity-50"
                   >
                     <svg
                       className="size-4 flex-shrink-0"
@@ -187,10 +210,10 @@ const NavBar = () => {
                   </Link>
                   <Link
                     href="/chat"
-                    className="text-textPrimary inline-flex h-[2.375rem] w-[2.375rem] items-center justify-center gap-x-2 rounded-full text-sm font-semibold hover:bg-bgSecondary disabled:pointer-events-none disabled:opacity-50"
+                    className="inline-flex h-[2.375rem] w-[2.375rem] items-center justify-center gap-x-2 rounded-full text-sm font-semibold text-textPrimary hover:bg-bgSecondary disabled:pointer-events-none disabled:opacity-50"
                   >
                     <svg
-                      className="text-textPrimary h-5 w-5"
+                      className="h-5 w-5 text-textPrimary"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
@@ -203,16 +226,15 @@ const NavBar = () => {
                       />
                     </svg>
                   </Link>
-
                   <div className="hs-dropdown relative inline-flex [--placement:bottom-right]"></div>
                 </div>
               </div>
             </nav>
           </header>
-          <div className="border-borderPrimaryPrimary sticky inset-x-0 top-0 z-20 border-y bg-bgPrimary px-4 sm:px-6 md:px-8 lg:hidden">
+          <div className="sticky inset-x-0 top-0 z-20 border-y border-borderPrimary bg-bgPrimary px-4 sm:px-6 md:px-8 lg:hidden">
             <div className="flex items-center justify-between py-2">
               <ol className="ms-3 flex items-center whitespace-nowrap">
-                <li className="text-textPrimary flex items-center text-sm">
+                <li className="flex items-center text-sm text-textPrimary">
                   {/* Breadcrumb or other content */}
                 </li>
               </ol>
@@ -220,7 +242,7 @@ const NavBar = () => {
               <button
                 onClick={OpenSideBar}
                 type="button"
-                className="border-borderPrimaryPrimary flex items-center justify-center gap-x-1.5 rounded-lg border px-3 py-2 text-xs text-gray-500 hover:text-gray-600"
+                className="flex items-center justify-center gap-x-1.5 rounded-lg border border-borderPrimary px-3 py-2 text-xs text-gray-500 hover:text-gray-600"
                 data-hs-overlay="#application-sidebar"
                 aria-controls="application-sidebar"
                 aria-label="Sidebar"
@@ -274,7 +296,7 @@ const NavBar = () => {
                 {!small && (
                   <button onClick={toggleNavbarSmall}>
                     <svg
-                      className="h-8 w-8 text-black"
+                      className="h-8 w-8 text-textPrimary"
                       width="24"
                       height="24"
                       viewBox="0 0 24 24"
@@ -306,7 +328,7 @@ const NavBar = () => {
                     {small && (
                       <button onClick={toggleNavbarSmall}>
                         <svg
-                          className="h-6 w-6 text-black"
+                          className="h-6 w-6 text-textPrimary"
                           width="24"
                           height="24"
                           viewBox="0 0 24 24"
@@ -338,11 +360,11 @@ const NavBar = () => {
                       className={`flex ${!small ? "w-full" : ""} text-md group mt-4 items-center gap-x-3.5 rounded-lg px-2.5 py-2 font-sans font-bold text-secondary hover:bg-bgSecondary hover:text-primary`}
                     >
                       <HiOutlineSquares2X2
-                        className={`h-10 w-10 ${small ? "h-6 w-6" : "pl-4"} ${isOpen5 ? `${small ? "" : "border-l-2"} border-primary text-primary` : ""} text-black`}
+                        className={`h-10 w-10 ${small ? "h-6 w-6" : "pl-4"} ${isOpen5 ? `${small ? "" : "border-l-2"} border-primary text-primary` : ""} text-textPrimary`}
                       />
                       {!small && (
                         <p
-                          className={`text-black ${isOpen5 ? "text-primary" : ""}`}
+                          className={`text-textPrimary ${isOpen5 ? "text-primary" : ""}`}
                         >
                           Menu
                         </p>
@@ -381,7 +403,7 @@ const NavBar = () => {
                           Exam{" "}
                         </Link>
                         <Link
-                          className={`hover:text-primary ${url === "/exercises" ? "text-primary" : ""}`}
+                          className={`hover:text-primary ${url === "/exercises" ? "text-primary" : "textPrimary"}`}
                           href="/exercises"
                         >
                           {" "}
