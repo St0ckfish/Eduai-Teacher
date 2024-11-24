@@ -33,8 +33,8 @@ export const getAllRegions = async () => {
   return response.data;
 };
 //
-export const signUp = async (formData: Partial<Advice>): Promise<Advice> => {
-  const response = await axiosInstance.post<Advice>(
+export const signUp = async (formData: Partial<SignUpFormData>): Promise<SignUpFormData> => {
+  const response = await axiosInstance.post<SignUpFormData>(
     "/api/v1/auth/teacher-registration",
     formData,
   );

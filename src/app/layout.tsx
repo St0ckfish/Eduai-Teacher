@@ -8,6 +8,7 @@ import { TRPCReactProvider } from "~/trpc/react";
 import NavBar from "../_components/navBar";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import WithAuth from "~/_components/Auth/WithAuth";
 
 export default function RootLayout({
   children,
@@ -30,11 +31,13 @@ export default function RootLayout({
         <link rel="icon" type="image/x-icon" href="/favicon.ico" />
       </head>
       <body className="bg-bgSecondary">
+      <WithAuth excludePaths={['/login', '/signup']}>
         <QueryClientProvider client={queryClient}>
           {!isLoginPage && <NavBar />}
           <Notification />
           <TRPCReactProvider>{children}</TRPCReactProvider>
         </QueryClientProvider>
+      </WithAuth>
       </body>
     </html>
   );

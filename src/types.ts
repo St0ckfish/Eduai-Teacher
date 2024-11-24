@@ -1,5 +1,3 @@
-// src/types/advice.ts
-
 export type Advice = {
   id: number;
   title: string;
@@ -15,6 +13,26 @@ export type PaginatedAdvices = {
   page: number;
   limit: number;
 }
+
+//
+
+export interface TeacherSchedule {
+  id: number;
+  teacherCourseRegistrationId: number;
+  courseName: string;
+  classroomName: string;
+  startTime: string;
+  endTime: string;
+  day: 'MONDAY' | 'TUESDAY' | 'WEDNESDAY' | 'THURSDAY' | 'FRIDAY' | 'SATURDAY' | 'SUNDAY';
+}
+
+export interface TeacherScheduleResponse {
+  success: boolean;
+  message: string;
+  data: TeacherSchedule[];
+}
+
+//
 
 export type SignUpFormData = {
   username: string;
