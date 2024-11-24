@@ -1,8 +1,15 @@
+'use client'
+import { useRouter } from "next/navigation";
 import Button from "~/_components/Button";
 import Container from "~/_components/Container";
 import { Text } from "~/_components/Text";
 
 const Finance = () => {
+  const router = useRouter();
+
+  const handlePayClick = () => {
+    router.push('/payment')
+  }
   return (
     <Container>
       <div className="w-full overflow-x-hidden rounded-md bg-bgPrimary p-4">
@@ -33,7 +40,7 @@ const Finance = () => {
                   <td className="px-4 py-2">00.00</td>
                   <td className="px-4 py-2">8100.00 MAD</td>
                   <td className="rounded-r-md px-4 py-2">
-                    <Button className="w-full">Pay Fees</Button>
+                    <Button className="w-full" onClick={handlePayClick}>Pay Fees</Button>
                   </td>
                 </tr>
                 <tr>
@@ -45,7 +52,7 @@ const Finance = () => {
                   <td className="px-4 py-2">00.00</td>
                   <td className="px-4 py-2">8100.00 MAD</td>
                   <td className="rounded-r-md px-4 py-2">
-                    <Button className="w-full">Pay Fees</Button>
+                    <Button className="w-full" onClick={handlePayClick}>Pay Fees</Button>
                   </td>
                 </tr>
               </tbody>

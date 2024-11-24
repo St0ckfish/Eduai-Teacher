@@ -8,7 +8,7 @@ const Comment = ({ userName, comment, time, imageUrl }: { userName: string, comm
         <Image src={imageUrl} alt="Profile Photo" width={60} height={60} />
       </div>
       <div>
-        <div className="flex gap-4 bg-bgSecondary p-4 rounded-xl">
+        <div className="flex gap-4 bg-comment p-4 rounded-xl">
           <div>
             <Text className="font-semibold">{userName}</Text>
             <div>{comment}</div>

@@ -29,6 +29,7 @@ export default {
         info: "rgba(var(--info))",
         warning: "rgba(var(--warning))",
         lavender: "rgba(var(--lavender))",
+        comment: "rgba(var(--comment))",
         borderPrimary: "rgba(var(--border-primary))",
         borderSecondary: "rgba(var(--border-secondary))",
         blackOrWhite: "rgba(var(--black-or-white))",

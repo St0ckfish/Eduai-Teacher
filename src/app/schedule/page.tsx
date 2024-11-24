@@ -31,7 +31,7 @@ const Schedule = () => {
           <div className="relative w-full overflow-auto sm:rounded-lg">
             <Text font={"bold"} size={"2xl"} className="mb-4">Today&apos;s sessions</Text>
             <table className="w-full overflow-x-auto p-4 text-left text-sm text-textPrimary">
-              <thead className="bg-thead text-textPrimary text-xs uppercase">
+              <thead className="text-textPrimary text-xs uppercase">
                 <tr>
                   <th scope="col" className="whitespace-nowrap px-6 py-3">
                     Class

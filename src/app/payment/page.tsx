@@ -1,10 +1,10 @@
 "use client";
-import { useState } from "react";
+import { type ChangeEvent, useState } from "react";
 import Container from "~/_components/Container";
 import { Text } from "~/_components/Text";
 import * as RadioGroup from "@radix-ui/react-radio-group";
-import { FaWallet, FaMoneyBillWave, FaCheck } from "react-icons/fa";
-import { AiOutlineCreditCard } from "react-icons/ai";
+import { FaWallet, FaMoneyBillWave } from "react-icons/fa";
+import { AiOutlineCloudUpload, AiOutlineCreditCard } from "react-icons/ai";
 import Image from "next/image";
 import Input from "~/_components/Input";
 import Button from "~/_components/Button";
@@ -98,6 +98,16 @@ function Payment() {
   const [isModalOpen, setModalOpen] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
+  const [fileName, setFileName] = useState("");
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>): void => {
+    const target = e.target as HTMLInputElement;
+    const file = target.files?.[0]; 
+    if (file) {
+      setFileName(file.name); 
+    }
+  };
   const handlePay = () => {
     setModalOpen(true); // Open the modal
   };
@@ -408,8 +418,34 @@ function Payment() {
             <Text font={"bold"} size={"2xl"}>
               Confirm deposit
             </Text>
-            Photo Input
             <form className="mt-8 grid w-2/3 grid-cols-1 gap-8 md:grid-cols-2">
+              <label className="h-[200px] rounded-xl border-2 border-dashed border-borderPrimary">
+                <div className="flex h-full flex-col items-center justify-center">
+                  <AiOutlineCloudUpload
+                    size={50}
+                    className="text-textSecondary"
+                  />
+                  <Text color={"gray"}>
+                    Choose an image or drag & drop it here
+                  </Text>
+
+                  {fileName ? (
+                    <Text className="mt-2 rounded-xl border border-borderPrimary px-4 py-2">
+                      {fileName}
+                    </Text>
+                  ) : (
+                    <Text color={"gray"} className="mt-2 rounded-xl border border-borderPrimary px-4 py-2">
+                      Browse File
+                    </Text>
+                  )}
+                </div>
+                <input
+                  type="file"
+                  className="opacity-0"
+                  onChange={handleFileChange}
+                />
+              </label>
+              <div></div>
               <div>
                 <label htmlFor="receiptNumber" className="text-xl">
                   Receipt number
@@ -426,7 +462,11 @@ function Payment() {
               <div>
                 <Text size={"xl"}>Date Deposit</Text>
                 <Input
-                  type="date" placeholder="dd/mm/yyyy" theme="transparent" border="gray" className="mt-2"
+                  type="date"
+                  placeholder="dd/mm/yyyy"
+                  theme="transparent"
+                  border="gray"
+                  className="mt-2"
                 />
               </div>
               <div>
@@ -444,7 +484,7 @@ function Payment() {
               </div>
             </form>
             <div className="mt-4 w-1/4">
-              <Button onClick={handlePay} >Send Details</Button>
+              <Button onClick={handlePay}>Send Details</Button>
             </div>
           </div>
         ) : (
