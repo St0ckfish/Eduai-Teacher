@@ -88,8 +88,8 @@ export default function Home() {
                   />
                 </div>
               </div>
-              <div className="-mb-4">
-                <Input placeholder="Add comment..." />
+              <div>
+                <Input border="gray" placeholder="Add comment..." />
               </div>
             </div>
           </div>
@@ -149,8 +149,8 @@ export default function Home() {
                   />
                 </div>
               </div>
-              <div className="-mb-4">
-                <Input placeholder="Add comment..." />
+              <div>
+                <Input border="gray" placeholder="Add comment..." />
               </div>
             </div>
           </div>

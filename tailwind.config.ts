@@ -31,6 +31,7 @@ export default {
         lavender: "rgba(var(--lavender))",
         borderPrimary: "rgba(var(--border-primary))",
         borderSecondary: "rgba(var(--border-secondary))",
+        blackOrWhite: "rgba(var(--black-or-white))",
         thead: "rgba(var(--thead))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",

@@ -11,6 +11,7 @@ interface MultiSelectComponentProps {
   error?: string;
 }
 
+
 const MultiSelectComponent: React.FC<MultiSelectComponentProps> = ({
   value = [], // Default to empty array if undefined
   onChange,

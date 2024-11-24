@@ -31,6 +31,8 @@ const textVariants = cva("text-textPrimary", {
       primary: "text-primary",
       gray: "text-textSecondary",
       muted: "text-textMuted",
+      warning: "text-warning",
+      error: "text-error",
     },
   },
   defaultVariants: {

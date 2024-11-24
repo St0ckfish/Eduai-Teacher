@@ -17,7 +17,7 @@ const Comment = ({ userName, comment, time, imageUrl }: { userName: string, comm
             <FaEllipsisV size={18} />
           </div>
         </div>
-        <div className="flex gap-4 ml-4 text-[14px] text-textSecondary">
+        <div className="flex gap-4 mx-4 text-[14px] text-textSecondary">
           <div>{time}</div>
           <div>like</div>
           <div>reply</div>

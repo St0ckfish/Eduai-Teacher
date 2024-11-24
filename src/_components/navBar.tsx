@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { AiFillHome } from "react-icons/ai";
 import { RiCalendarScheduleFill } from "react-icons/ri";
-import { FiFlag, FiMoon, FiSun } from "react-icons/fi";
+import { FiFlag } from "react-icons/fi";
 import { HiOutlineSquares2X2 } from "react-icons/hi2";
 import { FaBusAlt } from "react-icons/fa";
 import { CiSquareCheck } from "react-icons/ci";
