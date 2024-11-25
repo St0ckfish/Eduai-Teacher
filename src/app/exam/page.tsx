@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import Button from "~/_components/Button";
 import Container from "~/_components/Container";
+import { Text } from "~/_components/Text";
 
 const Exam = () => {
   return (
@@ -32,11 +33,11 @@ const Exam = () => {
       </div>
 
       <div className="mt-10 flex h-full w-full items-center justify-center">
-        <div className="flex w-full overflow-auto rounded-md bg-white p-4">
+        <div className="flex w-full overflow-auto rounded-md bg-bgPrimary p-4">
           <div className="relative w-full overflow-auto sm:rounded-lg">
-            <p className="mb-3 font-semibold">Previous Exams</p>
-            <table className="w-full overflow-x-auto p-4 text-left text-sm text-black">
-              <thead className="bg-thead text-textPrimary text-xs uppercase">
+            <Text font="bold" size="2xl" className="mb-4">Previous Exams</Text>
+            <table className="w-full overflow-x-auto p-4 text-left text-sm text-textPrimary">
+              <thead className="text-textPrimary text-xs uppercase">
                 <tr>
                   <th scope="col" className="whitespace-nowrap px-6 py-3">
                     Title

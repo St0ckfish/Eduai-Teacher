@@ -3,6 +3,8 @@
 import Container from "~/_components/Container";
 import * as React from "react";
 import { Calendar } from "~/components/ui/calendar";
+import Button from "~/_components/Button";
+import { Text } from "~/_components/Text";
 import { useGetAllSchedules } from "~/APIs/hooks/useSchedule";
 import Spinner from "~/_components/Spinner";
 import { format } from "date-fns";
@@ -100,7 +102,7 @@ function getTimeDifference(startTime: string, endTime: string): { hours: number;
         <CalendarDemo onDateSelect={handleDateSelect} />
         </div>
 
-        <div className="flex w-full overflow-auto rounded-md bg-white p-4">
+        <div className="flex w-full overflow-auto rounded-md bg-bgPrimary p-4">
           <div className="relative w-full overflow-auto sm:rounded-lg">
             <p className="mb-3 font-semibold">Sessions for {format(selectedDate, 'MMMM d, yyyy')}</p>
             {
@@ -109,7 +111,7 @@ function getTimeDifference(startTime: string, endTime: string): { hours: number;
                 <Spinner />
                 </div> : 
             <table className="w-full overflow-x-auto p-4 text-left text-sm text-black">
-              <thead className="bg-thead text-textPrimary text-xs uppercase">
+              <thead className="text-textPrimary text-xs uppercase">
                 <tr>
                   <th scope="col" className="whitespace-nowrap px-6 py-3">
                     Class
@@ -157,10 +159,10 @@ function getTimeDifference(startTime: string, endTime: string): { hours: number;
         </div>
       </div>
       <div className="flex w-full gap-10 max-[1080px]:grid">
-        <div className="flex h-fit w-[450px] rounded-md bg-white p-4 max-[1080px]:w-full max-[800px]:overflow-auto">
+        <div className="flex h-fit w-[450px] rounded-md bg-bgPrimary p-4 max-[1080px]:w-full max-[800px]:overflow-auto">
           <div className="relative w-full overflow-auto">
-            <p className="mb-3 font-semibold">Attendance</p>
-            <table className="w-full table-auto overflow-x-auto p-4 text-left text-sm text-black">
+            <Text font={"bold"} size={"2xl"} className="mb-4">Attendance</Text>
+            <table className="w-full table-auto overflow-x-auto p-4 text-left text-sm text-textPrimary">
               <thead className="bg-thead text-textPrimary text-xs uppercase">
                 <tr>
                   <th scope="col" className="whitespace-nowrap px-6 py-3">
@@ -187,16 +189,16 @@ function getTimeDifference(startTime: string, endTime: string): { hours: number;
                     className="text-textSecondary grid gap-2 whitespace-nowrap px-6 py-4 font-medium"
                   >
                     Omar Ali
-                    <p className="text-gray-400">04:00 PM-045 PM</p>
+                    <p className="text-textMuted">04:00 PM-045 PM</p>
                   </th>
                   <td className="justify-end whitespace-nowrap px-6 py-4 text-end">
-                    <button className="rounded-full bg-white p-3 shadow-lg">
+                    <button className="rounded-full bg-error/10 p-3 shadow-lg">
                       {" "}
                       <img src="/images/remove.png" alt="#" />
                     </button>
                   </td>
                   <td className="justify-end whitespace-nowrap px-6 py-4 text-end">
-                    <button className="rounded-full bg-white p-3 shadow-lg">
+                    <button className="rounded-full bg-success/10 p-3 shadow-lg">
                       {" "}
                       <img src="/images/check.png" alt="#" />
                     </button>
@@ -207,9 +209,9 @@ function getTimeDifference(startTime: string, endTime: string): { hours: number;
           </div>
         </div>
         <div className="grid w-full gap-4">
-          <div className="grid w-full gap-2 rounded-md bg-white p-4">
+          <div className="grid w-full gap-2 rounded-md bg-bgPrimary p-4">
             <div className="flex w-full items-start justify-between">
-              <p className="mb-3 font-semibold">Attendance</p>
+              <Text font={"bold"} size={"2xl"} className="mb-4">Attendance</Text>
               <button className="flex items-center gap-2 font-medium text-primary">
                 <svg
                   className="h-6 w-6 text-primary"
@@ -227,13 +229,13 @@ function getTimeDifference(startTime: string, endTime: string): { hours: number;
                 Add Material
               </button>
             </div>
-            <div className="rounded-md border border-gray-200 p-4">
-              <div className="grid h-full gap-2 border-l-2 border-primary px-3">
+            <div className="rounded-md border border-borderPrimary p-4">
+              <div className="grid h-full gap-2 border-l-4 border-primary px-3">
                 <div className="flex items-start justify-between">
-                  <p className="mb-3 font-semibold">Title</p>
+                  <Text font={"bold"} size={"xl"}>Title</Text>
                   <button>
                     <svg
-                      className="h-6 w-6 text-black"
+                      className="h-6 w-6 text-textPrimary"
                       viewBox="0 0 24 24"
                       fill="none"
                       stroke="currentColor"
@@ -248,23 +250,23 @@ function getTimeDifference(startTime: string, endTime: string): { hours: number;
                     </svg>
                   </button>
                 </div>
-                <div className="text-gray-400">
-                  <p>
+                <div>
+                  <Text color={"gray"}>
                     Lorem ipsum dolor sit amet consectetur, adipisicing elit.
                     Eveniet, dolorum velit beatae sed aspernatur non! Tempore
                     earum, voluptas optio odit obcaecati repellat libero
                     voluptatum aut, similique culpa et minima accusamus.
-                  </p>
+                  </Text>
                 </div>
               </div>
             </div>
-            <div className="rounded-md border border-gray-200 p-4">
-              <div className="grid h-full gap-2 border-l-2 border-primary px-3">
+            <div className="rounded-md border border-borderPrimary p-4">
+              <div className="grid h-full gap-2 border-l-4 border-primary px-3">
                 <div className="flex items-start justify-between">
-                  <p className="mb-3 font-semibold">Title</p>
+                  <Text font={"bold"} size={"xl"}>Title</Text>
                   <button>
                     <svg
-                      className="h-6 w-6 text-black"
+                      className="h-6 w-6 text-textPrimary"
                       viewBox="0 0 24 24"
                       fill="none"
                       stroke="currentColor"
@@ -279,20 +281,20 @@ function getTimeDifference(startTime: string, endTime: string): { hours: number;
                     </svg>
                   </button>
                 </div>
-                <div className="text-gray-400">
-                  <p>
+                <div>
+                  <Text color={"gray"}>
                     Lorem ipsum dolor sit amet consectetur, adipisicing elit.
                     Eveniet, dolorum velit beatae sed aspernatur non! Tempore
                     earum, voluptas optio odit obcaecati repellat libero
                     voluptatum aut, similique culpa et minima accusamus.
-                  </p>
+                  </Text>
                 </div>
               </div>
             </div>
           </div>
-          <div className="grid w-full gap-2 rounded-md bg-white p-4">
+          <div className="grid w-full gap-2 rounded-md bg-bgPrimary p-4">
             <div className="flex w-full items-start justify-between">
-              <p className="mb-3 font-semibold">Attendance</p>
+              <Text font={"bold"} size={"2xl"} className="mb-4">Attendance</Text>
               <button className="flex items-center gap-2 font-medium text-primary">
                 <svg
                   className="h-6 w-6 text-primary"
@@ -310,13 +312,13 @@ function getTimeDifference(startTime: string, endTime: string): { hours: number;
                 Add Material
               </button>
             </div>
-            <div className="rounded-md border border-gray-200 p-4">
-              <div className="grid h-full gap-2 border-l-2 border-primary px-3">
+            <div className="rounded-md border border-borderPrimary p-4">
+              <div className="grid h-full gap-2 border-l-4 border-primary px-3">
                 <div className="flex items-start justify-between">
-                  <p className="mb-3 font-semibold">Title</p>
+                  <Text font={"bold"} size={"xl"}>Title</Text>
                   <button>
                     <svg
-                      className="h-6 w-6 text-black"
+                      className="h-6 w-6 text-textPrimary"
                       viewBox="0 0 24 24"
                       fill="none"
                       stroke="currentColor"
@@ -331,13 +333,13 @@ function getTimeDifference(startTime: string, endTime: string): { hours: number;
                     </svg>
                   </button>
                 </div>
-                <div className="text-gray-400">
-                  <p>
+                <div>
+                  <Text color={"gray"}>
                     Lorem ipsum dolor sit amet consectetur, adipisicing elit.
                     Eveniet, dolorum velit beatae sed aspernatur non! Tempore
                     earum, voluptas optio odit obcaecati repellat libero
                     voluptatum aut, similique culpa et minima accusamus.
-                  </p>
+                  </Text>
                 </div>
               </div>
             </div>

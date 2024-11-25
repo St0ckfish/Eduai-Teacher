@@ -1,27 +1,30 @@
 import Link from "next/link";
 import Container from "~/_components/Container";
+import { Text } from "~/_components/Text";
 
 const French = () => {
   return (
     <Container>
       <div className="flex w-full items-center justify-start gap-5">
-        <Link href="/textbooks/" className="grid gap-2 rounded-xl bg-white p-6">
-          <h1 className="text-xl font-semibold">English</h1>
-          <p>
-            <span className="font-medium text-primary">4</span> Number of grades{" "}
-          </p>
+        <Link href="/textbooks/" className="grid gap-2 rounded-xl bg-bgPrimary p-6">
+          <Text font={"bold"} size={"2xl"}>English</Text>
+          <div className="flex gap-2">
+            <Text color={"primary"}>4</Text>
+            <Text>Number of grades</Text>
+          </div>
         </Link>
         <Link
           href="/textbooks/french"
-          className="grid gap-2 rounded-xl border border-primary bg-white p-6"
+          className="grid gap-2 rounded-xl border border-primary bg-bgPrimary p-6"
         >
-          <h1 className="text-xl font-semibold">French</h1>
-          <p>
-            <span className="font-medium text-primary">2</span> Number of grades{" "}
-          </p>
+          <Text font={"bold"} size={"2xl"}>French</Text>
+          <div className="flex gap-2">
+            <Text color={"primary"}>4</Text>
+            <Text>Number of grades</Text>
+          </div>
         </Link>
       </div>
-      <div className="mt-10 w-full rounded-xl bg-white p-8"></div>
+      <div className="mt-10 w-full rounded-xl bg-bgPrimary p-8"></div>
     </Container>
   );
 };

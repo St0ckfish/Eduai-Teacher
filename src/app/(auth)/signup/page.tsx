@@ -24,6 +24,7 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 import { toast } from "react-toastify";
+import { Text } from "~/_components/Text";
 import type { SignUpFormData } from "~/types";
 
 const Signup = () => {
@@ -184,9 +185,9 @@ const Signup = () => {
         </Link>
       </div>
       <div className="flex w-full max-w-lg flex-col items-center p-4 md:p-8">
-        <h1 className="mb-6 text-3xl font-bold text-black md:text-4xl">
+        <Text font={"bold"} size={"4xl"} className="mb-4">
           Sign Up
-        </h1>
+        </Text>
 
         {/* Steps */}
         <div className="mb-20 flex w-full items-center justify-between">
@@ -199,9 +200,9 @@ const Signup = () => {
                   } font-bold text-white`}
                 >
                   {stepIndex}
-                  <span className="absolute -left-[15px] top-10 w-[100px] text-[10px] text-black sm:left-[-22px] sm:w-[120px] sm:text-xs">
+                  <Text className="absolute -left-[15px] top-10 w-[100px] text-[10px] text-textPrimary sm:left-[-22px] sm:w-[120px] sm:text-xs">
                     {stepsDescription[index]}
-                  </span>
+                  </Text>
                 </div>
                 {index < 3 && (
                   <hr
@@ -467,7 +468,7 @@ const Signup = () => {
                   {...register("about")}
                   id="about"
                   placeholder="Write a brief summary about yourself. (Optional)"
-                  className="w-full rounded-lg border border-bgPowderBlue bg-bgSecondary p-3 text-gray-700 outline-none transition duration-200 ease-in"
+                  className="w-full rounded-lg border border-borderPrimary bg-bgSecondary p-3 text-gray-700 outline-none transition duration-200 ease-in"
                 ></textarea>
               </label>
 

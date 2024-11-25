@@ -11,6 +11,7 @@ interface MultiSelectComponentProps {
   error?: string;
 }
 
+
 const MultiSelectComponent: React.FC<MultiSelectComponentProps> = ({
   value = [], // Default to empty array if undefined
   onChange,
@@ -68,7 +69,7 @@ const MultiSelectComponent: React.FC<MultiSelectComponentProps> = ({
       <div className="relative" ref={dropdownRef}>
         <div
           className={`flex cursor-pointer justify-between overflow-hidden text-clip rounded-lg border bg-transparent ${
-            error ? "border-red-500" : "border-bgPowderBlue"
+            error ? "border-error" : "border-borderSecondary"
           } p-3`}
           onClick={toggleDropdown}
           onBlur={onBlur}
@@ -88,7 +89,7 @@ const MultiSelectComponent: React.FC<MultiSelectComponentProps> = ({
             : placeholder}
           <div>
             <svg
-              className="h-5 w-4 text-bgPowderBlue outline-none"
+              className="h-5 w-4 text-textSecondary outline-none"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"

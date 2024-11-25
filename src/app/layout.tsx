@@ -7,6 +7,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { TRPCReactProvider } from "~/trpc/react";
 import NavBar from "../_components/navBar";
 import { usePathname } from "next/navigation";
+import ThemeProvider from "./providers/themeProvider";
 import { useState } from "react";
 import WithAuth from "~/_components/Auth/WithAuth";
 
@@ -24,7 +25,11 @@ export default function RootLayout({
     pathname === "/confirm-account" ||
     pathname === "/choose-account";
   return (
-    <html lang="en" className={`${GeistSans.variable}`}>
+    <html
+      lang="en"
+      className={`${GeistSans.variable}`}
+      suppressHydrationWarning
+    >
       <head>
         <title>EduAI Teacher</title>
         <meta name="description" content="Edu AI-Admin" />
@@ -33,9 +38,11 @@ export default function RootLayout({
       <body className="bg-bgSecondary">
       <WithAuth excludePaths={['/login', '/signup']}>
         <QueryClientProvider client={queryClient}>
-          {!isLoginPage && <NavBar />}
-          <Notification />
-          <TRPCReactProvider>{children}</TRPCReactProvider>
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+            {!isLoginPage && <NavBar />}
+            <Notification />
+            <TRPCReactProvider>{children}</TRPCReactProvider>
+          </ThemeProvider>
         </QueryClientProvider>
       </WithAuth>
       </body>
