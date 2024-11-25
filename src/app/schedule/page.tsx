@@ -111,7 +111,7 @@ function getTimeDifference(startTime: string, endTime: string): { hours: number;
                 <Spinner />
                 </div> : 
             <table className="w-full overflow-x-auto p-4 text-left text-sm text-black">
-              <thead className="bg-thead text-textPrimary text-xs uppercase">
+              <thead className="text-textPrimary text-xs uppercase">
                 <tr>
                   <th scope="col" className="whitespace-nowrap px-6 py-3">
                     Class
