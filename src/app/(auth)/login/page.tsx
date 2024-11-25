@@ -3,13 +3,16 @@ import { Text } from "~/_components/Text";
 
 /* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import Button from "~/_components/Button";
 import Input from "~/_components/Input";
 import { useLogin } from "~/APIs/hooks/useAuth";
-
+import Cookie from "js-cookie";
 const Login = () => {
+  const router = useRouter();
+  
   const {
     handleSubmit,
     register,
@@ -18,15 +21,16 @@ const Login = () => {
     shouldUnregister: false,
   });
 
-  const { mutate, isPending: isSubmitting, error: submitError } = useLogin();
+  const { mutate, isPending: isSubmitting } = useLogin();
   const onSubmit = (data: any) => {
     mutate(data, {
-      onSuccess: () => {
+      onSuccess: (response: any) => {
         toast.success("Login successfully!");
-        // Optionally, redirect the user to another page
-        // router.push("/welcome");
+        Cookie.set("token", response.data);
+        router.replace("/");
       },
       onError: (err: any) => {
+        console.log('Login Error:', err.response.data);
         toast.error(err.response.data.message)
       },
     });
