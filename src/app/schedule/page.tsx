@@ -3,7 +3,6 @@
 import Container from "~/_components/Container";
 import * as React from "react";
 import { Calendar } from "~/components/ui/calendar";
-import Button from "~/_components/Button";
 import { Text } from "~/_components/Text";
 import { useGetAllSchedules } from "~/APIs/hooks/useSchedule";
 import Spinner from "~/_components/Spinner";

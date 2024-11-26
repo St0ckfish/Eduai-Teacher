@@ -4,18 +4,18 @@ import type {
   UseMutationOptions,
 } from "@tanstack/react-query";
 import {
-  fetchAllSchedule,
+  fetchAllHomeWork,
   deleteSession,
-} from "../features/schedule";
-import type { TeacherScheduleResponse } from "../../types";
+} from "../features/homeWork";
+import type { HomeworkResponse } from "../../types";
 
-export const useGetAllSchedules = (
-  date: string,
-  options?: UseQueryOptions<TeacherScheduleResponse, Error>,
+export const useGetAllHomeWorks = (
+  sessionId: number,
+  options?: UseQueryOptions<HomeworkResponse, Error>,
 ) => {
-  return useQuery<TeacherScheduleResponse, Error>({
-    queryKey: ["schedule", date],
-    queryFn: () => fetchAllSchedule(date),
+  return useQuery<HomeworkResponse, Error>({
+    queryKey: ["homework", sessionId],
+    queryFn: () => fetchAllHomeWork(sessionId),
     staleTime: 1000 * 60 * 5,
     ...options,
   });
