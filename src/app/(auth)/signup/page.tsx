@@ -24,8 +24,8 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 import { toast } from "react-toastify";
-import type { SignUpFormData } from "~/types";
 import { Text } from "~/_components/Text";
+import type { SignUpFormData } from "~/types";
 
 const Signup = () => {
   const [step, setStep] = useState(1);

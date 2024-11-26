@@ -3,12 +3,12 @@
 import Container from "~/_components/Container";
 import * as React from "react";
 import { Calendar } from "~/components/ui/calendar";
+import Button from "~/_components/Button";
+import { Text } from "~/_components/Text";
 import { useGetAllSchedules } from "~/APIs/hooks/useSchedule";
 import Spinner from "~/_components/Spinner";
 import { format } from "date-fns";
 import type { TeacherSchedule } from "~/types";
-import Button from "~/_components/Button";
-import { Text } from "~/_components/Text";
 
 function CalendarDemo({ onDateSelect }: { onDateSelect: (date: Date) => void }) {
   const [date, setDate] = React.useState<Date | undefined>(new Date());
@@ -111,7 +111,7 @@ function getTimeDifference(startTime: string, endTime: string): { hours: number;
                 <Spinner />
                 </div> : 
             <table className="w-full overflow-x-auto p-4 text-left text-sm text-black">
-              <thead className="bg-thead text-textPrimary text-xs uppercase">
+              <thead className="text-textPrimary text-xs uppercase">
                 <tr>
                   <th scope="col" className="whitespace-nowrap px-6 py-3">
                     Class

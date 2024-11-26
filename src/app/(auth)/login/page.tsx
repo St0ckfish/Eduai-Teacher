@@ -43,8 +43,8 @@ const Login = () => {
             <img className="h-full w-full" src="images/login.png" alt="#" />
           </div>
         </div>
-        <div className="gird items-center justify-center">
-          <div className="mb-10 grid text-center">
+        <div className="gird items-center justify-center text-center">
+          <div className="mb-10 grid">
             <Text font={"bold"} size={"4xl"} className="mb-2">
               Log in
             </Text>
