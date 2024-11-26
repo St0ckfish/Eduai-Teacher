@@ -23,7 +23,7 @@ const Input: React.FC<InputProps> = ({
   className = "",
   theme = "solid",
   border,
-  rounded = "lg", // القيمة الافتراضية
+  rounded = "lg",
   ...props
 }) => {
   const [inputType, setInputType] = useState(type);
@@ -41,7 +41,7 @@ const Input: React.FC<InputProps> = ({
 
   const borderClass = border === "gray" ? "border-borderPrimary" : "border-borderSecondary";
 
-  const roundedClass = `rounded-${rounded}`; // إضافة الـ rounded
+  const roundedClass = `rounded-${rounded}`; 
 
   return (
     <label className={`grid w-full gap-1 text-end`}>

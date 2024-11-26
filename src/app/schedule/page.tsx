@@ -3,35 +3,115 @@
 import Container from "~/_components/Container";
 import * as React from "react";
 import { Calendar } from "~/components/ui/calendar";
+import { useGetAllSchedules } from "~/APIs/hooks/useSchedule";
+import Spinner from "~/_components/Spinner";
+import { format } from "date-fns";
+import type { TeacherSchedule } from "~/types";
 import Button from "~/_components/Button";
 import { Text } from "~/_components/Text";
 
-function CalendarDemo() {
+function CalendarDemo({ onDateSelect }: { onDateSelect: (date: Date) => void }) {
   const [date, setDate] = React.useState<Date | undefined>(new Date());
+
+  const handleDateSelect = (newDate: Date | undefined) => {
+    if (newDate) {
+      setDate(newDate);
+      onDateSelect(newDate);
+    }
+  };
 
   return (
     <Calendar
       mode="single"
       selected={date}
-      onSelect={setDate}
+      onSelect={handleDateSelect}
       className="flex w-fit justify-center rounded-md max-[1080px]:w-full"
     />
   );
 }
 
 const Schedule = () => {
+  const [selectedDate, setSelectedDate] = React.useState<Date>(new Date());
+  
+  const formattedDate = React.useMemo(() => 
+    format(selectedDate, 'yyyy-MM-dd'),
+    [selectedDate]
+  );
+  function convertToAmPm(time24: string): string {
+    const timeRegex = /^([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$/;
+    const match = timeRegex.exec(time24);
+
+    if (!match) {
+        throw new Error("Invalid time format. Please use HH:MM:SS in 24-hour format.");
+    }
+
+    const [hoursStr, minutes] = match;
+    let hours = parseInt(hoursStr, 10);
+    const period = hours >= 12 ? "PM" : "AM";
+    hours = hours % 12;
+    if (hours === 0) {
+        hours = 12;
+    }
+
+    return `${hours}:${minutes} ${period}`;
+}
+
+function getTimeDifference(startTime: string, endTime: string): { hours: number; minutes: number; seconds: number } {
+  const timeToSeconds = (time: string): number => {
+      const parts = time.split(':').map(part => parseInt(part, 10));
+      if (parts.length !== 3 || parts.some(isNaN)) {
+          throw new Error(`Invalid time format: ${time}. Expected "HH:MM:SS".`);
+      }
+      const hours = parts[0];
+      const minutes = parts[1];
+      const seconds = parts[2];
+      if (typeof hours !== 'number' || typeof minutes !== 'number' || typeof seconds !== 'number' ||
+          hours < 0 || hours >= 24 || minutes < 0 || minutes >= 60 || seconds < 0 || seconds >= 60) {
+          throw new Error(`Time values out of range in: ${time}.`);
+      }
+      return hours * 3600 + minutes * 60 + seconds;
+  };
+
+  const startSeconds = timeToSeconds(startTime);
+  const endSeconds = timeToSeconds(endTime);
+
+  let diffSeconds = endSeconds - startSeconds;
+
+  if (diffSeconds < 0) {
+      diffSeconds += 24 * 3600;
+  }
+
+  const hours = Math.floor(diffSeconds / 3600);
+  diffSeconds %= 3600;
+  const minutes = Math.floor(diffSeconds / 60);
+  const seconds = diffSeconds % 60;
+
+  return { hours, minutes, seconds };
+}
+
+  const { data, isLoading } = useGetAllSchedules(formattedDate);
+
+  const handleDateSelect = (date: Date) => {
+    setSelectedDate(date);
+  };
+
   return (
     <Container>
       <div className="mb-4 flex w-full gap-10 max-[1080px]:grid">
         <div className="flex">
-          <CalendarDemo />
+        <CalendarDemo onDateSelect={handleDateSelect} />
         </div>
 
         <div className="flex w-full overflow-auto rounded-md bg-bgPrimary p-4">
           <div className="relative w-full overflow-auto sm:rounded-lg">
-            <Text font={"bold"} size={"2xl"} className="mb-4">Today&apos;s sessions</Text>
-            <table className="w-full overflow-x-auto p-4 text-left text-sm text-textPrimary">
-              <thead className="text-textPrimary text-xs uppercase">
+            <Text font={"semiBold"} className="mb-3">Sessions for {format(selectedDate, 'MMMM d, yyyy')}</Text>
+            {
+              isLoading ? 
+              <div className="flex w-full justify-center">
+                <Spinner />
+                </div> : 
+            <table className="w-full overflow-x-auto p-4 text-left text-sm text-black">
+              <thead className="bg-thead text-textPrimary text-xs uppercase">
                 <tr>
                   <th scope="col" className="whitespace-nowrap px-6 py-3">
                     Class
@@ -48,23 +128,33 @@ const Schedule = () => {
                 </tr>
               </thead>
               <tbody className="rounded-lg">
-                <tr className="bg-bgSecondary font-semibold hover:bg-primary hover:text-white">
+              {data?.data?.map((schedule: TeacherSchedule) => (
+                <tr key={schedule.id} className="bg-bgSecondary font-semibold hover:bg-primary hover:text-white">
                   <th
                     scope="row"
-                    className="text-textSecondary whitespace-nowrap rounded-s-2xl px-6 py-4 font-medium"
+                    className="whitespace-nowrap rounded-s-2xl px-6 py-4 font-medium"
                   >
-                    Class 5/2
+                    {schedule.classroomName}
                   </th>
-                  <td className="whitespace-nowrap px-6 py-4">English</td>
+                  <td className="whitespace-nowrap px-6 py-4">{schedule.courseName}</td>
                   <td className="whitespace-nowrap px-6 py-4">
-                    10:30 am-11:30 am
+                    {convertToAmPm(schedule.startTime)} - {convertToAmPm(schedule.endTime)}
                   </td>
                   <td className="whitespace-nowrap rounded-e-2xl px-6 py-4">
-                    60 min
+                   {`${getTimeDifference(schedule.startTime, schedule.endTime).hours}h ${getTimeDifference(schedule.startTime, schedule.endTime).minutes}m`}
                   </td>
                 </tr>
+                ))}
+                {(!data?.data || data.data.length === 0) && (
+                  <tr>
+                    <td colSpan={4} className="px-6 py-4 text-center text-gray-500">
+                      No sessions scheduled for this date
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
+            }
           </div>
         </div>
       </div>

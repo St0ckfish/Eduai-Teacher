@@ -7,6 +7,8 @@ interface SearchableSelectProps {
   options: { value: string | number; label: string }[];
   placeholder?: string;
   error?: string;
+  bgColor?: string; // Background color
+  border?: string;  // Border style
 }
 
 const SearchableSelect: React.FC<SearchableSelectProps> = ({
@@ -16,6 +18,8 @@ const SearchableSelect: React.FC<SearchableSelectProps> = ({
   options,
   placeholder,
   error,
+  bgColor = "bgSecondary", // Default background
+  border = "border-borderSecondary", // Default border
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [isOpen, setIsOpen] = useState(false);
@@ -83,9 +87,9 @@ const SearchableSelect: React.FC<SearchableSelectProps> = ({
           onChange={handleInputChange}
           onFocus={() => setIsOpen(true)}
           onBlur={onBlur}
-          className={`w-full rounded-lg border ${
-            error ? "border-error" : "border-borderSecondary"
-          } bg-bgSecondary p-3 text-gray-700 outline-none transition duration-200 ease-in`}
+          className={`w-full rounded-lg border ${border} ${bgColor} p-3 text-textPrimary outline-none transition duration-200 ease-in ${
+            error ? "border-error" : ""
+          }`}
         />
         <div className="absolute inset-y-0 right-3 flex items-center px-2">
           <svg
@@ -114,9 +118,7 @@ const SearchableSelect: React.FC<SearchableSelectProps> = ({
                 </li>
               ))
             ) : (
-              <li className="p-2 text-textSecondary">
-                No data found
-              </li>
+              <li className="p-2 text-textSecondary">No data found</li>
             )}
           </ul>
         )}

@@ -24,6 +24,7 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 import { toast } from "react-toastify";
+import type { SignUpFormData } from "~/types";
 import { Text } from "~/_components/Text";
 
 const Signup = () => {
@@ -34,7 +35,7 @@ const Signup = () => {
     register,
     trigger,
     formState: { errors },
-  } = useForm({
+  } = useForm<SignUpFormData>({
     shouldUnregister: false,
   });
 
@@ -116,24 +117,25 @@ const Signup = () => {
 
   const { mutate, isPending: isSubmitting } = useSignUp();
 
-  const onSubmit = (data: any) => {
+  const onSubmit = (data: SignUpFormData) => {
     mutate(data, {
       onSuccess: () => {
         toast.success("Form submitted successfully!");
-        // Optionally, redirect the user to another page
-        // router.push("/welcome");
       },
-      onError: (err: any) => {
-        toast.error(err.response.data.message);
-        setErrorMessage(err.response.data.data);
-        // Optionally, set a form-level error
+      onError: (err: Error & { response?: { data: { message: string; data: [] } } }) => {
+        if (err.response?.data) {
+          toast.error(err.response.data.message);
+          setErrorMessage(err.response.data.data);
+        } else {
+          toast.error(err.message);
+        }
       },
     });
   };
 
   // Function to trigger validation for the current step
   const triggerValidation = async () => {
-    let fieldsToValidate: string[] = [];
+    let fieldsToValidate: (keyof SignUpFormData)[] = [];
     switch (step) {
       case 1:
         fieldsToValidate = ["username", "email", "schoolId", "regionId"];

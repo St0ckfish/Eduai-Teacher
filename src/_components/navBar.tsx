@@ -14,6 +14,7 @@ import { useTheme } from "next-themes";
 import Spinner from "./Spinner";
 import { Switch } from "~/components/ui/switch";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
+import Cookie from "js-cookie";
 
 const useWindowDimensions = () => {
   const isClient = typeof window === "object";
@@ -101,6 +102,10 @@ const NavBar = () => {
   };
   const toggleNavbar5 = () => {
     setIsOpen5(!isOpen5);
+  };
+
+  const DeleteCookie = () => {
+    Cookie.remove("token");
   };
 
   const toggleNavbarSmall = () => {
@@ -294,6 +299,7 @@ const NavBar = () => {
                             </DropdownMenu.Item>
                             <DropdownMenu.Item asChild>
                               <a
+                              onClick={()=> DeleteCookie()}
                                 className="text-textPrimary flex items-center gap-x-3.5 rounded-lg border-none px-3 py-2 text-sm outline-none hover:bg-error hover:text-white"
                                 href="/login"
                               >

@@ -85,7 +85,7 @@ const Finance = () => {
                   <td className="px-4 py-2">00.00</td>
                   <td className="px-4 py-2">8100.00 MAD</td>
                   <td className="rounded-r-md px-4 py-2">
-                    <Button theme="gray">Paid</Button>
+                    <Button color="secondary">Paid</Button>
                   </td>
                 </tr>
                 <tr>
@@ -97,7 +97,7 @@ const Finance = () => {
                   <td className="px-4 py-2">00.00</td>
                   <td className="px-4 py-2">8100.00 MAD</td>
                   <td className="rounded-r-md px-4 py-2">
-                    <Button theme="gray">Paid</Button>
+                    <Button color="secondary">Paid</Button>
                   </td>
                 </tr>
                 <tr>
@@ -109,7 +109,7 @@ const Finance = () => {
                   <td className="px-4 py-2">00.00</td>
                   <td className="px-4 py-2">8100.00 MAD</td>
                   <td className="rounded-r-md px-4 py-2">
-                    <Button theme="gray">Paid</Button>
+                    <Button color="secondary">Paid</Button>
                   </td>
                 </tr>
                 <tr>
@@ -121,7 +121,7 @@ const Finance = () => {
                   <td className="px-4 py-2">00.00</td>
                   <td className="px-4 py-2">8100.00 MAD</td>
                   <td className="rounded-r-md px-4 py-2">
-                    <Button theme="gray">Paid</Button>
+                    <Button color="secondary">Paid</Button>
                   </td>
                 </tr>
                 <tr>
@@ -133,7 +133,7 @@ const Finance = () => {
                   <td className="px-4 py-2">00.00</td>
                   <td className="px-4 py-2">8100.00 MAD</td>
                   <td className="rounded-r-md px-4 py-2">
-                    <Button theme="gray">Paid</Button>
+                    <Button color="secondary">Paid</Button>
                   </td>
                 </tr>
                 <tr>
@@ -145,7 +145,7 @@ const Finance = () => {
                   <td className="px-4 py-2">00.00</td>
                   <td className="px-4 py-2">8100.00 MAD</td>
                   <td className="rounded-r-md px-4 py-2">
-                    <Button theme="gray">Paid</Button>
+                    <Button color="secondary">Paid</Button>
                   </td>
                 </tr>
               </tbody>

@@ -23,7 +23,8 @@ type ButtonAsLink = {
 type ButtonProps = {
   children: ReactNode;
   className?: string;
-  theme?: "outline" | "gray";
+  theme?: "outline";
+  color?: "error" | "primary" | "secondary";
 } & (ButtonAsButton | ButtonAsAnchor | ButtonAsLink);
 
 /**
@@ -33,27 +34,41 @@ type ButtonProps = {
  * @param {ReactNode} props.children - The content to be rendered inside the button.
  * @param {string} [props.className] - Additional CSS classes to apply.
  * @param {("button" | "a" | "link")} [props.as="button"] - The HTML element type to render.
- * @param {("outline")} [props.theme] - The theme variant of the button ("outline").
- * @param {object} [props.rest] - Additional HTML attributes to spread on the rendered element.
+ * @param {("outline")} [props.theme] - The theme variant of the button.
+ * @param {("error" | "primary" | "secondary")} [props.color] - The color variant of the button.
  *
  * @returns {JSX.Element} The rendered button, anchor, or link element.
  */
-
 const Button = ({
   children,
   className,
   as = "button",
   theme,
+  color = "primary",
   ...rest
 }: ButtonProps) => {
   const baseClassName =
     "w-full flex items-center gap-3 justify-center whitespace-nowrap rounded-lg px-6 py-3 font-semibold text-center hover:shadow-lg duration-200 ease-in";
 
-  const defaultClassName = `${baseClassName} text-white bg-primary hover:bg-primaryHover`;
-  const outlineClassName = `${baseClassName} text-primary border border-primary`;
-  const grayClassName = `${baseClassName} text-white bg-bgPowderBlue hover:bg-textSecondary`;
+  const colorClassName =
+    color === "error"
+      ? "bg-error text-white hover:bg-errorHover"
+      : color === "secondary"
+      ? "bg-bgPowderBlue text-white hover:bg-textSecondary"
+      : "bg-primary text-white hover:bg-primaryHover";
 
-  const computedClassName = `${theme === "outline" ? outlineClassName : theme === "gray" ? grayClassName : defaultClassName} ${className ?? ""}`;
+  const themeClassName =
+    theme === "outline"
+      ? color === "error"
+        ? "text-error border border-error bg-transparent"
+        : color === "secondary"
+        ? "text-secondary-500 border border-secondary-500 bg-transparent hover:bg-secondary-200"
+        : "text-primary border border-primary bg-transparent hover:bg-primary hover:text-white"
+      : colorClassName;
+
+  const computedClassName = `${baseClassName} ${themeClassName} ${
+    className ?? ""
+  }`;
 
   if (as === "a" && "href" in rest) {
     return (
