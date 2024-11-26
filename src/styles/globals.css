@@ -6,7 +6,7 @@
   --primary: 62, 90, 240; /* #3e5af0 */
   --bg-primary: 255, 255, 255; /* #ffffff */
   --bg-secondary: 245, 246, 250; /* #f5f6fa */
-  --comment: 241, 245, 249; /* #F1F5F9 */
+  --comment: 241, 245, 249; /* #F1F5F9 */ 
   --bg-gray: 224, 224, 224; /* #e0e0e0 */
   --text-primary: 20, 27, 52; /* #141b34 */
   --text-secondary: 150, 150, 150; /* #969696 */
@@ -22,6 +22,7 @@
   --border-primary: 217, 217, 217; /* #d9d9d9 */
   --border-secondary: 103, 116, 137;  /* #677489 */
   --thead: 218, 234, 251; /* #daeafb */
+  --light-gray: 252, 252, 252; /* #FCFCFC */
   --black-or-white: 0, 0, 0; /* #000000 */
   --chat: 255, 234, 209; /* #ffeed1 */
 }

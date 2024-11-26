@@ -34,6 +34,7 @@ export default {
         borderSecondary: "rgba(var(--border-secondary))",
         blackOrWhite: "rgba(var(--black-or-white))",
         thead: "rgba(var(--thead))",
+        lightGray: "rgba(var(--light-gray))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         card: {

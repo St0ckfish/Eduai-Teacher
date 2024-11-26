@@ -236,7 +236,7 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="mt-4 flex items-center border border-borderPrimary rounded-xl">
+            <div className="mt-4 flex items-center rounded-xl border border-borderPrimary">
               <div className="m-4 border-r-4 border-primary py-4 pr-4 text-primary">
                 <div className="flex flex-col items-center font-bold">
                   <Text color={"primary"} size={"xl"} font={"bold"}>
@@ -252,8 +252,7 @@ export default function Home() {
                 <Text color={"gray"}>Tuesday</Text>
               </div>
             </div>
-
-            <div className="mt-4 flex items-center border border-borderPrimary rounded-xl">
+            <div className="mt-4 flex items-center rounded-xl border border-borderPrimary">
               <div className="m-4 border-r-4 border-primary py-4 pr-4 text-primary">
                 <div className="flex flex-col items-center font-bold">
                   <Text color={"primary"} size={"xl"} font={"bold"}>

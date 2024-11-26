@@ -103,7 +103,7 @@ function getTimeDifference(startTime: string, endTime: string): { hours: number;
 
         <div className="flex w-full overflow-auto rounded-md bg-bgPrimary p-4">
           <div className="relative w-full overflow-auto sm:rounded-lg">
-            <p className="mb-3 font-semibold">Sessions for {format(selectedDate, 'MMMM d, yyyy')}</p>
+            <Text font={"semiBold"} className="mb-3">Sessions for {format(selectedDate, 'MMMM d, yyyy')}</Text>
             {
               isLoading ? 
               <div className="flex w-full justify-center">

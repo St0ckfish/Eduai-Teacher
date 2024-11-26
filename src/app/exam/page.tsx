@@ -13,7 +13,7 @@ const Exam = () => {
         </div>
 
         <div className="flex w-[300px]">
-          <Button>
+          <Button as="link" href="/exam/add-exam">
             <svg
               className="h-6 w-6"
               fill="none"
