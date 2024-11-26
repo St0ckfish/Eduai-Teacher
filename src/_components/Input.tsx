@@ -36,12 +36,12 @@ const Input: React.FC<InputProps> = ({
     theme === "transparent"
       ? "bg-transparent"
       : theme === "comment"
-      ? "bg-comment"
+      ? "bg-comment rounded-xl"
       : "bg-bgSecondary";
 
   const borderClass = border === "gray" ? "border-borderPrimary" : "border-borderSecondary";
 
-  const roundedClass = `rounded-${rounded}`; // إضافة الـ rounded
+  const roundedClass = `rounded-${rounded}`;
 
   return (
     <label className={`grid w-full gap-1 text-end`}>
