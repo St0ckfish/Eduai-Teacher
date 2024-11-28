@@ -6,11 +6,8 @@ import type {
 import {
   fetchAllSchedule,
   deleteSession,
-  createAdvice,
-  fetchAdviceById,
-  updateAdvice,
 } from "../features/schedule";
-import type { Advice, TeacherScheduleResponse } from "../../types";
+import type { TeacherScheduleResponse } from "../../types";
 
 export const useGetAllSchedules = (
   date: string,
@@ -33,51 +30,6 @@ export const useDeleteSession = (
     mutationFn: deleteSession,
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ["deleteSession"] });
-    },
-    ...options,
-  });
-};
-
-//
-export const useCreateAdvice = (
-  options?: UseMutationOptions<Advice, Error, Partial<Advice>>,
-) => {
-  const queryClient = useQueryClient();
-  return useMutation<Advice, Error, Partial<Advice>>({
-    mutationFn: createAdvice,
-    onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ["advices"] });
-    },
-    ...options,
-  });
-};
-
-//
-export const useGetAdviceById = (
-  id: number | undefined,
-  options?: UseQueryOptions<Advice, Error>,
-) => {
-  return useQuery<Advice, Error>({
-    queryKey: ["advice", id],
-    queryFn: () => fetchAdviceById(id!),
-    enabled: !!id,
-    ...options,
-  });
-};
-
-//
-export const useUpdateAdvice = (
-  options?: UseMutationOptions<
-    Advice,
-    Error,
-    { formData: Partial<Advice>; id: number }
-  >,
-) => {
-  const queryClient = useQueryClient();
-  return useMutation<Advice, Error, { formData: Partial<Advice>; id: number }>({
-    mutationFn: updateAdvice,
-    onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ["advices"] });
     },
     ...options,
   });

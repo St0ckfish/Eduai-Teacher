@@ -3,7 +3,6 @@
 import Container from "~/_components/Container";
 import * as React from "react";
 import { Calendar } from "~/components/ui/calendar";
-import Button from "~/_components/Button";
 import { Text } from "~/_components/Text";
 import { useGetAllSchedules } from "~/APIs/hooks/useSchedule";
 import Spinner from "~/_components/Spinner";
@@ -110,7 +109,7 @@ function getTimeDifference(startTime: string, endTime: string): { hours: number;
               <div className="flex w-full justify-center">
                 <Spinner />
                 </div> : 
-            <table className="w-full overflow-x-auto p-4 text-left text-sm text-black">
+            <table className="w-full overflow-x-auto p-4 text-left text-sm border-separate border-spacing-y-2">
               <thead className="text-textPrimary text-xs uppercase">
                 <tr>
                   <th scope="col" className="whitespace-nowrap px-6 py-3">
