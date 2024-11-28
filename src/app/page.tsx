@@ -89,7 +89,7 @@ export default function Home() {
                 </div>
               </div>
               <div>
-                <Input border="gray" theme="comment" placeholder="Add comment..." rounded="2xl" />
+                <Input border="gray" theme="comment" placeholder="Add comment..." type="comment" />
               </div>
             </div>
           </div>
@@ -150,7 +150,7 @@ export default function Home() {
                 </div>
               </div>
               <div>
-                <Input border="gray" theme="comment" placeholder="Add comment..." rounded="2xl" />
+                <Input border="gray" theme="comment" placeholder="Add comment..." type="comment" />
               </div>
             </div>
           </div>

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import type { InputHTMLAttributes } from "react";
 import type { UseFormRegisterReturn } from "react-hook-form";
+
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   register?: UseFormRegisterReturn;
@@ -39,7 +40,8 @@ const Input: React.FC<InputProps> = ({
       ? "bg-comment"
       : "bg-bgSecondary";
 
-  const borderClass = border === "gray" ? "border-borderPrimary" : "border-borderSecondary";
+  const borderClass =
+    type === "comment" ? "rounded-2xl" : border === "gray" ? "border-borderPrimary" : "border-borderSecondary";
 
   const roundedClass = `rounded-${rounded}`; 
 
