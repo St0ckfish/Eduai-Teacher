@@ -1,13 +1,16 @@
 "use client";
 
-import React, { useState } from "react";
-import { useForm, Controller } from "react-hook-form";
-import Image from "next/image";
 import Link from "next/link";
-import Button from "~/_components/Button";
-import SearchableSelect from "~/_components/SearchSelect";
-import Spinner from "~/_components/Spinner";
+import Image from "next/image";
+import { toast } from "react-toastify";
+import React, { useState } from "react";
 import Input from "~/_components/Input";
+import Button from "~/_components/Button";
+import { Text } from "~/_components/Text";
+import Spinner from "~/_components/Spinner";
+import type { SignUpFormData } from "~/types";
+import { useForm, Controller } from "react-hook-form";
+import SearchableSelect from "~/_components/SearchSelect";
 import MultiSelectComponent from "~/_components/MultiSelect";
 import {
   useGetAllRegions,
@@ -23,9 +26,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
-import { toast } from "react-toastify";
-import { Text } from "~/_components/Text";
-import type { SignUpFormData } from "~/types";
 
 const Signup = () => {
   const [step, setStep] = useState(1);

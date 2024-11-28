@@ -1,6 +1,7 @@
 "use client";
 
-import { VariantProps, cva } from "class-variance-authority";
+import { cva } from "class-variance-authority";
+import type { VariantProps } from "class-variance-authority";
 import { forwardRef } from "react";
 import { cn } from "~/lib/utils";
 
@@ -58,7 +59,7 @@ const Text = forwardRef<HTMLParagraphElement, TextProps>(
         className={cn(textVariants({ font, color, size }), className)}
         {...props}
       >
-        {children}  {/* Render children here */}
+        {children}
       </p>
     );
   }

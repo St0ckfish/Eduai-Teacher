@@ -41,6 +41,13 @@ export type HomeworkResponse = {
   data: PaginationData<Homework>;
 }
 
+export type HomeWorkFormData = {
+  title: string;
+  description: string;
+  deadline: string;
+  sessionId: string;
+}
+
 // Generic pagination data interface
 export type PaginationData<T> = {
   content: T[];

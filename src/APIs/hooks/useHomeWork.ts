@@ -6,9 +6,23 @@ import type {
 import {
   fetchAllHomeWork,
   deleteSession,
+  addHomeWork,
 } from "../features/homeWork";
-import type { HomeworkResponse } from "../../types";
+import type { HomeWorkFormData, HomeworkResponse } from "../../types";
 
+export const useAddHomeWork = (
+  options?: UseMutationOptions<HomeWorkFormData, Error, Partial<HomeWorkFormData>>,
+) => {
+  const queryClient = useQueryClient();
+  return useMutation<HomeWorkFormData, Error, Partial<HomeWorkFormData>>({
+    mutationFn: addHomeWork,
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["addHomeWork"] });
+    },
+    ...options,
+  });
+};
+//
 export const useGetAllHomeWorks = (
   sessionId: number,
   options?: UseQueryOptions<HomeworkResponse, Error>,

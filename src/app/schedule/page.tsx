@@ -109,7 +109,7 @@ function getTimeDifference(startTime: string, endTime: string): { hours: number;
               <div className="flex w-full justify-center">
                 <Spinner />
                 </div> : 
-            <table className="w-full overflow-x-auto p-4 text-left text-sm text-black">
+            <table className="w-full overflow-x-auto p-4 text-left text-sm border-separate border-spacing-y-2">
               <thead className="text-textPrimary text-xs uppercase">
                 <tr>
                   <th scope="col" className="whitespace-nowrap px-6 py-3">
