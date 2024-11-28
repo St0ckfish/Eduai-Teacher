@@ -92,3 +92,50 @@ export type SignUpFormData = {
   countryCode: string;
   number: string;
 }
+
+/** TextBook **/
+export type SubjectSummaryResponse = {
+  success: boolean;
+  message: string;
+  data: SubjectSummary[];
+};
+
+export type SubjectSummary = {
+  subject: string;
+  numberOfGrades: number;
+};
+
+export type LessonPageResponse = {
+  success: boolean;
+  message: string;
+  data: {content: Lesson[];};
+};
+
+export type Lesson = {
+  lessonId: number;
+  lessonName: string;
+};
+
+export type LessonPageData = {
+  content: Lesson[];
+  totalElementsCount: number;
+  totalPagesCount: number;
+  pageElementsCount: number;
+  pageSize: number;
+  pageNumber: number;
+  firstPage: boolean;
+  lastPage: boolean;
+  emptyPage: boolean;
+  sortedPage: boolean;
+}
+
+export type StudyStageResponse = {
+  success: boolean;
+  message: string;
+  data: StudyStage[];
+};
+
+export type StudyStage = {
+  studyLevel: string;
+  courseId: number;
+};

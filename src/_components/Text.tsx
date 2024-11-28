@@ -28,6 +28,7 @@ const textVariants = cva("text-textPrimary", {
       "4xl": "text-4xl",
     },
     color: {
+      white: "#ffffff",
       default: "text-textPrimary",
       primary: "text-primary",
       gray: "text-textSecondary",
