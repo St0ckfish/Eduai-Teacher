@@ -11,7 +11,7 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   className?: string;
   dir?: string;
   theme?: "solid" | "transparent" | "comment";
-  border?: "primary" | "gray";
+  border?: "primary" | "gray" | "none";
   rounded?: "none" | "sm" | "md" | "lg" | "xl" | "2xl" | "full"; 
 }
 
@@ -41,8 +41,10 @@ const Input: React.FC<InputProps> = ({
       : "bg-bgSecondary";
 
   const borderClass =
-    type === "comment" ? "rounded-2xl" : border === "gray" ? "border-borderPrimary" : "border-borderSecondary";
-
+      border === "none" ? "" : 
+      type === "comment" ? "rounded-2xl" : 
+      border === "gray" ? "border border-borderPrimary" : "border border-borderSecondary";
+  
   const roundedClass = `rounded-${rounded}`; 
 
   return (
@@ -54,10 +56,10 @@ const Input: React.FC<InputProps> = ({
           type={inputType}
           {...register}
           dir={dir}
-          className={`w-full border px-4 py-3 ${
+          className={`w-full px-4 py-3 ${
             inputType === "date" ? "mb-1" : ""
           } outline-none text-textPrimary placeholder:text-textSecondary ${
-            error ? "border-error bg-transparent" : `${themeClasses} ${borderClass}`
+            error ? "border border-error bg-transparent" : `${themeClasses} ${borderClass}`
           } ${roundedClass} ${className}`}
         />
         {type === "password" && (

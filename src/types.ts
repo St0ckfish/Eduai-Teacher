@@ -139,3 +139,82 @@ export type StudyStage = {
   studyLevel: string;
   courseId: number;
 };
+
+/** Posts */
+
+export type Attachment = {
+  id: string;
+  viewLink: string;
+  downloadLink: string;
+  isVideo: boolean;
+};
+
+export type Post = {
+  id: number;
+  title: string;
+  content: string;
+  publisherName: string;
+  publisherPicture: string;
+  creationDate: string;
+  updateDate: string;
+  isPublisherPictureExists: boolean;
+  isLiked: boolean;
+  isEdited: boolean;
+  likesCount: number;
+  attachmentsCount: number;
+  attachments: Attachment[];
+};
+
+export type PostResponse = {
+  success: boolean;
+  message: string;
+  data: {
+    content: Post[];
+    totalElementsCount: number;
+    totalPagesCount: number;
+    pageElementsCount: number;
+    pageSize: number;
+    pageNumber: number;
+    firstPage: boolean;
+    lastPage: boolean;
+    emptyPage: boolean;
+    sortedPage: boolean;
+  };
+};
+
+// Comment
+
+export interface CommentsResponse {
+  success: boolean;
+  message: string;
+  data: {
+    content: Comment[];
+    totalElementsCount: number;
+    totalPagesCount: number;
+    pageElementsCount: number;
+    pageSize: number;
+    pageNumber: number;
+    firstPage: boolean;
+    lastPage: boolean;
+    emptyPage: boolean;
+    sortedPage: boolean;
+  };
+}
+
+export interface Comment {
+  id: number;
+  postId: number;
+  comment: string;
+  creatorName: string;
+  creatorPicture: string;
+  createdDate: string;
+  updatedDate: string;
+  isCreatorPictureExists: boolean;
+  isEdited: boolean;
+  isLiked: boolean;
+  likesCount: number;
+}
+
+export interface PostCommentRequest {
+  comment: string;
+}
