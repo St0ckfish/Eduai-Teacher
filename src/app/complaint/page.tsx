@@ -5,9 +5,44 @@ import { BsArrowDownLeft, BsArrowUpRight } from "react-icons/bs";
 import Input from "~/_components/Input";
 import { useGetAllAdvices } from "~/APIs/hooks/useAdvice";
 import { Text } from "~/_components/Text";
+import { useGetAllComplains } from "~/APIs/hooks/useComplains";
 
 const Complaint = () => {
-  const { data, isLoading, error } = useGetAllAdvices({ page: 1, limit: 10 });
+  const { data, isLoading } = useGetAllComplains();
+
+  function formatBeautifulDate(dateString: string): string {
+    const date = new Date(dateString);
+  
+    const days = [
+      'Sunday', 'Monday', 'Tuesday', 'Wednesday', 
+      'Thursday', 'Friday', 'Saturday'
+    ];
+  
+    const months = [
+      'January', 'February', 'March', 'April', 'May', 'June', 
+      'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+  
+    const dayName = days[date.getDay()];
+    const month = months[date.getMonth()];
+    const day = date.getDate();
+    const year = date.getFullYear();
+  
+    const ordinalDay = getOrdinalDay(day);
+
+    return `${dayName}, ${month} ${ordinalDay}, ${year}`;
+  }
+  
+  function getOrdinalDay(day: number): string {
+    if (day > 3 && day < 21) return day + 'th';
+    switch (day % 10) {
+      case 1: return day + 'st';
+      case 2: return day + 'nd';
+      case 3: return day + 'rd';
+      default: return day + 'th';
+    }
+  }
+
   return (
     <>
       <Container>
@@ -15,117 +50,36 @@ const Complaint = () => {
           <div className="flex w-full flex-col gap-4 rounded-xl bg-bgPrimary p-4">
             <Text font={"bold"} size={"4xl"} >Complaint</Text>
             <div className="border-b border-borderPrimary pb-4">
-              <Text font={"bold"} size={"2xl"}>Recent</Text>
-              <div className="mt-4 flex items-center justify-between rounded-xl border border-borderPrimary p-4">
-                <div className="flex gap-4">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-success/10">
-                    <BsArrowUpRight size={30} className="text-success" />
-                  </div>
-                  <div>
-                    <Text size={"lg"}>
-                      Complaint to Nada Mohamed&apos;s Parent
-                    </Text>
-                    <Text color={"gray"}>1 May 2024</Text>
-                  </div>
-                </div>
-                <div className="mt-[2px]">
-                  <AiOutlineDown size={20} className="text-textSecondary" />
-                </div>
-              </div>
-
-              <div className="mt-4 flex items-center justify-between rounded-xl border border-borderPrimary p-4">
-                <div className="flex gap-4">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-warning/10">
-                    <BsArrowDownLeft size={30} className="text-warning" />
-                  </div>
-                  <div>
-                    <Text size={"lg"}>
-                      Complaint to Nada Mohamed&apos;s Parent
-                    </Text>
-                    <Text color={"gray"}>1 May 2024</Text>
-                  </div>
-                </div>
-                <div className="mt-[2px]">
-                  <AiOutlineDown size={20} className="text-textSecondary" />
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <h2 className="text-xl font-semibold">Earliest</h2>
-              <div className="mt-4 flex items-center justify-between rounded-xl border border-borderPrimary p-4">
-                <div className="flex gap-4">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-success/10">
-                    <BsArrowUpRight size={30} className="text-success" />
-                  </div>
-                  <div>
-                    <Text size={"lg"}>
-                      Complaint to Nada Mohamed&apos;s Parent
-                    </Text>
-                    <Text color={"gray"}>1 May 2024</Text>
-                  </div>
-                </div>
-                <div className="mt-[2px]">
-                  <AiOutlineDown size={20} className="text-textSecondary" />
-                </div>
-              </div>
-
-              <div className="mt-4 flex items-center justify-between rounded-xl border border-borderPrimary p-4">
-                <div className="flex gap-4">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-warning/10">
-                    <BsArrowDownLeft size={30} className="text-warning" />
-                  </div>
-                  <div>
-                    <Text size={"lg"}>
-                      Complaint to Nada Mohamed&apos;s Parent
-                    </Text>
-                    <Text color={"gray"}>1 May 2024</Text>
-                  </div>
-                </div>
-                <div className="mt-[2px]">
-                  <AiOutlineDown size={20} className="text-textSecondary" />
-                </div>
-              </div>
-
-              <div className="mt-4 flex items-center justify-between rounded-xl border border-borderPrimary p-4">
-                <div className="flex gap-4">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-success/10">
-                    <BsArrowUpRight size={30} className="text-success" />
-                  </div>
-                  <div>
-                    <Text size={"lg"}>
-                      Complaint to Nada Mohamed&apos;s Parent
-                    </Text>
-                    <Text color={"gray"}>1 May 2024</Text>
-                  </div>
-                </div>
-                <div className="mt-[2px]">
-                  <AiOutlineDown size={20} className="text-textSecondary" />
-                </div>
-              </div>
-
-              <div className="mt-4 flex items-center justify-between rounded-xl border border-borderPrimary p-4">
-                <div className="flex gap-4">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-warning/10">
-                    <BsArrowDownLeft size={30} className="text-warning" />
-                  </div>
-                  <div>
-                    <Text size={"lg"}>
-                      Complaint to Nada Mohamed&apos;s Parent
-                    </Text>
-                    <Text color={"gray"}>1 May 2024</Text>
-                  </div>
-                </div>
-                <div className="mt-[2px]">
-                  <AiOutlineDown size={20} className="text-textSecondary" />
-                </div>
-              </div>
-            </div>
-            <div className="mt-4 flex justify-center gap-1">
-              <Text>Show more </Text>
-              <div className="mt-[2px]">
-                <AiOutlineDown size={20} />{" "}
-              </div>
+                {
+                  data?.data.content.map((compliant) => (
+                      <div key={compliant.id} className="mt-4 flex items-center justify-between rounded-xl border border-borderPrimary p-4">
+                        <div className="flex gap-4">
+                          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-warning/10">
+                            {
+                              compliant.approved  ? 
+                              <BsArrowUpRight size={30} className="text-success" /> : 
+                  <BsArrowDownLeft size={20} className="text-error" />
+                            }
+                          </div>
+                          <div>
+                            <Text size={"lg"} font="medium">
+                              {compliant.teacherName}
+                            </Text>
+                            <Text size={"lg"} font="medium">
+                              {compliant.studentName}
+                            </Text>
+                            <Text size={"md"}>
+                              {compliant.message}
+                            </Text>
+                            <Text color={"gray"}>{formatBeautifulDate(compliant.creationDateTime)}</Text>
+                          </div>
+                        </div>
+                        <div className="mt-[2px]">
+                          <AiOutlineDown size={20} className="text-textSecondary" />
+                        </div>
+                      </div>
+                  ))
+                }
             </div>
           </div>
           <div className="w-full rounded-xl bg-bgPrimary p-4 md:w-1/2">

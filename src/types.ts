@@ -194,6 +194,34 @@ export enum AttendanceStatus {
   // Add other potential statuses if needed
 }
 
+export type AbsenceReason = 'OTHER';
+
+// Type for individual session attendance record
+export type SessionAttendanceRecord = {
+    id: number;
+    studentName: string;
+    status: AttendanceStatus;
+    absenceReason: AbsenceReason | null;
+};
+
+// Type for the full API response
+export type SessionAttendanceResponse = {
+    success: boolean;
+    message: string;
+    data: {
+        content: SessionAttendanceRecord[];
+        totalElementsCount: number;
+        totalPagesCount: number;
+        pageElementsCount: number;
+        pageSize: number;
+        pageNumber: number;
+        firstPage: boolean;
+        lastPage: boolean;
+        emptyPage: boolean;
+        sortedPage: boolean;
+    };
+};
+
 // Enum for day names
 export enum DayName {
   MONDAY = "MONDAY",
@@ -267,8 +295,6 @@ export type LeaveAttendanceResponse = {
     sortedPage: boolean;
   }
 }
-
-/** Posts */
 
 export type Attachment = {
   id: string;
@@ -400,4 +426,74 @@ export type TeacherProfileUpdate = {
 export type ChangePassword = {
   password: string;
   newPassword: string;
+};
+
+export type SessionMaterial = {
+  materialId: number;
+  title: string;
+  description: string;
+  fileId: string | null;
+  fileName: string | null;
+  fileExtension: string | null;
+  fileLink: string | null;
+};
+
+// Type for the full API response
+export type SessionMaterialResponse = {
+  success: boolean;
+  message: string;
+  data: SessionMaterial[];
+};
+
+export type SessionExplainedItem = {
+  id: number;
+  topicId: number;
+  topicName: string;
+  description: string;
+};
+
+// Type for the full API response
+export type SessionExplainedResponse = {
+  success: boolean;
+  message: string;
+  data: SessionExplainedItem[];
+};
+
+export type ComplaintType = 'Teacher to student' | 'Parent to teacher';
+
+// Type for individual complaint
+export type Complaint = {
+    id: number;
+    subject: string;
+    message: string;
+    deleted: boolean;
+    approved: boolean;
+    type: ComplaintType;
+    creationDateTime: string;
+    updateDateTime: string;
+    teacherId: number;
+    teacherName: string;
+    studentId: number;
+    studentName: string;
+    isVoiceNoteExists: boolean;
+    viewVoiceNoteLink: string;
+    downloadVoiceNoteLink: string;
+};
+
+// Type for the full API response
+export type ComplainsResponse = {
+    success: boolean;
+    message: string;
+    data: {
+        content: Complaint[];
+        totalElementsCount: number;
+        totalPagesCount: number;
+        pageElementsCount: number;
+        pageSize: number;
+        pageNumber: number;
+        firstPage: boolean;
+        lastPage: boolean;
+        emptyPage: boolean;
+        sortedPage: boolean;
+    };
 };
