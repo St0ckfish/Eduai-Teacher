@@ -5,14 +5,14 @@ export type Advice = {
   categoryId: number;
   createdAt: string;
   updatedAt: string;
-}
+};
 
 export type PaginatedAdvices = {
   advices: Advice[];
   total: number;
   page: number;
   limit: number;
-}
+};
 
 //
 
@@ -23,7 +23,14 @@ export interface TeacherSchedule {
   classroomName: string;
   startTime: string;
   endTime: string;
-  day: 'MONDAY' | 'TUESDAY' | 'WEDNESDAY' | 'THURSDAY' | 'FRIDAY' | 'SATURDAY' | 'SUNDAY';
+  day:
+    | "MONDAY"
+    | "TUESDAY"
+    | "WEDNESDAY"
+    | "THURSDAY"
+    | "FRIDAY"
+    | "SATURDAY"
+    | "SUNDAY";
 }
 
 export interface TeacherScheduleResponse {
@@ -39,14 +46,14 @@ export type HomeworkResponse = {
   success: boolean;
   message: string;
   data: PaginationData<Homework>;
-}
+};
 
 export type HomeWorkFormData = {
   title: string;
   description: string;
   deadline: string;
   sessionId: string;
-}
+};
 
 // Generic pagination data interface
 export type PaginationData<T> = {
@@ -60,7 +67,7 @@ export type PaginationData<T> = {
   lastPage: boolean;
   emptyPage: boolean;
   sortedPage: boolean;
-}
+};
 
 // Homework item interface
 export type Homework = {
@@ -68,8 +75,7 @@ export type Homework = {
   title: string;
   description: string;
   deadline: string; // Consider using Date if you're parsing the date
-}
-
+};
 
 //
 
@@ -91,7 +97,7 @@ export type SignUpFormData = {
   birthDate: string;
   countryCode: string;
   number: string;
-}
+};
 
 /** TextBook **/
 export type SubjectSummaryResponse = {
@@ -108,7 +114,7 @@ export type SubjectSummary = {
 export type LessonPageResponse = {
   success: boolean;
   message: string;
-  data: {content: Lesson[];};
+  data: { content: Lesson[] };
 };
 
 export type Lesson = {
@@ -127,7 +133,7 @@ export type LessonPageData = {
   lastPage: boolean;
   emptyPage: boolean;
   sortedPage: boolean;
-}
+};
 
 export type StudyStageResponse = {
   success: boolean;
@@ -290,7 +296,138 @@ export type LeaveAttendanceResponse = {
   }
 }
 
-// Type for individual session material
+export type Attachment = {
+  id: string;
+  viewLink: string;
+  downloadLink: string;
+  isVideo: boolean;
+};
+
+export type Post = {
+  id: number;
+  title: string;
+  content: string;
+  publisherName: string;
+  publisherPicture: string;
+  creationDate: string;
+  updateDate: string;
+  isPublisherPictureExists: boolean;
+  isLiked: boolean;
+  isEdited: boolean;
+  likesCount: number;
+  attachmentsCount: number;
+  attachments: Attachment[];
+};
+
+export type PostResponse = {
+  success: boolean;
+  message: string;
+  data: {
+    content: Post[];
+    totalElementsCount: number;
+    totalPagesCount: number;
+    pageElementsCount: number;
+    pageSize: number;
+    pageNumber: number;
+    firstPage: boolean;
+    lastPage: boolean;
+    emptyPage: boolean;
+    sortedPage: boolean;
+  };
+};
+
+export type SinglePostResponse = {
+  success: boolean;
+  message: string;
+  data: Post;
+};
+// Comment
+
+export interface CommentsResponse {
+  success: boolean;
+  message: string;
+  data: {
+    content: Comment[];
+    totalElementsCount: number;
+    totalPagesCount: number;
+    pageElementsCount: number;
+    pageSize: number;
+    pageNumber: number;
+    firstPage: boolean;
+    lastPage: boolean;
+    emptyPage: boolean;
+    sortedPage: boolean;
+  };
+}
+
+export interface Comment {
+  id: number;
+  postId: number;
+  comment: string;
+  creatorName: string;
+  creatorPicture: string;
+  createdDate: string;
+  updatedDate: string;
+  isCreatorPictureExists: boolean;
+  isEdited: boolean;
+  isLiked: boolean;
+  likesCount: number;
+}
+
+export interface PostCommentRequest {
+  comment: string;
+}
+
+/** Teacher Profile */
+
+export type TeacherProfile = {
+  success: boolean;
+  message: string;
+  data: {
+    id: number;
+    username: string;
+    email: string;
+    picture: string;
+    hasPicture: boolean;
+    nid: string;
+    gender: string;
+    role: string;
+    nationality: string;
+    religion: string;
+    birthDate: string | null;
+    regionId: number;
+    number: string;
+    name: string;
+    about: string;
+    qualification: string;
+    enabled: boolean;
+    locked: boolean;
+    authorities: string[];
+    address: string | null;
+    subjects: string[];
+  };
+};
+
+export type TeacherProfileUpdate = {
+  username: string;
+  email: string;
+  name_en: string;
+  name_fr: string;
+  name_ar: string;
+  number?: string;
+  gender: "MALE" | "FEMALE";
+  nationality: string;
+  qualification?: string;
+  subjects: string[];
+};
+
+// password
+
+export type ChangePassword = {
+  password: string;
+  newPassword: string;
+};
+
 export type SessionMaterial = {
   materialId: number;
   title: string;
