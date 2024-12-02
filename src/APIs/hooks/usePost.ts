@@ -1,6 +1,6 @@
 import { useMutation, useQuery, UseQueryOptions } from "@tanstack/react-query";
-import type { PostResponse } from "../../types";
-import { fetchAllPosts, likePost } from "../features/post";
+import type { PostResponse, SinglePostResponse } from "../../types";
+import { fetchAllPosts, fetchPostById, likePost } from "../features/post";
 
 export const useGetAllPosts = (
   params: { page: number; size: number },
@@ -12,6 +12,17 @@ export const useGetAllPosts = (
     ...options,
   });
 };
+export const useGetPost = (
+  params: { postId: number },
+  options?: UseQueryOptions<SinglePostResponse, Error>,
+) => {
+  return useQuery<SinglePostResponse, Error>({
+    queryKey: ["post", params.postId],
+    queryFn: () => fetchPostById(params.postId),
+    ...options,
+  });
+};
+
 
 export function useLikePost() {
   return useMutation<void, Error, { postId: number; liked: boolean }>({

@@ -5,14 +5,14 @@ export type Advice = {
   categoryId: number;
   createdAt: string;
   updatedAt: string;
-};
+}
 
 export type PaginatedAdvices = {
   advices: Advice[];
   total: number;
   page: number;
   limit: number;
-};
+}
 
 //
 
@@ -23,14 +23,7 @@ export interface TeacherSchedule {
   classroomName: string;
   startTime: string;
   endTime: string;
-  day:
-    | "MONDAY"
-    | "TUESDAY"
-    | "WEDNESDAY"
-    | "THURSDAY"
-    | "FRIDAY"
-    | "SATURDAY"
-    | "SUNDAY";
+  day: 'MONDAY' | 'TUESDAY' | 'WEDNESDAY' | 'THURSDAY' | 'FRIDAY' | 'SATURDAY' | 'SUNDAY';
 }
 
 export interface TeacherScheduleResponse {
@@ -46,14 +39,14 @@ export type HomeworkResponse = {
   success: boolean;
   message: string;
   data: PaginationData<Homework>;
-};
+}
 
 export type HomeWorkFormData = {
   title: string;
   description: string;
   deadline: string;
   sessionId: string;
-};
+}
 
 // Generic pagination data interface
 export type PaginationData<T> = {
@@ -67,7 +60,7 @@ export type PaginationData<T> = {
   lastPage: boolean;
   emptyPage: boolean;
   sortedPage: boolean;
-};
+}
 
 // Homework item interface
 export type Homework = {
@@ -75,7 +68,8 @@ export type Homework = {
   title: string;
   description: string;
   deadline: string; // Consider using Date if you're parsing the date
-};
+}
+
 
 //
 
@@ -97,7 +91,7 @@ export type SignUpFormData = {
   birthDate: string;
   countryCode: string;
   number: string;
-};
+}
 
 /** TextBook **/
 export type SubjectSummaryResponse = {
@@ -114,7 +108,7 @@ export type SubjectSummary = {
 export type LessonPageResponse = {
   success: boolean;
   message: string;
-  data: { content: Lesson[] };
+  data: {content: Lesson[];};
 };
 
 export type Lesson = {
@@ -133,7 +127,7 @@ export type LessonPageData = {
   lastPage: boolean;
   emptyPage: boolean;
   sortedPage: boolean;
-};
+}
 
 export type StudyStageResponse = {
   success: boolean;
@@ -188,6 +182,7 @@ export type PostResponse = {
   };
 };
 
+
 export type SinglePostResponse = {
   success: boolean;
   message: string;
@@ -230,6 +225,7 @@ export interface PostCommentRequest {
   comment: string;
 }
 
+
 /** Teacher Profile */
 
 export type TeacherProfile = {
@@ -258,24 +254,4 @@ export type TeacherProfile = {
     address: string | null;
     subjects: string[];
   };
-};
-
-export type TeacherProfileUpdate = {
-  username: string;
-  email: string;
-  name_en: string;
-  name_fr: string;
-  name_ar: string;
-  number?: string;
-  gender: "MALE" | "FEMALE";
-  nationality: string;
-  qualification?: string;
-  subjects: string[];
-};
-
-// password
-
-export type ChangePassword = {
-  password: string;
-  newPassword: string;
 };

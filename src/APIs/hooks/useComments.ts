@@ -1,4 +1,4 @@
- import { createComment, deleteComment, fetchAllCommentsForPost, updateComment } from "../features/comments";
+ import { createComment, deleteComment, fetchAllCommentsForPost, likeComment, updateComment } from "../features/comments";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { CommentsResponse } from "~/types";
 
@@ -34,4 +34,12 @@ export function useDeleteComment() {
     return useMutation<void, Error, { postId: number; commentId: number; }>({
       mutationFn: ({ postId, commentId }) => deleteComment(postId, commentId), // Pass postId and comment as an object
     });
+
   }
+
+  export function useLikeComment() {
+    return useMutation<void, Error, { postId: number; commentId: number; liked: boolean }>({
+      mutationFn: ({ postId, commentId, liked }) => likeComment(postId, commentId, liked),
+    });
+  }
+  

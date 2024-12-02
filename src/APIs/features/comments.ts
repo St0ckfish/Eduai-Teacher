@@ -34,10 +34,12 @@ export const deleteComment = async (postId: number, commentId: number): Promise<
     return response.data; // Assuming you don't need to return anything
   };
 
-  export const likeComment = async (postId: number, commentId: number ,comment: string): Promise<void> => {
-    const response = await axiosInstance.put(`/api/v1/post/${postId}/comment/${commentId}`, {
-      comment,
-    });
-    return response.data; // Assuming you don't need to return anything
+  export const likeComment = async (
+    postId: number, 
+    commentId: number, 
+    liked: boolean
+  ): Promise<void> => {
+    const response = await axiosInstance.put(`/api/v1/post/${postId}/comment/${commentId}/like?liked=${liked}`);
+    // /api/v1/post/1/comment/39/like?liked=false
+    return response.data; // If no response data is needed, this can be omitted
   };
-

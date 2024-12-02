@@ -14,7 +14,7 @@ import Button from "~/_components/Button";
 import React, { useState } from "react";
 import { Calendar } from "~/components/ui/calendar";
 import { Text } from "~/_components/Text";
-import { useGetAllPosts, useLikePost } from "~/APIs/hooks/usePost";
+import { useGetAllPosts, useGetPost, useLikePost } from "~/APIs/hooks/usePost";
 import Spinner from "~/_components/Spinner";
 import {
   useCreateComment,
@@ -29,8 +29,6 @@ export default function Home() {
   console.log(comment);
   const { mutate: sendComment } = useCreateComment();
 
-  const { data: dataPosts, isLoading } = useGetAllPosts({ page: 0, size: 10 });
-
 
   const {
     data: comments,
@@ -41,11 +39,20 @@ export default function Home() {
     page: 0,
     size: 10,
   });
-
-  const { mutate } = useLikePost();
+  
+  console.log(comments);
+  const { data: dataPosts, refetch, isLoading } = useGetAllPosts({ page: 0, size: 10 });
+  const { mutate: likePost } = useLikePost();
 
   const handleLikeClick = (postId: number, liked: boolean) => {
-    mutate({ postId, liked });
+    likePost(
+      { postId, liked },
+      {
+        onSuccess: () => {
+          refetch(); // Only refetch posts after successful like/unlike mutation
+        },
+      }
+    );
   };
   
   const handleCommentClick = (postId: number) => {
@@ -123,11 +130,12 @@ export default function Home() {
               </div>
               <div>
                 <div className="flex gap-3">
+                
                   <button
                     className="flex items-center gap-1"
                     onClick={() => handleLikesCount(post.id, post.likesCount)}
                   >
-                    {post.isLiked ? (
+                    {post?.isLiked ? (
                       <FaHeart
                         color="red"
                         size={20}
@@ -140,7 +148,7 @@ export default function Home() {
                       />
                     )}
 
-                    <span className="text-sm">{post.likesCount}</span>
+                    <span className="text-sm">{post?.likesCount}</span>
                   </button>
                   <button
                     className="flex items-center gap-1"
@@ -179,6 +187,7 @@ export default function Home() {
                             postId={selectedPostId}
                             commentId={comment.id}
                             isLiked={comment.isLiked}
+                            likesCount={comment.likesCount}
                           />
                         ))}
 
