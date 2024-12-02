@@ -109,7 +109,7 @@ export default function Home() {
                             ? post.publisherPicture
                             : "/images/default.png"
                         }
-                        className="rounded-full"
+                        className="rounded-full w-[60px] h-[60px]"
                         alt="Profile Photo"
                         width={60}
                         height={60}
