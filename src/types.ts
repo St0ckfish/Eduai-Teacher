@@ -146,6 +146,128 @@ export type StudyStage = {
   courseId: number;
 };
 
+/** Fess **/
+
+export type Fee = {
+  invoiceId: number;
+  semesterName: string;
+  creationDate: string;
+  updateDate: string;
+  dueDate: string;
+  paidAmount: number;
+  totalFeesAmount: number;
+  feesCurrency: string;
+  paymentStatus: string;
+  discountAmount: number;
+};
+
+// Type for the full API response
+export type FeesResponse = {
+  success: boolean;
+  message: string;
+  data: Fee[];
+};
+
+export type Exam = {
+  id: number;
+  examDate: string;
+  examBeginning: string;
+  examEnding: string;
+  examName: string;
+  courseName: string;
+  className: string;
+  examTypeName: string;
+  examLegalTypeName: string;
+};
+
+// Type for the exam list response
+export type ExamListResponse = Exam[];
+
+export type Upcoming_Previous_Exams = {
+  success: boolean;
+  message: string;
+  data: Fee[];
+};
+
+export enum AttendanceStatus {
+  ABSENT = "ABSENT",
+  // Add other potential statuses if needed
+}
+
+// Enum for day names
+export enum DayName {
+  MONDAY = "MONDAY",
+  TUESDAY = "TUESDAY", 
+  WEDNESDAY = "WEDNESDAY",
+  THURSDAY = "THURSDAY",
+  FRIDAY = "FRIDAY",
+  SATURDAY = "SATURDAY",
+  SUNDAY = "SUNDAY"
+}
+
+// Interface for individual attendance record
+export type AttendanceRecord = {
+  checkInTime: string;
+  checkOutTime: string;
+  status: AttendanceStatus;
+  date: string;
+  dayName: DayName;
+}
+
+// Interface for the full attendance API response
+export type AttendanceResponse = {
+  success: boolean;
+  message: string;
+  data: {
+    content: AttendanceRecord[];
+    totalElementsCount: number;
+    totalPagesCount: number;
+    pageElementsCount: number;
+    pageSize: number;
+    pageNumber: number;
+    firstPage: boolean;
+    lastPage: boolean;
+    emptyPage: boolean;
+    sortedPage: boolean;
+  }
+}
+
+export type AttendanceNumbersResponse = {
+  success: boolean;
+  message: string;
+  data: {
+    totalAbsent: number;
+    totalEarlyDeparture: number;
+    totalPresent: number;
+    totalLeaveDays: number;
+  }
+}
+
+export type LeaveRecord ={
+  leaveBalance: number;
+  applyDays: number;
+  startDate: string;
+  endDate: string;
+}
+
+// Interface for the full leave attendance API response
+export type LeaveAttendanceResponse = {
+  success: boolean;
+  message: string;
+  data: {
+    content: LeaveRecord[];
+    totalElementsCount: number;
+    totalPagesCount: number;
+    pageElementsCount: number;
+    pageSize: number;
+    pageNumber: number;
+    firstPage: boolean;
+    lastPage: boolean;
+    emptyPage: boolean;
+    sortedPage: boolean;
+  }
+}
+
 /** Posts */
 
 export type Attachment = {
