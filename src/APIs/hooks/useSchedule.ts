@@ -6,8 +6,11 @@ import type {
 import {
   fetchAllSchedule,
   deleteSession,
+  fetchAllSessionAttendance,
+  fetchAllSessionMaterial,
+  fetchAllSessionExplained,
 } from "../features/schedule";
-import type { TeacherScheduleResponse } from "../../types";
+import type { SessionAttendanceResponse, SessionExplainedResponse, SessionMaterialResponse, TeacherScheduleResponse } from "../../types";
 
 export const useGetAllSchedules = (
   date: string,
@@ -20,7 +23,42 @@ export const useGetAllSchedules = (
     ...options,
   });
 };
-
+//
+export const useGetAllSessionAttendance = (
+  sessionId: string,
+  options?: UseQueryOptions<SessionAttendanceResponse, Error>,
+) => {
+  return useQuery<SessionAttendanceResponse, Error>({
+    queryKey: ["sessionAttendance", sessionId],
+    queryFn: () => fetchAllSessionAttendance(sessionId),
+    staleTime: 1000 * 60 * 5,
+    ...options,
+  });
+};
+//
+export const useGetAllSessionExplained = (
+  sessionId: string,
+  options?: UseQueryOptions<SessionExplainedResponse, Error>,
+) => {
+  return useQuery<SessionExplainedResponse, Error>({
+    queryKey: ["sessionAttendance", sessionId],
+    queryFn: () => fetchAllSessionExplained(sessionId),
+    staleTime: 1000 * 60 * 5,
+    ...options,
+  });
+};
+//
+export const useGetAllSessionMateriale = (
+  sessionId: string,
+  options?: UseQueryOptions<SessionMaterialResponse, Error>,
+) => {
+  return useQuery<SessionMaterialResponse, Error>({
+    queryKey: ["sessionMaterial", sessionId],
+    queryFn: () => fetchAllSessionMaterial(sessionId),
+    staleTime: 1000 * 60 * 5,
+    ...options,
+  });
+};
 //
 export const useDeleteSession = (
   options?: UseMutationOptions<{ message: string }, Error, number>,
