@@ -506,3 +506,40 @@ export type Material = {
   description: string;
   file: File;
 };
+
+// complaint
+
+export type ComplaintResponse = {
+    studentId: number,
+    subject: string,
+    message: string,
+    file?: File
+}
+
+// Student
+
+export type Student = {
+  studentId: number;
+  studentName: string;
+  studyLevel: string;
+  hasPhoto: boolean;
+  photoLink: string | null;
+  chatId: string | null;
+};
+
+export type StudentsResponse = {
+  success: boolean;
+  message: string;
+  data: {
+    content: Student[];
+    totalElementsCount: number;
+    totalPagesCount: number;
+    pageElementsCount: number;
+    pageSize: number;
+    pageNumber: number;
+    firstPage: boolean;
+    lastPage: boolean;
+    emptyPage: boolean;
+    sortedPage: boolean;
+  };
+};

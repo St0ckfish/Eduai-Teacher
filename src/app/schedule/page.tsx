@@ -55,8 +55,13 @@ const Schedule = () => {
   );
 
   const { mutate: addMaterial } = useCreateSessionMaterial({
-    onSuccess: (data) => {
-      console.log("Material added successfully:", data);
+    onSuccess: () => {
+      toast.success("Material added successfully!");
+      retechMaterials();
+    },
+    onError: (error: any) => {
+      toast.error("Failed to add material.");
+      console.error(error);
     },
   });
 
@@ -100,17 +105,13 @@ const Schedule = () => {
     formData.append("file", materialData.file);
 
     addMaterial(formData);
+    setIsModalOpen(false);
   };
 
   const [selectedDate, setSelectedDate] = React.useState<Date>(new Date());
   const [selectedScheduleId, setSelectedScheduleId] = React.useState<
     string | null
   >(null);
-
-  const handleInputChange = (e: any) => {
-    const { name, value } = e.target;
-    setMaterialData((prev) => ({ ...prev, [name]: value }));
-  };
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -191,10 +192,9 @@ const Schedule = () => {
   const { data: attendanceData, isLoading: isAttendanceLoading } =
     useGetAllSessionAttendance(selectedScheduleId ?? "");
 
-  const { data: Materiales, isLoading: isMaterialeLoading } =
+  const { data: Materiales, isLoading: isMaterialeLoading , refetch: retechMaterials} =
     useGetAllSessionMateriale(selectedScheduleId ?? "");
 
-  console.log(Materiales);
   const { data: Explaineds, isLoading: isExplainedLoading } =
     useGetAllSessionExplained(selectedScheduleId ?? "");
   console.log(selectedScheduleId);
