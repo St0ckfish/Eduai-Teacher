@@ -95,6 +95,7 @@ function SuccessModal({
 }
 
 function Payment({ params }: { params: { invoiceId: string } }) {
+  const { invoiceId } = params;
   const [selectedPayment, setSelectedPayment] = useState<string>("bank-card");
   const [selectedVisa, setSelectedVisa] = useState<string>("visa-1");
   const [isAddingCard, setIsAddingCard] = useState<boolean>(false);
@@ -156,7 +157,7 @@ function Payment({ params }: { params: { invoiceId: string } }) {
     // Create the deposit request object
     
     const depositRequest = {
-      invoiceId: params.invoiceId,
+      invoiceId: invoiceId,
       bankAccountId: data.request.bankAccountId,
       receiptNumber: data.request.receiptNumber,
       amount: data.request.amount,
