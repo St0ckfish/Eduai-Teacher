@@ -497,3 +497,12 @@ export type ComplainsResponse = {
         sortedPage: boolean;
     };
 };
+
+// Material 
+
+export type Material = {
+  sessionId: string;
+  title: string;
+  description: string;
+  file: File;
+};
