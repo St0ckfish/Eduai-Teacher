@@ -7,28 +7,76 @@ import {
   FaRegHeart,
   FaPaperPlane,
 } from "react-icons/fa";
+import { AiOutlineClockCircle } from "react-icons/ai";
+import { IoSend } from "react-icons/io5";
+import { FaHeart } from "react-icons/fa6";
 import Input from "~/_components/Input";
 import Comment from "~/_components/Comment";
-import { AiOutlineClockCircle, AiOutlineDown } from "react-icons/ai";
 import Button from "~/_components/Button";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Calendar } from "~/components/ui/calendar";
 import { Text } from "~/_components/Text";
-import { useGetAllPosts, useGetPost, useLikePost } from "~/APIs/hooks/usePost";
+import { useGetAllPosts, useLikePost } from "~/APIs/hooks/usePost";
 import Spinner from "~/_components/Spinner";
 import {
   useCreateComment,
   useGetAllCommentsForPost,
 } from "~/APIs/hooks/useComments";
-import { IoSend } from "react-icons/io5";
-import { FaHeart } from "react-icons/fa6";
+import { useAddAttendance, useUpcomingEvents } from "~/APIs/hooks/useEvents";
+import { isToday, isAfter } from "date-fns";
+import { CustomEvent } from "~/types";
+import { toast } from "react-toastify";
 
 export default function Home() {
+  const {
+    data: dataEvents,
+    isLoading: isEventsLoading,
+    refetch: refetchEvents,
+  } = useUpcomingEvents();
+
+  const { mutate: addAttendance } = useAddAttendance({
+    onSuccess: () => {
+      toast.success("Attendance confirmed successfully!");
+      refetchEvents();
+    },
+    onError: () => {
+      toast.success("Error confirmed attendance!");
+    },
+  });
   const [selectedPostId, setSelectedPostId] = useState<number | null>(null);
   const [comment, setComment] = useState("");
   console.log(comment);
   const { mutate: sendComment } = useCreateComment();
 
+  const [todayEvents, setTodayEvents] = useState<CustomEvent[]>([]);
+  const [upcomingEvents, setUpcomingEvents] = useState<CustomEvent[]>([]);
+
+  const categorizeEvents = (events: CustomEvent[]) => {
+    const today = new Date();
+    const todayEvents: CustomEvent[] = [];
+    const upcomingEvents: CustomEvent[] = [];
+
+    events.forEach((event) => {
+      const eventDate = new Date(event.startDate);
+      if (isToday(eventDate)) {
+        todayEvents.push(event);
+      } else if (isAfter(eventDate, today)) {
+        upcomingEvents.push(event);
+      }
+    });
+
+    return { todayEvents, upcomingEvents };
+  };
+
+  useEffect(() => {
+    if (dataEvents?.data?.content) {
+      const { todayEvents, upcomingEvents } = categorizeEvents(
+        dataEvents?.data?.content,
+      );
+      setTodayEvents(todayEvents);
+      setUpcomingEvents(upcomingEvents);
+    }
+  }, [dataEvents]);
 
   const {
     data: comments,
@@ -39,9 +87,13 @@ export default function Home() {
     page: 0,
     size: 10,
   });
-  
+
   console.log(comments);
-  const { data: dataPosts, refetch, isLoading } = useGetAllPosts({ page: 0, size: 10 });
+  const {
+    data: dataPosts,
+    refetch,
+    isLoading,
+  } = useGetAllPosts({ page: 0, size: 10 });
   const { mutate: likePost } = useLikePost();
 
   const handleLikeClick = (postId: number, liked: boolean) => {
@@ -51,10 +103,10 @@ export default function Home() {
         onSuccess: () => {
           refetch(); // Only refetch posts after successful like/unlike mutation
         },
-      }
+      },
     );
   };
-  
+
   const handleCommentClick = (postId: number) => {
     setSelectedPostId(postId === selectedPostId ? null : postId);
   };
@@ -78,6 +130,11 @@ export default function Home() {
     console.log(likesCount);
   };
 
+  const handleConfirmAttendance = (eventId: string) => {
+    addAttendance(eventId);
+    refetchEvents();
+  };
+  //
   function CalendarDemo() {
     const [date, setDate] = React.useState<Date | undefined>(new Date());
 
@@ -91,7 +148,7 @@ export default function Home() {
     );
   }
 
-  if (isLoading) return <Spinner />;
+  if (isLoading || isEventsLoading) return <Spinner />;
 
   return (
     <Container>
@@ -109,7 +166,7 @@ export default function Home() {
                             ? post.publisherPicture
                             : "/images/default.png"
                         }
-                        className="rounded-full w-[60px] h-[60px]"
+                        className="h-[60px] w-[60px] rounded-full"
                         alt="Profile Photo"
                         width={60}
                         height={60}
@@ -126,11 +183,34 @@ export default function Home() {
                     <FaEllipsisH size={20} />
                   </div>
                 </div>
-                <Text className="ml-2">{post.content}</Text>
+                <Text className="m-2">{post.content}</Text>
+                <div className="mt-4">
+                  {post?.attachments?.length > 0 && (
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
+                      {post.attachments.slice(0, 6).map((attachment, index) => (
+                        <div key={index} className="relative">
+                          <Image
+                            src={attachment.viewLink}
+                            alt={`Post Image ${index + 1}`}
+                            width={500}
+                            height={500}
+                            className="h-full w-full rounded-md object-cover"
+                          />
+                        </div>
+                      ))}
+                      {post.attachments.length > 6 && (
+                        <div className="relative flex items-center justify-center rounded-md bg-gray-200">
+                          <Text font="bold" size="lg" className="text-primary">
+                            +{post.attachments.length - 6} more
+                          </Text>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
               </div>
               <div>
                 <div className="flex gap-3">
-                
                   <button
                     className="flex items-center gap-1"
                     onClick={() => handleLikesCount(post.id, post.likesCount)}
@@ -139,7 +219,7 @@ export default function Home() {
                       <FaHeart
                         color="red"
                         size={20}
-                        onClick={() => handleLikeClick(post.id, false)} 
+                        onClick={() => handleLikeClick(post.id, false)}
                       />
                     ) : (
                       <FaRegHeart
@@ -152,7 +232,7 @@ export default function Home() {
                   </button>
                   <button
                     className="flex items-center gap-1"
-                    onClick={() => handleCommentClick(post.id)} 
+                    onClick={() => handleCommentClick(post.id)}
                   >
                     <FaRegComment size={20} />
                     <span className="text-sm">
@@ -222,73 +302,124 @@ export default function Home() {
           ))}
         </div>
         <div className="w-full rounded-md bg-bgPrimary p-4 md:w-1/2">
-          <div className="my-2 border-b border-borderPrimary">
-            <Text font={"bold"} size={"2xl"}>
+          <div>
+            <Text font="bold" size="2xl">
               Today&apos;s Events
             </Text>
-            <div className="my-4">
-              <div>
-                <div className="flex justify-between rounded-md bg-thead p-2 text-primary">
-                  <Text color={"primary"}>Today</Text>
-                  <div className="flex gap-1">
-                    <div className="mt-[2px]">
-                      <AiOutlineClockCircle size={18} />
-                    </div>
-                    <Text color={"primary"}>04:00 - 43 Min</Text>
-                  </div>
-                </div>
+            {todayEvents.length > 0 ? (
+              todayEvents.map((event) => (
+                <div
+                  key={event.id}
+                  className="my-2 border-b border-borderPrimary"
+                >
+                  <div className="my-4">
+                    <div>
+                      <div className="flex justify-between rounded-md bg-thead p-2 text-primary">
+                        <Text color="primary">
+                          {new Date(event.startDate).toLocaleDateString()}
+                        </Text>
+                        <div className="flex gap-1">
+                          <div className="mt-[2px]">
+                            <AiOutlineClockCircle size={18} />
+                          </div>
+                          <Text color="primary">
+                            {new Date(event.startDate).toLocaleTimeString()} -{" "}
+                            {Math.abs(
+                              new Date(event.endDate).getTime() -
+                                new Date(event.startDate).getTime(),
+                            ) /
+                              (1000 * 60)}{" "}
+                            Min
+                          </Text>
+                        </div>
+                      </div>
 
-                <div className="flex justify-between p-4">
-                  <div>
-                    <Text>Parent - teacher meeting!</Text>
-                    <Text color={"gray"}>Academic Progress</Text>
-                  </div>
-                  <div>
-                    <Button>Confirm Attendance</Button>
+                      <div className="flex justify-between p-4">
+                        <div>
+                          <Text>{event.title}</Text>
+                          <Text color="gray">{event.description}</Text>
+                        </div>
+                        <div>
+                          {event.isAttendee ? (
+                            <Button color="secondary">
+                              Attendance Confirmed
+                            </Button>
+                          ) : (
+                            <Button
+                              onClick={() =>
+                                handleConfirmAttendance(event.id.toString())
+                              }
+                            >
+                              Confirm Attendance
+                            </Button>
+                          )}
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div className="flex justify-center gap-1 text-primary">
-                <Text color={"primary"}>Show more </Text>
-                <div className="mt-[2px]">
-                  <AiOutlineDown size={20} />{" "}
-                </div>
-              </div>
-            </div>
+              ))
+            ) : (
+              <Text>No events scheduled for today.</Text>
+            )}
           </div>
+
           <div className="my-2 border-b border-borderPrimary">
-            <Text font={"bold"} size={"2xl"}>
+            <Text font="bold" size="2xl">
               Upcoming Events
             </Text>
-            <div className="my-4">
-              <div>
-                <div className="flex justify-between rounded-md bg-thead p-2 text-primary">
-                  <Text color={"primary"}>Sunday - 4 April 2024</Text>
-                  <div className="flex gap-1">
-                    <div className="mt-[2px]">
-                      <AiOutlineClockCircle size={18} />
+            {upcomingEvents.length > 0 ? (
+              upcomingEvents.map((event) => (
+                <div key={event.id} className="my-4">
+                  <div className="flex justify-between rounded-md bg-thead p-2 text-primary">
+                    <Text color="primary">
+                      {new Date(event.startDate).toLocaleDateString("en-US", {
+                        weekday: "long",
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      })}
+                    </Text>
+                    <div className="flex gap-1">
+                      <div className="mt-[2px]">
+                        <AiOutlineClockCircle size={18} />
+                      </div>
+                      <Text color="primary">
+                        {new Date(event.startDate).toLocaleTimeString()} -{" "}
+                        {Math.abs(
+                          new Date(event.endDate).getTime() -
+                            new Date(event.startDate).getTime(),
+                        ) /
+                          (1000 * 60)}{" "}
+                        Min
+                      </Text>
                     </div>
-                    <Text color={"primary"}>04:00 - 43 Min</Text>
                   </div>
-                </div>
 
-                <div className="flex justify-between p-4">
-                  <div>
-                    <Text>Parent - teacher meeting!</Text>
-                    <Text color={"gray"}>Academic Progress</Text>
-                  </div>
-                  <div>
-                    <Button>Confirm Attendance</Button>
+                  <div className="flex justify-between p-4">
+                    <div>
+                      <Text>{event.title}</Text>
+                      <Text color="gray">{event.description}</Text>
+                    </div>
+                    <div>
+                      {event.isAttendee ? (
+                        <Button color="secondary">Attendance Confirmed</Button>
+                      ) : (
+                        <Button
+                          onClick={() =>
+                            handleConfirmAttendance(event.id.toString())
+                          }
+                        >
+                          Confirm Attendance
+                        </Button>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div className="flex justify-center gap-1 text-primary">
-                <Text color={"primary"}>Show more </Text>
-                <div className="mt-[2px]">
-                  <AiOutlineDown size={20} />{" "}
-                </div>
-              </div>
-            </div>
+              ))
+            ) : (
+              <Text>No upcoming events scheduled.</Text>
+            )}
           </div>
 
           <div className="my-2 border-b border-borderPrimary">

@@ -543,3 +543,46 @@ export type StudentsResponse = {
     sortedPage: boolean;
   };
 };
+
+// Events
+
+export type EventAttendee = {
+  id: number; 
+};
+
+export type Event = {
+  id: number;
+  title: string;
+  description: string;
+  startDate: string;
+  endDate: string;
+  isAttendee: boolean;
+  attendees: EventAttendee[]; 
+};
+
+export type EventsResponse = {
+  success: boolean;
+  message: string;
+  data: {
+    content: Event[];
+    totalElementsCount: number;
+    totalPagesCount: number;
+    pageElementsCount: number;
+    pageSize: number;
+    pageNumber: number;
+    firstPage: boolean;
+    lastPage: boolean;
+    emptyPage: boolean;
+    sortedPage: boolean;
+  };
+};
+
+export type CustomEvent = {
+  id: number;
+  title: string;
+  description: string;
+  startDate: string;
+  endDate: string;
+  isAttendee: boolean;
+  attendees: any[];
+};

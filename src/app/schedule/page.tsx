@@ -20,6 +20,7 @@ import { useCreateSessionMaterial } from "~/APIs/hooks/useMaterial";
 import { toast } from "react-toastify";
 import Link from "next/link";
 import { FaDownload } from "react-icons/fa6";
+import { FaEllipsisV } from "react-icons/fa";
 
 function CalendarDemo({
   onDateSelect,
@@ -192,8 +193,11 @@ const Schedule = () => {
   const { data: attendanceData, isLoading: isAttendanceLoading } =
     useGetAllSessionAttendance(selectedScheduleId ?? "");
 
-  const { data: Materiales, isLoading: isMaterialeLoading , refetch: retechMaterials} =
-    useGetAllSessionMateriale(selectedScheduleId ?? "");
+  const {
+    data: Materiales,
+    isLoading: isMaterialeLoading,
+    refetch: retechMaterials,
+  } = useGetAllSessionMateriale(selectedScheduleId ?? "");
 
   const { data: Explaineds, isLoading: isExplainedLoading } =
     useGetAllSessionExplained(selectedScheduleId ?? "");
@@ -438,19 +442,7 @@ const Schedule = () => {
                           {material.title}
                         </Text>
                         <button>
-                          <svg
-                            className="h-6 w-6 text-textPrimary"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          >
-                            <circle cx="12" cy="12" r="1" />
-                            <circle cx="12" cy="5" r="1" />
-                            <circle cx="12" cy="19" r="1" />
-                          </svg>
+                          <FaEllipsisV />
                         </button>
                       </div>
                       <div>
@@ -458,7 +450,7 @@ const Schedule = () => {
                       </div>
                       {material.fileLink && (
                         <Link href={material.fileLink}>
-                          <FaDownload className="text-primary mb-2" /> 
+                          <FaDownload className="mb-2 text-primary" />
                         </Link>
                       )}
                     </div>
