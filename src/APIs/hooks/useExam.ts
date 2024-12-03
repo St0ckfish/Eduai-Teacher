@@ -1,9 +1,10 @@
-import { useQuery} from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import type {
+  UseMutationOptions,
   UseQueryOptions,
 } from "@tanstack/react-query";
-import type { ExamListResponse, Upcoming_Previous_Exams } from "../../types";
-import { fetchAllExams, fetchAllPreviousExams, fetchAllUpcomingExams } from "../features/exam";
+import type { ExamFormData, ExamListResponse, Upcoming_Previous_Exams } from "../../types";
+import { createExam, fetchAllExams, fetchAllPreviousExams, fetchAllUpcomingExams } from "../features/exam";
 
 export const useGetAllExams = (
   options?: UseQueryOptions<ExamListResponse, Error>,
@@ -32,6 +33,19 @@ export const useGetAllPreviousExams = (
     queryKey: ["previous"],
     queryFn: () => fetchAllPreviousExams(),
     staleTime: 1000 * 60 * 5,
+    ...options,
+  });
+};
+
+export const useCreateExam = (
+  options?: UseMutationOptions<ExamFormData, Error, Partial<ExamFormData>>,
+) => {
+  const queryClient = useQueryClient();
+  return useMutation<ExamFormData, Error, Partial<ExamFormData>>({
+    mutationFn: createExam,
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["createExam"] });
+    },
     ...options,
   });
 };

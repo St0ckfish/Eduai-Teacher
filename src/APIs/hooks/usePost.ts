@@ -1,4 +1,4 @@
-import { useMutation, useQuery, UseQueryOptions } from "@tanstack/react-query";
+import { useMutation, useQuery, type UseQueryOptions } from "@tanstack/react-query";
 import type { PostResponse, SinglePostResponse } from "../../types";
 import { fetchAllPosts, fetchPostById, likePost } from "../features/post";
 
@@ -9,6 +9,10 @@ export const useGetAllPosts = (
   return useQuery<PostResponse, Error>({
     queryKey: ["posts", params], 
     queryFn: () => fetchAllPosts(params),
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+    refetchInterval: false,
     ...options,
   });
 };

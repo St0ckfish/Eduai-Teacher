@@ -586,3 +586,54 @@ export type CustomEvent = {
   isAttendee: boolean;
   attendees: any[];
 };
+
+
+export type BankAccount = {
+  id: number;
+  createdDate: string;
+  updatedDate: string;
+  bankName: string;
+  bankShortName: string;
+  beneficiaryName: string;
+  beneficiaryAddress: string;
+  beneficiaryAccountNumber: string;
+};
+
+export type BankAccountResponse = {
+  success: boolean;
+  message: string;
+  data: {
+      content: BankAccount[];
+      totalElementsCount: number;
+      totalPagesCount: number;
+      pageElementsCount: number;
+      pageSize: number;
+      pageNumber: number;
+      firstPage: boolean;
+      lastPage: boolean;
+      emptyPage: boolean;
+      sortedPage: boolean;
+  };
+};
+
+export type BankAccountFormData = {
+  request: {
+    invoiceId: number;
+    bankAccountId: number;
+    receiptNumber: string;
+    amount: number;
+    depositDate: string;
+  };
+  file: File | null;
+}
+
+export type ExamFormData = {
+  name: string;
+  examDate: string;
+  examBeginning: string;
+  examEnding: string;
+  teacherId: number;
+  courseId: number;
+  classroomId: number;
+  examTypeId: number;
+}
