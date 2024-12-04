@@ -1,42 +1,40 @@
 "use client";
 import { Controller, useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 import Button from "~/_components/Button";
 import Container from "~/_components/Container";
 import Input from "~/_components/Input";
 import SearchableSelect from "~/_components/SearchSelect";
 import { Text } from "~/_components/Text";
-import { SignUpFormData } from "~/types";
+import { useCreateExam } from "~/APIs/hooks/useExam";
+import { type ExamFormData } from "~/types";
 
 const Bus = () => {
+  const { mutate, isPending} = useCreateExam()
   const {
     control,
     handleSubmit,
     register,
     trigger,
     formState: { errors },
-  } = useForm<SignUpFormData>({
+  } = useForm<ExamFormData>({
     shouldUnregister: false,
   });
 
-  const classOptions = [
-    { label: "Class 1", value: "class-1" },
-    { label: "Class 2", value: "class-2" },
-    { label: "Class 3", value: "class-3" },
-    { label: "Class 4", value: "class-4" },
-    { label: "Class 5", value: "class-5" },
-  ];
-
-  const examOptions = [
-    { label: "Regular", value: "regular" },
-    { label: "Special", value: "special" },
-  ];
-
-  const examBeginningOptions = [
-    { label: "1st", value: "1st" },
-    { label: "2nd", value: "2nd" },
-    { label: "3rd", value: "3rd" },
-    { label: "4th", value: "4th" },
-  ];
+  const onSubmit = (data: ExamFormData) => {
+    mutate(data, {
+      onSuccess: () => {
+        toast.success("Form submitted successfully!");
+      },
+      onError: (err: Error & { response?: { data: { message: string; data: [] } } }) => {
+        if (err.response?.data) {
+          toast.error(err.response.data.message);
+        } else {
+          toast.error(err.message);
+        }
+      },
+    });
+  };
 
   const examEndingOptions = [
     { label: "1st", value: "1st" },
@@ -51,123 +49,146 @@ const Bus = () => {
           <Text font={"bold"} size={"4xl"}>
             Add Exam
           </Text>
-          <div className="mt-4 grid grid-cols-1 gap-6 md:grid-cols-2 w-full md:w-3/4">
-            <div>
-              <Input
-                name="title"
-                placeholder="title"
-                theme="transparent"
-                border="gray"
-              />
-            </div>
-            <div>
-              <Input
-                name="score"
-                placeholder="score"
-                theme="transparent"
-                border="gray"
-              />
-            </div>
-            <div>
-              <label htmlFor="schoolId" className="block">
-                <Controller
-                  name="schoolId"
-                  control={control}
-                  rules={{ required: "Class selection is required" }}
-                  defaultValue=""
-                  render={({ field: { onChange, value } }) => (
-                    <SearchableSelect
-                      error={errors.schoolId?.message?.toString() ?? ""}
-                      value={value}
-                      onChange={onChange}
-                      placeholder="Select Class"
-                      options={classOptions}
-                      bgColor="bg-bgPrimary"
-                      border="border-border"
-                    />
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <div className="mt-4 grid grid-cols-1 gap-6 md:grid-cols-2 w-full md:w-3/4">
+              <div>
+                <label htmlFor="teacherId" className="block">
+                  <Controller
+                    name="teacherId"
+                    control={control}
+                    rules={{ required: "Teacher selection is required" }}
+                    render={({ field: { onChange, value } }) => (
+                      <SearchableSelect
+                        error={errors.teacherId?.message?.toString() ?? ""}
+                        value={value}
+                        onChange={onChange}
+                        placeholder="Teacher Id"
+                        options={examEndingOptions}
+                        bgColor="bg-bgPrimary"
+                        border="border-border"
+                      />
+                    )}
+                  />
+                </label>
+              </div>
+              <div>
+                <label htmlFor="courseId" className="block">
+                  <Controller
+                    name="courseId"
+                    control={control}
+                    rules={{ required: "Course selection is required" }}
+                    render={({ field: { onChange, value } }) => (
+                      <SearchableSelect
+                        error={errors.courseId?.message?.toString() ?? ""}
+                        value={value}
+                        onChange={onChange}
+                        placeholder="Course Id"
+                        options={examEndingOptions}
+                        bgColor="bg-bgPrimary"
+                        border="border-border"
+                      />
+                    )}
+                  />
+                </label>
+              </div>
+              <div>
+                <label htmlFor="classroomId" className="block">
+                  <Controller
+                    name="classroomId"
+                    control={control}
+                    rules={{ required: "Classroom selection is required" }}
+                    render={({ field: { onChange, value } }) => (
+                      <SearchableSelect
+                        error={errors.classroomId?.message?.toString() ?? ""}
+                        value={value}
+                        onChange={onChange}
+                        placeholder="Classroom Id"
+                        options={examEndingOptions}
+                        bgColor="bg-bgPrimary"
+                        border="border-border"
+                      />
+                    )}
+                  />
+                </label>
+              </div>
+              <label htmlFor="name" className="">
+                  <Input
+                    {...register("name", { required: "name is required" })}
+                    error={errors.name?.message?.toString() ?? ""}
+                    placeholder="name"
+                    theme="transparent"
+                    className="border border-gray-200"
+                  />
+                  {errors.name && (
+                    <p className="mt-1 text-sm text-red-500">
+                      {errors.name.message?.toString()}
+                    </p>
                   )}
-                />
-              </label>
-            </div>
-            <div>
-              <label htmlFor="schoolId" className="block">
-                <Controller
-                  name="schoolId"
-                  control={control}
-                  rules={{ required: "Class selection is required" }}
-                  defaultValue=""
-                  render={({ field: { onChange, value } }) => (
-                    <SearchableSelect
-                      error={errors.schoolId?.message?.toString() ?? ""}
-                      value={value}
-                      onChange={onChange}
-                      placeholder="Exam Type"
-                      options={examOptions}
-                      bgColor="bg-bgPrimary"
-                      border="border-border"
-                    />
+                </label>
+              <label htmlFor="examTypeId" className="">
+                  <Input
+                    {...register("examTypeId", { required: "examTypeId is required" })}
+                    error={errors.examTypeId?.message?.toString() ?? ""}
+                    placeholder="examTypeId"
+                    theme="transparent"
+                    className="border border-gray-200"
+                  />
+                  {errors.examTypeId && (
+                    <p className="mt-1 text-sm text-red-500">
+                      {errors.examTypeId.message?.toString()}
+                    </p>
                   )}
-                />
-              </label>
-            </div>
-            <div>
-              <label htmlFor="schoolId" className="block">
-                <Controller
-                  name="schoolId"
-                  control={control}
-                  rules={{ required: "Class selection is required" }}
-                  defaultValue=""
-                  render={({ field: { onChange, value } }) => (
-                    <SearchableSelect
-                      error={errors.schoolId?.message?.toString() ?? ""}
-                      value={value}
-                      onChange={onChange}
-                      placeholder="Exam Beginning"
-                      options={examBeginningOptions}
-                      bgColor="bg-bgPrimary"
-                      border="border-border"
-                    />
+                </label>
+              <label htmlFor="examDate" className="">
+                  <Input
+                    {...register("examDate", { required: "examDate is required" })}
+                    error={errors.examDate?.message?.toString() ?? ""}
+                    placeholder="examDate"
+                    type="date"
+                    theme="transparent"
+                    className="border border-gray-200"
+                  />
+                  {errors.examDate && (
+                    <p className="mt-1 text-sm text-red-500">
+                      {errors.examDate.message?.toString()}
+                    </p>
                   )}
-                />
-              </label>
-            </div>
-            <div>
-              <label htmlFor="schoolId" className="block">
-                <Controller
-                  name="schoolId"
-                  control={control}
-                  rules={{ required: "Class selection is required" }}
-                  defaultValue=""
-                  render={({ field: { onChange, value } }) => (
-                    <SearchableSelect
-                      error={errors.schoolId?.message?.toString() ?? ""}
-                      value={value}
-                      onChange={onChange}
-                      placeholder="Exam ending"
-                      options={examEndingOptions}
-                      bgColor="bg-bgPrimary"
-                      border="border-border"
-                    />
+                </label>
+              <label htmlFor="examBeginning" className="">
+                  <Input
+                    {...register("examBeginning", { required: "examBeginning is required" })}
+                    error={errors.examBeginning?.message?.toString() ?? ""}
+                    placeholder="examBeginning"
+                    type="time"
+                    theme="transparent"
+                    className="border border-gray-200"
+                  />
+                  {errors.examBeginning && (
+                    <p className="mt-1 text-sm text-red-500">
+                      {errors.examBeginning.message?.toString()}
+                    </p>
                   )}
-                />
-              </label>
+                </label>
+              <label htmlFor="examEnding" className="">
+                  <Input
+                    {...register("examEnding", { required: "examEnding is required" })}
+                    error={errors.examEnding?.message?.toString() ?? ""}
+                    placeholder="examEnding"
+                    type="time"
+                    theme="transparent"
+                    className="border border-gray-200"
+                  />
+                  {errors.examEnding && (
+                    <p className="mt-1 text-sm text-red-500">
+                      {errors.examEnding.message?.toString()}
+                    </p>
+                  )}
+                </label>
+              <div>
+                <Button type="submit" disabled={isPending}>{isPending ? "Continue..." : "Continue"}</Button>
+              </div>
             </div>
-            <div>
-              <label htmlFor="birthDate" className="block">
-                <Input
-                  type="date"
-                  placeholder="Exam Date"
-                  className="!mb-2 !mt-2"
-                  theme="transparent"
-                  border="gray"
-                />
-              </label>
-            </div>
-            <div></div>
-            <div>
-              <Button>Continue</Button>
-            </div>
-          </div>
+          </form>
         </div>
       </Container>
     </>

@@ -486,13 +486,13 @@ const NavBar = () => {
                           {" "}
                           Exam{" "}
                         </Link>
-                        <Link
+                        {/* <Link
                           className={`hover:text-primary ${url === "/exercises" ? "text-primary" : "textPrimary"}`}
                           href="/exercises"
                         >
                           {" "}
                           Exercises{" "}
-                        </Link>
+                        </Link> */}
                       </ul>
                     )}
                   </li>

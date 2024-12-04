@@ -1,5 +1,5 @@
 "use client";
-import { type ChangeEvent, useState } from "react";
+import React, { type ChangeEvent, useState } from "react";
 import Container from "~/_components/Container";
 import { Text } from "~/_components/Text";
 import * as RadioGroup from "@radix-ui/react-radio-group";
@@ -8,99 +8,105 @@ import { AiOutlineCloudUpload, AiOutlineCreditCard } from "react-icons/ai";
 import Image from "next/image";
 import Input from "~/_components/Input";
 import Button from "~/_components/Button";
+import { Controller, useForm } from "react-hook-form";
+import SearchableSelect from "~/_components/SearchSelect";
+import { useDeposit, useGetAllBanks } from "~/APIs/hooks/useBank";
+import { type BankAccountFormData } from "~/types";
+import { toast } from "react-toastify";
+
+type PaymentClientProps = {
+    invoiceId: string;
+  };
 
 const paymentMethods = [
-  {
-    value: "bank-card",
-    label: "Bank Card",
-    icon: <AiOutlineCreditCard size={20} />,
-  },
-  {
-    value: "wallet",
-    label: "Wallet",
-    icon: <FaWallet size={20} />,
-  },
-  {
-    value: "cash-deposit",
-    label: "Cash Deposit",
-    icon: <FaMoneyBillWave size={20} />,
-  },
-];
-
-const visaCards = [
-  {
-    visaNumber: "1234 5678 9012 3456",
-  },
-  {
-    visaNumber: "1234 5678 9012 0000",
-  },
-];
-
-const wallets = [
-  {
-    name: "Vodafone Cash",
-    src: "/images/vodafone.png",
-  },
-  {
-    name: "Fawry",
-    src: "/images/fawry.png",
-  },
-];
-
-function SuccessModal({
-  isOpen,
-  onClose,
-}: {
-  isOpen: boolean;
-  onClose: () => void;
-}) {
-  if (!isOpen) return null;
-
-  return (
-    <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black bg-opacity-50">
-      <div className="w-full max-w-md rounded-lg border border-borderPrimary bg-bgPrimary p-6 shadow-lg">
-        <div className="flex flex-col items-center">
-          <div>
-            <Image
-              src={"/images/succes.png"}
-              alt="Success"
-              width={100}
-              height={100}
-              className="mx-auto"
-            />
+    {
+      value: "bank-card",
+      label: "Bank Card",
+      icon: <AiOutlineCreditCard size={20} />,
+    },
+    {
+      value: "wallet",
+      label: "Wallet",
+      icon: <FaWallet size={20} />,
+    },
+    {
+      value: "cash-deposit",
+      label: "Cash Deposit",
+      icon: <FaMoneyBillWave size={20} />,
+    },
+  ];
+  
+  const visaCards = [
+    {
+      visaNumber: "1234 5678 9012 3456",
+    },
+    {
+      visaNumber: "1234 5678 9012 0000",
+    },
+  ];
+  
+  const wallets = [
+    {
+      name: "Vodafone Cash",
+      src: "/images/vodafone.png",
+    },
+    {
+      name: "Fawry",
+      src: "/images/fawry.png",
+    },
+  ];
+  
+  function SuccessModal({
+    isOpen,
+    onClose,
+  }: {
+    isOpen: boolean;
+    onClose: () => void;
+  }) {
+    if (!isOpen) return null;
+  
+    return (
+      <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black bg-opacity-50">
+        <div className="w-full max-w-md rounded-lg border border-borderPrimary bg-bgPrimary p-6 shadow-lg">
+          <div className="flex flex-col items-center">
+            <div>
+              <Image
+                src={"/images/succes.png"}
+                alt="Success"
+                width={100}
+                height={100}
+                className="mx-auto"
+              />
+            </div>
+            <Text font={"bold"} size={"2xl"} className="mt-4">
+              Success!
+            </Text>
+            <Text
+              font={"medium"}
+              color={"gray"}
+              size={"xl"}
+              className="mt-2 text-center"
+            >
+              Receipt has been sent successfully.
+            </Text>
+            <Button className="mt-6" onClick={onClose}>
+              Ok
+            </Button>
           </div>
-          <Text font={"bold"} size={"2xl"} className="mt-4">
-            Success!
-          </Text>
-          <Text
-            font={"medium"}
-            color={"gray"}
-            size={"xl"}
-            className="mt-2 text-center"
-          >
-            Receipt has been sent successfully.
-          </Text>
-          <Button className="mt-6" onClick={onClose}>
-            Ok
-          </Button>
         </div>
       </div>
-    </div>
-  );
-}
+    );
+  }
 
-function Payment() {
-  // State to track the selected payment method
-  const [selectedPayment, setSelectedPayment] = useState<string>("bank-card");
+  export default function PaymentClient({ invoiceId }: PaymentClientProps) {
+    const [selectedPayment, setSelectedPayment] = useState<string>("bank-card");
   const [selectedVisa, setSelectedVisa] = useState<string>("visa-1");
-  const [isAddingCard, setIsAddingCard] = useState<boolean>(false); // New state for adding a card
+  const [isAddingCard, setIsAddingCard] = useState<boolean>(false);
   const [isChecked, setIsChecked] = useState(false);
   const [isModalOpen, setModalOpen] = useState(false);
-  const [showConfirm, setShowConfirm] = useState(false);
 
   const [fileName, setFileName] = useState("");
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>): void => {
     const target = e.target as HTMLInputElement;
     const file = target.files?.[0]; 
@@ -108,39 +114,87 @@ function Payment() {
       setFileName(file.name); 
     }
   };
-  const handlePay = () => {
-    setModalOpen(true); // Open the modal
-  };
 
   const handleCloseModal = () => {
     setModalOpen(false); // Close the modal
   };
 
-  // Handle value change when a radio button is selected
-  const handlePaymentChange = (value: string) => {
+  
+  const {
+    control,
+    handleSubmit,
+    register,
+    formState: { errors },
+  } = useForm<BankAccountFormData>();
+  
+  const {data: banks} = useGetAllBanks()
+  
+  const bankOptions =
+  banks?.data?.content.map(
+      (bank) => ({
+        value: bank.id,
+        label: `${bank.bankName} - ${bank.beneficiaryName}, ${bank.beneficiaryAccountNumber}`,
+      }),
+    ) ?? [];
+
+    // Handle value change when a radio button is selected
+    const handlePaymentChange = (value: string) => {
     setSelectedPayment(value);
     setIsAddingCard(false);
-    setShowConfirm(false);
   };
-
+  
   const handleVisaChange = (value: string) => {
     setSelectedVisa(value);
     setIsAddingCard(false);
-    setShowConfirm(false);
   };
 
   const handleAddCardClick = () => {
     setIsAddingCard(true); // Show the "Adding Card" UI
   };
-
+  
   const handleCheckboxChange = () => {
     setIsChecked(!isChecked);
   };
+  const { mutate, isPending: isSubmitting } = useDeposit();
+  const onSubmit = (data: BankAccountFormData) => {
+    // Create the deposit request object
+    
+    const depositRequest = {
+      invoiceId: invoiceId,
+      bankAccountId: data.request.bankAccountId,
+      receiptNumber: data.request.receiptNumber,
+      amount: data.request.amount,
+      depositDate: data.request.depositDate
+    };
 
-  const handleShowConfirm = () => {
-    setShowConfirm(true); // Show the "Adding Card" UI
+    // Create FormData for file upload
+    const formData = new FormData();
+    
+    // Append the deposit request as a JSON string
+    formData.append('request', JSON.stringify(depositRequest));
+    
+    // Append the file
+    if (data.file && data.file instanceof FileList && data.file.length > 0) {
+      formData.append('file', data.file[0]!);
+    }
+
+    // Send the FormData
+    mutate(formData as unknown as Partial<BankAccountFormData>, {
+      onSuccess: () => {
+        setModalOpen(true); // Open success modal
+        toast.success("Form submitted successfully!");
+      },
+      onError: (err: Error & { response?: { data: { message: string; data: [] } } }) => {
+        if (err.response?.data) {
+          toast.error(err.response.data.message);
+        } else {
+          toast.error(err.message);
+        }
+      },
+    });
   };
 
+  
   return (
     <Container>
       <div className="w-full overflow-x-hidden rounded-xl bg-bgPrimary p-4">
@@ -179,7 +233,7 @@ function Payment() {
       </div>
 
       {/* Conditional rendering for Adding Card */}
-      <div className="mt-8">
+      <div className="mt-8 mb-10">
         {isAddingCard ? (
           <div className="mt-8 w-full overflow-x-hidden rounded-xl bg-bgPrimary p-4">
             <Text font={"semiBold"} size={"2xl"}>
@@ -413,12 +467,84 @@ function Payment() {
               <Button>Continue</Button>
             </div>
           </div>
-        ) : showConfirm ? (
+        ) : (
           <div className="mt-8 w-full overflow-x-hidden rounded-xl bg-bgPrimary p-4">
             <Text font={"bold"} size={"2xl"}>
-              Confirm deposit
+              Bank deposit
             </Text>
-            <form className="mt-8 grid w-2/3 grid-cols-1 gap-8 md:grid-cols-2">
+            <Text font={"medium"} size={"xl"} className="mt-4">
+              Visit the nearest CIB branch and make a deposit using the
+              following details, then confirm the transfer on the Edu AI app.
+            </Text>
+            <form onSubmit={handleSubmit(onSubmit)} className="mt-8 grid w-2/3 grid-cols-1 gap-8 md:grid-cols-2">
+              <div>
+              <label htmlFor="bankAccountId" className="block">
+                Bank Id 
+                <Controller
+                  name="request.bankAccountId"
+                  control={control}
+                  rules={{ required: "Bank selection is required" }}
+                  render={({ field: { onChange, value } }) => (
+                    <SearchableSelect
+                      error={errors?.request?.bankAccountId?.message?.toString() ?? ""}
+                      value={value}
+                      onChange={onChange}
+                      placeholder="Select Bank"
+                      options={bankOptions}
+                    />
+                  )}
+                />
+              </label>
+              </div>
+              <div>
+              <label htmlFor="receiptNumber" className="">
+                <Input
+                  {...register("request.receiptNumber", { required: "receiptNumber is required" })}
+                  error={errors?.request?.receiptNumber?.message?.toString() ?? ""}
+                  placeholder="receiptNumber"
+                  theme="transparent"
+                  label="Receipt number"
+                />
+                {errors?.request?.receiptNumber && (
+                  <p className="mt-1 text-sm text-red-500">
+                    {errors.request.receiptNumber.message?.toString()}
+                  </p>
+                )}
+              </label>
+              </div>
+              <div>
+              <label htmlFor="depositDate" className="">
+                <Input
+                  {...register("request.depositDate", { required: "depositDate is required" })}
+                  error={errors?.request?.depositDate?.message?.toString() ?? ""}
+                  placeholder="depositDate"
+                  theme="transparent"
+                  label="Date Deposit"
+                  type="date"
+                />
+                {errors?.request?.depositDate && (
+                  <p className="mt-1 text-sm text-red-500">
+                    {errors.request.depositDate.message?.toString()}
+                  </p>
+                )}
+              </label>
+              </div>
+              <div>
+              <label htmlFor="amount" className="">
+                <Input
+                  {...register("request.amount", { required: "amount is required" })}
+                  error={errors.request?.amount?.message?.toString() ?? ""}
+                  placeholder="amount"
+                  theme="transparent"
+                  label="Amount deposited"
+                />
+                {errors.request?.amount && (
+                  <p className="mt-1 text-sm text-red-500">
+                    {errors.request.amount.message?.toString()}
+                  </p>
+                )}
+              </label>
+              </div>
               <label className="h-[200px] rounded-xl border-2 border-dashed border-borderPrimary">
                 <div className="flex h-full flex-col items-center justify-center">
                   <AiOutlineCloudUpload
@@ -441,117 +567,18 @@ function Payment() {
                 </div>
                 <input
                   type="file"
+                  {...register("file", { required: "file is required" })}
                   className="opacity-0"
                   onChange={handleFileChange}
                 />
               </label>
-              <div></div>
-              <div>
-                <label htmlFor="receiptNumber" className="text-xl">
-                  Receipt number
-                </label>
-                <Input
-                  type="number"
-                  id="receiptNumber"
-                  placeholder="1234"
-                  theme="transparent"
-                  border="gray"
-                  className="mt-2"
-                />
-              </div>
-              <div>
-                <Text size={"xl"}>Date Deposit</Text>
-                <Input
-                  type="date"
-                  placeholder="dd/mm/yyyy"
-                  theme="transparent"
-                  border="gray"
-                  className="mt-2"
-                />
-              </div>
-              <div>
-                <label htmlFor="amountDeposited" className="text-xl">
-                  Amount deposited
-                </label>
-                <Input
-                  type="number"
-                  id="amountDeposited"
-                  placeholder="0.00 MAD"
-                  theme="transparent"
-                  border="gray"
-                  className="mt-2"
-                />
-              </div>
-            </form>
-            <div className="mt-4 w-1/4">
-              <Button onClick={handlePay}>Send Details</Button>
+              <div className="mt-4 w-1/4">
+              <Button type="submit" disabled={isSubmitting}>{isSubmitting ? "Confirm..." : "Confirm"}</Button>
             </div>
-          </div>
-        ) : (
-          <div className="mt-8 w-full overflow-x-hidden rounded-xl bg-bgPrimary p-4">
-            <Text font={"bold"} size={"2xl"}>
-              Bank deposit
-            </Text>
-            <Text font={"medium"} size={"xl"} className="mt-4">
-              Visit the nearest CIB branch and make a deposit using the
-              following details, then confirm the transfer on the Edu AI app.
-            </Text>
-            <form className="mt-8 grid w-2/3 grid-cols-1 gap-8 md:grid-cols-2">
-              <div>
-                <label htmlFor="bankName" className="text-xl">
-                  Bank name
-                </label>
-                <Input
-                  id="phoneNumber"
-                  placeholder="Bank Name"
-                  theme="transparent"
-                  border="gray"
-                  className="mt-2"
-                />
-              </div>
-              <div>
-                <label htmlFor="beneficiaryName" className="text-xl">
-                  Beneficiary name
-                </label>
-                <Input
-                  id="beneficiaryName"
-                  placeholder="Beneficiary name"
-                  theme="transparent"
-                  border="gray"
-                  className="mt-2"
-                />
-              </div>
-              <div>
-                <label htmlFor="beneficiaryAddress" className="text-xl">
-                  Beneficiary address
-                </label>
-                <Input
-                  id="beneficiaryAddress"
-                  placeholder="Beneficiary address"
-                  theme="transparent"
-                  border="gray"
-                  className="mt-2"
-                />
-              </div>
-              <div>
-                <label htmlFor="beneficiaryAccountNumber" className="text-xl">
-                  Beneficiary account number
-                </label>
-                <Input
-                  id="beneficiaryAccountNumber"
-                  placeholder="123456789098"
-                  theme="transparent"
-                  border="gray"
-                  className="mt-2"
-                />
-              </div>
             </form>
             <Text font={"medium"} size={"xl"} color={"error"} className="mt-8">
               Please keep a photo of your receipt to confirm your deposit.
             </Text>
-            <div className="mt-4 w-1/4">
-              <Button onClick={handleShowConfirm}>Confirm</Button>
-            </div>
           </div>
         )}
       </div>
@@ -560,5 +587,3 @@ function Payment() {
     </Container>
   );
 }
-
-export default Payment;

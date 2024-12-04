@@ -37,3 +37,4 @@ export const deleteSession = async (
     );
     return response.data;
 };
+

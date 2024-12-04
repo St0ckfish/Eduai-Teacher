@@ -7,3 +7,12 @@ export const fetchAllComplains = async (): Promise<ComplainsResponse> => {
     );
     return response.data;
 };
+
+export const createComplaint = async (formData: FormData): Promise<any> => {
+    const response = await axiosInstance.post("/api/v1/complain/teacher", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data", 
+      },
+    });
+    return response.data;
+  };

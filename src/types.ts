@@ -497,3 +497,143 @@ export type ComplainsResponse = {
         sortedPage: boolean;
     };
 };
+
+// Material 
+
+export type Material = {
+  sessionId: string;
+  title: string;
+  description: string;
+  file: File;
+};
+
+// complaint
+
+export type ComplaintResponse = {
+    studentId: number,
+    subject: string,
+    message: string,
+    file?: File
+}
+
+// Student
+
+export type Student = {
+  studentId: number;
+  studentName: string;
+  studyLevel: string;
+  hasPhoto: boolean;
+  photoLink: string | null;
+  chatId: string | null;
+};
+
+export type StudentsResponse = {
+  success: boolean;
+  message: string;
+  data: {
+    content: Student[];
+    totalElementsCount: number;
+    totalPagesCount: number;
+    pageElementsCount: number;
+    pageSize: number;
+    pageNumber: number;
+    firstPage: boolean;
+    lastPage: boolean;
+    emptyPage: boolean;
+    sortedPage: boolean;
+  };
+};
+
+// Events
+
+export type EventAttendee = {
+  id: number; 
+};
+
+export type Event = {
+  id: number;
+  title: string;
+  description: string;
+  startDate: string;
+  endDate: string;
+  isAttendee: boolean;
+  attendees: EventAttendee[]; 
+};
+
+export type EventsResponse = {
+  success: boolean;
+  message: string;
+  data: {
+    content: Event[];
+    totalElementsCount: number;
+    totalPagesCount: number;
+    pageElementsCount: number;
+    pageSize: number;
+    pageNumber: number;
+    firstPage: boolean;
+    lastPage: boolean;
+    emptyPage: boolean;
+    sortedPage: boolean;
+  };
+};
+
+export type CustomEvent = {
+  id: number;
+  title: string;
+  description: string;
+  startDate: string;
+  endDate: string;
+  isAttendee: boolean;
+  attendees: any[];
+};
+
+
+export type BankAccount = {
+  id: number;
+  createdDate: string;
+  updatedDate: string;
+  bankName: string;
+  bankShortName: string;
+  beneficiaryName: string;
+  beneficiaryAddress: string;
+  beneficiaryAccountNumber: string;
+};
+
+export type BankAccountResponse = {
+  success: boolean;
+  message: string;
+  data: {
+      content: BankAccount[];
+      totalElementsCount: number;
+      totalPagesCount: number;
+      pageElementsCount: number;
+      pageSize: number;
+      pageNumber: number;
+      firstPage: boolean;
+      lastPage: boolean;
+      emptyPage: boolean;
+      sortedPage: boolean;
+  };
+};
+
+export type BankAccountFormData = {
+  request: {
+    invoiceId: number;
+    bankAccountId: number;
+    receiptNumber: string;
+    amount: number;
+    depositDate: string;
+  };
+  file: File | null;
+}
+
+export type ExamFormData = {
+  name: string;
+  examDate: string;
+  examBeginning: string;
+  examEnding: string;
+  teacherId: number;
+  courseId: number;
+  classroomId: number;
+  examTypeId: number;
+}

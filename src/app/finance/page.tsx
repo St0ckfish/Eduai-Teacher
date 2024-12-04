@@ -60,7 +60,7 @@ const Finance = () => {
                       <td className="px-4 py-2">{fee.paymentStatus}</td>
                       <td className="px-4 py-2">{fee.totalFeesAmount}</td>
                       <td className="rounded-r-md px-4 py-2">
-                        <Button className="w-full" as="link" href="/payment">Pay Fees</Button>
+                        <Button className="w-full" as="link" href={`/finance/payment/${fee.invoiceId}`}>Pay Fees</Button>
                       </td>
                     </tr>
                   ))}
@@ -101,7 +101,7 @@ const Finance = () => {
                     <td className="px-4 py-2">{fee.paymentStatus}</td>
                     <td className="px-4 py-2">{fee.totalFeesAmount}</td>
                     <td className="rounded-r-md px-4 py-2">
-                      <Button color="secondary" as="link" href="/payment">Details</Button>
+                      <Button color="secondary" as="link" href="/finance/">Details</Button>
                     </td>
                   </tr>
                 ))}
