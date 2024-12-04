@@ -1,5 +1,5 @@
 import axiosInstance from "../axios";
-import type { ExamFormData, ExamListResponse, Upcoming_Previous_Exams } from "../../types";
+import type { ExamFormData, ExamListResponse, ExamResultsResponse, Upcoming_Previous_Exams } from "../../types";
 
 export const fetchAllExams = async (): Promise<ExamListResponse> => {
     const response = await axiosInstance.get<ExamListResponse>(
@@ -25,5 +25,15 @@ export const createExam = async (formData: Partial<ExamFormData>): Promise<ExamF
       "/api/v1/academic/educationalAffairs/exams",
       formData,
     );
+    return response.data;
+  };
+
+  export const fetchExamResults = async (examId: string): Promise<ExamResultsResponse> => {
+    const response = await axiosInstance.get<ExamResultsResponse>(`/api/v1/exam-results/exam/${examId}`);
+    return response.data;
+  };
+
+  export const putGrade = async (examResultId: string, scoreData: { score: number; scoreDate: string }) => {
+    const response = await axiosInstance.put(`/api/v1/exam-results/${examResultId}`, scoreData);
     return response.data;
   };
