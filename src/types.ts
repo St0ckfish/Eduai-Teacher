@@ -525,6 +525,8 @@ export type Student = {
   hasPhoto: boolean;
   photoLink: string | null;
   chatId: string | null;
+  score?: number;
+  passed?: boolean;
 };
 
 export type StudentsResponse = {
@@ -541,6 +543,15 @@ export type StudentsResponse = {
     lastPage: boolean;
     emptyPage: boolean;
     sortedPage: boolean;
+  };
+};
+
+export type StudentsWithGradesResponse = {
+  success: boolean;
+  message: string;
+  data: {
+    students: Student[];
+    finalScore: number;
   };
 };
 
@@ -637,3 +648,16 @@ export type ExamFormData = {
   classroomId: number;
   examTypeId: number;
 }
+
+
+export type ExamResult = {
+  id: number;
+  examId: number;
+  studentId: number;
+  studentName: string;
+  status: "PASSED" | "FAILED"; 
+  score: number;
+  scoreDate: string;
+}
+
+export type ExamResultsResponse = ExamResult[];

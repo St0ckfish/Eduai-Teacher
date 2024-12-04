@@ -3,8 +3,8 @@ import type {
   UseMutationOptions,
   UseQueryOptions,
 } from "@tanstack/react-query";
-import type { ExamFormData, ExamListResponse, Upcoming_Previous_Exams } from "../../types";
-import { createExam, fetchAllExams, fetchAllPreviousExams, fetchAllUpcomingExams } from "../features/exam";
+import type { ExamFormData, ExamListResponse, ExamResultsResponse, Upcoming_Previous_Exams } from "../../types";
+import { createExam, fetchAllExams, fetchAllPreviousExams, fetchAllUpcomingExams, fetchExamResults, putGrade } from "../features/exam";
 
 export const useGetAllExams = (
   options?: UseQueryOptions<ExamListResponse, Error>,
@@ -16,6 +16,9 @@ export const useGetAllExams = (
     ...options,
   });
 };
+
+
+
 export const useGetAllUpcomingExams = (
   options?: UseQueryOptions<Upcoming_Previous_Exams, Error>,
 ) => {
@@ -46,6 +49,26 @@ export const useCreateExam = (
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ["createExam"] });
     },
+    ...options,
+  });
+};
+
+export const useGetExamResults = (
+  examId: string,
+  options?: UseQueryOptions<ExamResultsResponse, Error>
+) => {
+  return useQuery<ExamResultsResponse, Error>({
+    queryKey: ["examResults", examId],
+    queryFn: () => fetchExamResults(examId),
+    ...options,
+  });
+};
+
+export const usePutGrade = (
+  options?: UseMutationOptions<any, Error, { examResultId: string; scoreData: { score: number; scoreDate: string } }>
+) => {
+  return useMutation({
+    mutationFn: ({ examResultId, scoreData }) => putGrade(examResultId, scoreData),
     ...options,
   });
 };
