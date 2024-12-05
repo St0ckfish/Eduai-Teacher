@@ -20,9 +20,30 @@ export const fetchAllPreviousExams = async (): Promise<Upcoming_Previous_Exams> 
     return response.data;
 };
 
+export const fetchAllTeachers = async (): Promise<any> => {
+    const response = await axiosInstance.get<any>(
+        `/api/v1/management/teacher/all?size=1000000&page=0&archived=false`
+    );
+    return response.data;
+};
+
+export const fetchAllCourses = async (): Promise<any> => {
+    const response = await axiosInstance.get<any>(
+        `/api/v1/management/course/all?size=1000000&page=0`
+    );
+    return response.data;
+};
+
+export const fetchAllClasses = async (): Promise<any> => {
+    const response = await axiosInstance.get<any>(
+        `/api/v1/management/classroom/all?size=1000000&page=0&semesterId=`
+    );
+    return response.data;
+};
+
 export const createExam = async (formData: Partial<ExamFormData>): Promise<ExamFormData> => {
     const response = await axiosInstance.post<ExamFormData>(
-      "/api/v1/academic/educationalAffairs/exams",
+      "/api/v1/academic/educationalAffairs/exams/by-teacher",
       formData,
     );
     return response.data;

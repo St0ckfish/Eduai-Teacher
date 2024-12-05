@@ -12,7 +12,7 @@ import {
 } from "~/APIs/hooks/useSchedule";
 import Spinner from "~/_components/Spinner";
 import { format } from "date-fns";
-import { AttendanceStatus, Material, type TeacherSchedule } from "~/types";
+import { AttendanceStatus, type Material, type TeacherSchedule } from "~/types";
 import { useState } from "react";
 import Button from "~/_components/Button";
 import Input from "~/_components/Input";
@@ -21,6 +21,7 @@ import { toast } from "react-toastify";
 import Link from "next/link";
 import { FaDownload } from "react-icons/fa6";
 import { FaEllipsisV } from "react-icons/fa";
+import { useRecordAttendance } from "~/APIs/hooks/useAttendance";
 
 function CalendarDemo({
   onDateSelect,
@@ -221,6 +222,33 @@ const Schedule = () => {
     setIsModalOpen(false);
   };
 
+  const { isPending, mutate: recordAttendance } = useRecordAttendance({
+    onSuccess: () => {
+      toast.success("Attendance recorded successfully!");
+      // Optionally refetch attendance data
+      // You might want to add a refetch method for session attendance
+    },
+    onError: (error: any) => {
+      toast.error("Failed to record attendance.");
+    }
+  });
+
+  const handleAttendanceRecord = (
+    studentId: string, 
+    status: AttendanceStatus
+  ) => {
+    if (!selectedScheduleId) {
+      toast.error("Please select a session first.");
+      return;
+    }
+
+    recordAttendance({
+      studentId,
+      sessionId: selectedScheduleId,
+      status
+    });
+  };
+
   return (
     <Container>
       <div className="mb-4 flex w-full gap-10 max-[1080px]:grid">
@@ -352,6 +380,13 @@ const Schedule = () => {
                       </th>
                       <td className="justify-end whitespace-nowrap px-6 py-4 text-end">
                         <button
+                          onClick={() => 
+                            handleAttendanceRecord(
+                              student.id.toString(), 
+                              AttendanceStatus.ABSENT
+                            )
+                          }
+                          disabled={isPending}
                           className={`rounded-full p-3 shadow-lg ${
                             student.status !== AttendanceStatus.ABSENT
                               ? "bg-gray-200"
@@ -363,6 +398,13 @@ const Schedule = () => {
                       </td>
                       <td className="justify-end whitespace-nowrap px-6 py-4 text-end">
                         <button
+                        onClick={() => 
+                          handleAttendanceRecord(
+                            student.id.toString(), 
+                            AttendanceStatus.PRESENT
+                          )
+                        }
+                        disabled={isPending}
                           className={`rounded-full p-3 shadow-lg ${
                             student.status !== AttendanceStatus.ABSENT
                               ? "bg-success/10"

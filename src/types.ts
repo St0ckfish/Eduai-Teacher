@@ -191,6 +191,7 @@ export type Upcoming_Previous_Exams = {
 
 export enum AttendanceStatus {
   ABSENT = "ABSENT",
+  PRESENT = "PRESENT"
   // Add other potential statuses if needed
 }
 

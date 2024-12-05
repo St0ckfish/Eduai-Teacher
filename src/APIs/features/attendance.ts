@@ -25,3 +25,11 @@ export const fetchAllAttendanceNumbers = async (): Promise<AttendanceNumbersResp
     );
     return response.data;
 };
+export const recordAttendance = async (formData: Partial<any>): Promise<any> => {
+    const response = await axiosInstance.post<any>(
+      "/api/attendance/record",
+      formData,
+    );
+    return response.data;
+  };
+  //
