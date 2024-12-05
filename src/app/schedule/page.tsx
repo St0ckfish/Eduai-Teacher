@@ -228,7 +228,7 @@ const Schedule = () => {
       // Optionally refetch attendance data
       // You might want to add a refetch method for session attendance
     },
-    onError: (error: any) => {
+    onError: () => {
       toast.error("Failed to record attendance.");
     }
   });
@@ -368,8 +368,8 @@ const Schedule = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {attendanceData?.data?.content.map((student) => (
-                    <tr key={student.id} className="font-semibold">
+                  {attendanceData?.data?.map((student) => (
+                    <tr key={student.studentId} className="font-semibold">
                       <th
                         scope="row"
                         className="grid gap-2 whitespace-nowrap px-6 py-4 font-medium text-textSecondary"
@@ -382,13 +382,13 @@ const Schedule = () => {
                         <button
                           onClick={() => 
                             handleAttendanceRecord(
-                              student.id.toString(), 
+                              student.studentId.toString(), 
                               AttendanceStatus.ABSENT
                             )
                           }
                           disabled={isPending}
                           className={`rounded-full p-3 shadow-lg ${
-                            student.status !== AttendanceStatus.ABSENT
+                            student.sessionStatus !== AttendanceStatus.ABSENT
                               ? "bg-gray-200"
                               : "bg-error/10"
                           }`}
@@ -400,13 +400,13 @@ const Schedule = () => {
                         <button
                         onClick={() => 
                           handleAttendanceRecord(
-                            student.id.toString(), 
+                            student.studentId.toString(), 
                             AttendanceStatus.PRESENT
                           )
                         }
                         disabled={isPending}
                           className={`rounded-full p-3 shadow-lg ${
-                            student.status !== AttendanceStatus.ABSENT
+                            student.sessionStatus !== AttendanceStatus.ABSENT
                               ? "bg-success/10"
                               : "bg-gray-200"
                           }`}
@@ -416,8 +416,8 @@ const Schedule = () => {
                       </td>
                     </tr>
                   ))}
-                  {(!attendanceData?.data?.content ||
-                    attendanceData.data.content.length === 0) && (
+                  {(!attendanceData?.data ||
+                    attendanceData.data.length === 0) && (
                     <tr>
                       <td
                         colSpan={3}
