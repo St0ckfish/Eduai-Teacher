@@ -6,7 +6,7 @@ import Container from "~/_components/Container";
 import Input from "~/_components/Input";
 import SearchableSelect from "~/_components/SearchSelect";
 import { Text } from "~/_components/Text";
-import { useCreateExam } from "~/APIs/hooks/useExam";
+import { useCreateExam, useGetAllClasses, useGetAllCourses, useGetAllTeachers } from "~/APIs/hooks/useExam";
 import { type ExamFormData } from "~/types";
 
 const Bus = () => {
@@ -15,7 +15,6 @@ const Bus = () => {
     control,
     handleSubmit,
     register,
-    trigger,
     formState: { errors },
   } = useForm<ExamFormData>({
     shouldUnregister: false,
@@ -35,6 +34,10 @@ const Bus = () => {
       },
     });
   };
+
+  const {data: classes, isLoading: isClasses} = useGetAllClasses()
+  const {data: courses, isLoading: isCourses} = useGetAllCourses()
+  const {data: teachers, isLoading: isTeachers} = useGetAllTeachers()
 
   const examEndingOptions = [
     { label: "1st", value: "1st" },

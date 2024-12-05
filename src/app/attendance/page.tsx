@@ -1,16 +1,21 @@
 "use client"
 import Container from "~/_components/Container";
 import { FiLogIn, FiLogOut } from "react-icons/fi";
-import { AiOutlineDown } from "react-icons/ai";
 import { useGetAllAttendanceNumbers, useGetAllAttendances, useGetAllEarlyAttendances, useGetAllLeavesAttendances } from "~/APIs/hooks/useAttendance";
 import Spinner from "~/_components/Spinner";
 
 const Attendance = () => {
-
   const {data: attendanceNumbers, isLoading: isAttendanceNumbers} = useGetAllAttendanceNumbers()
   const {data: attendance, isLoading: isAttendance} = useGetAllAttendances()
   const {data: attendanceEarly, isLoading: isAttendanceEarly} = useGetAllEarlyAttendances()
   const {data: attendanceLeaves, isLoading: isAttendanceLeaves} = useGetAllLeavesAttendances()
+  if( isAttendanceNumbers || isAttendance || isAttendanceEarly || isAttendanceLeaves ){
+    return(
+      <div className="flex w-full justify-center">
+            <Spinner />
+          </div>
+    )
+  }
   return (
     <>
       <Container>

@@ -191,6 +191,7 @@ export type Upcoming_Previous_Exams = {
 
 export enum AttendanceStatus {
   ABSENT = "ABSENT",
+  PRESENT = "PRESENT"
   // Add other potential statuses if needed
 }
 
@@ -198,9 +199,9 @@ export type AbsenceReason = 'OTHER';
 
 // Type for individual session attendance record
 export type SessionAttendanceRecord = {
-    id: number;
+    studentId: number;
     studentName: string;
-    status: AttendanceStatus;
+    sessionStatus: AttendanceStatus;
     absenceReason: AbsenceReason | null;
 };
 
@@ -208,18 +209,7 @@ export type SessionAttendanceRecord = {
 export type SessionAttendanceResponse = {
     success: boolean;
     message: string;
-    data: {
-        content: SessionAttendanceRecord[];
-        totalElementsCount: number;
-        totalPagesCount: number;
-        pageElementsCount: number;
-        pageSize: number;
-        pageNumber: number;
-        firstPage: boolean;
-        lastPage: boolean;
-        emptyPage: boolean;
-        sortedPage: boolean;
-    };
+    data: SessionAttendanceRecord[];
 };
 
 // Enum for day names

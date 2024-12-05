@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react";
+import React, { type ReactNode } from "react";
 
 interface BoxProps extends React.HTMLAttributes<HTMLDivElement> {
   children?: ReactNode;
