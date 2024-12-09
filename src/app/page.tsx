@@ -22,7 +22,7 @@ import {
   useCreateComment,
   useGetAllCommentsForPost,
 } from "~/APIs/hooks/useComments";
-import { useAddAttendance, useUpcomingEvents } from "~/APIs/hooks/useEvents";
+import { useAddAttendance, useRemoveAttendance, useUpcomingEvents } from "~/APIs/hooks/useEvents";
 import { isToday, isAfter } from "date-fns";
 import { CustomEvent } from "~/types";
 import { toast } from "react-toastify";
@@ -43,6 +43,18 @@ export default function Home() {
       toast.success("Error confirmed attendance!");
     },
   });
+  const { mutate: removeAttendance } = useRemoveAttendance({
+    onSuccess: () => {
+      toast.success("Attendance removed successfully!");
+      refetchEvents();
+    },
+
+    onError: () => {
+      toast.success("Error remove attendance!");
+    },
+  });
+
+  
   const [selectedPostId, setSelectedPostId] = useState<number | null>(null);
   const [comment, setComment] = useState("");
   console.log(comment);
@@ -134,6 +146,11 @@ export default function Home() {
     addAttendance(eventId);
     refetchEvents();
   };
+
+  const handleRemoveAttendance = (eventId: string) => {
+    removeAttendance(eventId);
+    refetchEvents();
+  };
   //
   function CalendarDemo() {
     const [date, setDate] = React.useState<Date | undefined>(new Date());
@@ -161,6 +178,8 @@ export default function Home() {
                   <div className="flex gap-4">
                     <div className="h-[60px] w-[60px] overflow-hidden">
                       <Image
+                        priority
+                        unoptimized
                         src={
                           post.isPublisherPictureExists
                             ? post.publisherPicture
@@ -179,9 +198,9 @@ export default function Home() {
                       </Text>
                     </div>
                   </div>
-                  <div className="mt-2 font-extrabold">
+                  {/* <div className="mt-2 font-extrabold">
                     <FaEllipsisH size={20} />
-                  </div>
+                  </div> */}
                 </div>
                 <Text className="m-2">{post.content}</Text>
                 <div className="mt-4">
@@ -190,6 +209,8 @@ export default function Home() {
                       {post.attachments.slice(0, 6).map((attachment, index) => (
                         <div key={index} className="relative">
                           <Image
+                            priority
+                            unoptimized
                             src={attachment.viewLink}
                             alt={`Post Image ${index + 1}`}
                             width={500}
@@ -341,7 +362,11 @@ export default function Home() {
                         </div>
                         <div>
                           {event.isAttendee ? (
-                            <Button color="secondary">
+                            <Button 
+                            onClick={() =>
+                              handleRemoveAttendance(event.id.toString())
+                            }
+                            color="secondary">
                               Attendance Confirmed
                             </Button>
                           ) : (
@@ -403,7 +428,14 @@ export default function Home() {
                     </div>
                     <div>
                       {event.isAttendee ? (
-                        <Button color="secondary">Attendance Confirmed</Button>
+                        <Button
+                          color="secondary"
+                          onClick={() =>
+                            handleRemoveAttendance(event.id.toString())
+                          }
+                        >
+                          Attendance Confirmed
+                        </Button>
                       ) : (
                         <Button
                           onClick={() =>

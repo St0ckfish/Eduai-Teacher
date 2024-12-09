@@ -20,7 +20,7 @@ const config = {
   transpilePackages: ["geist"],
 
   images: {
-    domains: ["eduai.vitaparapharma.com"], // Add your allowed domains here
+    domains: ['eduai.vitaparapharma.com'],
   },
 };
 
