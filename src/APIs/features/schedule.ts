@@ -10,7 +10,7 @@ export const fetchAllSchedule = async (date: string): Promise<TeacherScheduleRes
 
 export const fetchAllSessionAttendance = async (sessionId: string): Promise<SessionAttendanceResponse> => {
     const response = await axiosInstance.get<SessionAttendanceResponse>(
-        `/api/attendance/by-session?sessionId=${sessionId}&size=1000000&page=0`
+        `/api/attendance/students-with-status/${sessionId}`
     );
     return response.data;
 };

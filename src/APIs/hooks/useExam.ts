@@ -5,6 +5,7 @@ import type {
 } from "@tanstack/react-query";
 import type { ExamFormData, ExamListResponse, ExamResultsResponse, Upcoming_Previous_Exams } from "../../types";
 import { createExam, fetchAllExams, fetchAllPreviousExams, fetchAllUpcomingExams, fetchExamResults, putGrade } from "../features/exam";
+import { fetchAllClasses, fetchAllCourses, fetchAllTeachers } from "../features/exam";
 
 export const useGetAllExams = (
   options?: UseQueryOptions<ExamListResponse, Error>,
@@ -33,6 +34,36 @@ export const useGetAllPreviousExams = (
   return useQuery<Upcoming_Previous_Exams, Error>({
     queryKey: ["previous"],
     queryFn: () => fetchAllPreviousExams(),
+    staleTime: 1000 * 60 * 5,
+    ...options,
+  });
+};
+export const useGetAllTeachers = (
+  options?: UseQueryOptions<any>,
+) => {
+  return useQuery<any, Error>({
+    queryKey: ["teachers"],
+    queryFn: () => fetchAllTeachers(),
+    staleTime: 1000 * 60 * 5,
+    ...options,
+  });
+};
+export const useGetAllCourses = (
+  options?: UseQueryOptions<any>,
+) => {
+  return useQuery<any, Error>({
+    queryKey: ["courses"],
+    queryFn: () => fetchAllCourses(),
+    staleTime: 1000 * 60 * 5,
+    ...options,
+  });
+};
+export const useGetAllClasses = (
+  options?: UseQueryOptions<any>,
+) => {
+  return useQuery<any, Error>({
+    queryKey: ["classes"],
+    queryFn: () => fetchAllClasses(),
     staleTime: 1000 * 60 * 5,
     ...options,
   });

@@ -1,9 +1,10 @@
-import { useQuery} from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import type {
+  UseMutationOptions,
   UseQueryOptions,
 } from "@tanstack/react-query";
 import type { AttendanceNumbersResponse, AttendanceResponse, LeaveAttendanceResponse } from "../../types";
-import { fetchAllAbsentAttendance, fetchAllAttendanceNumbers, fetchAllEarlyAttendance, fetchAllLeavesAttendance } from "../features/attendance";
+import { fetchAllAbsentAttendance, fetchAllAttendanceNumbers, fetchAllEarlyAttendance, fetchAllLeavesAttendance, recordAttendance } from "../features/attendance";
 
 export const useGetAllAttendances = (
   options?: UseQueryOptions<AttendanceResponse, Error>,
@@ -44,6 +45,18 @@ export const useGetAllAttendanceNumbers = (
     queryKey: ["attendanceNumbers"],
     queryFn: () => fetchAllAttendanceNumbers(),
     staleTime: 1000 * 60 * 5,
+    ...options,
+  });
+};
+export const useRecordAttendance = (
+  options?: UseMutationOptions<any, Error, Partial<any>>,
+) => {
+  const queryClient = useQueryClient();
+  return useMutation<any, Error, Partial<any>>({
+    mutationFn: recordAttendance,
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["recordAttendance"] });
+    },
     ...options,
   });
 };
