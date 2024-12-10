@@ -135,6 +135,7 @@ const Homework = () => {
     mutate(data, {
       onSuccess: () => {
         toast.success("HomeWork submitted successfully!");
+        setModalOpen(false);
       },
       onError: (
         err: Error & { response?: { data: { message: string; data: [] } } },
