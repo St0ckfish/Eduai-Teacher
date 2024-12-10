@@ -10,3 +10,7 @@ export const addAttendance = async (eventId: string): Promise<void> => {
   await axiosInstance.put(`/api/v1/event-attendance/add-myself?eventId=${eventId}`);
 };
 
+export const removeAttendance = async (eventId: string): Promise<void> => {
+  await axiosInstance.put(`/api/v1/event-attendance/remove-myself?eventId=${eventId}`);
+};
+

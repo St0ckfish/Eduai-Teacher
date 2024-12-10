@@ -100,6 +100,7 @@ const EditProfile = () => {
       name_fr: name,
       number: phone,
       gender,
+      qualification,
       nationality,
       subjects: ["SCIENCE"],
       // TODO: Make it dynamic
@@ -136,7 +137,7 @@ const EditProfile = () => {
                 {data?.data?.name}
               </Text>
               <Text size={"xl"} color="gray" className="mb-2">
-                {data?.data?.username}
+                @{data?.data?.username}
               </Text>
             </div>
           </div>

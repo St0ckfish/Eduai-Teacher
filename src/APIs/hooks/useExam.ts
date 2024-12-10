@@ -18,8 +18,6 @@ export const useGetAllExams = (
   });
 };
 
-
-
 export const useGetAllUpcomingExams = (
   options?: UseQueryOptions<Upcoming_Previous_Exams, Error>,
 ) => {
