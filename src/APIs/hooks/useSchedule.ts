@@ -10,7 +10,20 @@ import {
   fetchAllSessionMaterial,
   fetchAllSessionExplained,
 } from "../features/schedule";
-import type { SessionAttendanceResponse, SessionExplainedResponse, SessionMaterialResponse, TeacherScheduleResponse } from "../../types";
+import type {
+  SessionAttendanceResponse,
+  SessionExplainedResponse,
+  SessionMaterialResponse,
+  TeacherScheduleResponse,
+} from "../../types";
+
+const commonQueryOptions = {
+  staleTime: 1000 * 60 * 5,
+  retry: false, // Disable retries
+  refetchOnWindowFocus: false,
+  refetchOnReconnect: false,
+  refetchOnMount: false,
+};
 
 export const useGetAllSchedules = (
   date: string,
@@ -19,11 +32,11 @@ export const useGetAllSchedules = (
   return useQuery<TeacherScheduleResponse, Error>({
     queryKey: ["schedule", date],
     queryFn: () => fetchAllSchedule(date),
-    staleTime: 1000 * 60 * 5,
+    ...commonQueryOptions,
     ...options,
   });
 };
-//
+
 export const useGetAllSessionAttendance = (
   sessionId: string,
   options?: UseQueryOptions<SessionAttendanceResponse, Error>,
@@ -31,23 +44,23 @@ export const useGetAllSessionAttendance = (
   return useQuery<SessionAttendanceResponse, Error>({
     queryKey: ["sessionAttendance", sessionId],
     queryFn: () => fetchAllSessionAttendance(sessionId),
-    staleTime: 1000 * 60 * 5,
+    ...commonQueryOptions,
     ...options,
   });
 };
-//
+
 export const useGetAllSessionExplained = (
   sessionId: string,
   options?: UseQueryOptions<SessionExplainedResponse, Error>,
 ) => {
   return useQuery<SessionExplainedResponse, Error>({
-    queryKey: ["sessionAttendance", sessionId],
+    queryKey: ["sessionExplained", sessionId],
     queryFn: () => fetchAllSessionExplained(sessionId),
-    staleTime: 1000 * 60 * 5,
+    ...commonQueryOptions,
     ...options,
   });
 };
-//
+
 export const useGetAllSessionMateriale = (
   sessionId: string,
   options?: UseQueryOptions<SessionMaterialResponse, Error>,
@@ -55,11 +68,11 @@ export const useGetAllSessionMateriale = (
   return useQuery<SessionMaterialResponse, Error>({
     queryKey: ["sessionMaterial", sessionId],
     queryFn: () => fetchAllSessionMaterial(sessionId),
-    staleTime: 1000 * 60 * 5,
+    ...commonQueryOptions,
     ...options,
   });
 };
-//
+
 export const useDeleteSession = (
   options?: UseMutationOptions<{ message: string }, Error, number>,
 ) => {
