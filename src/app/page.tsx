@@ -40,7 +40,7 @@ export default function Home() {
       refetchEvents();
     },
     onError: () => {
-      toast.success("Error confirmed attendance!");
+      toast.error("Error confirmed attendance!");
     },
   });
   const { mutate: removeAttendance } = useRemoveAttendance({
@@ -205,7 +205,16 @@ export default function Home() {
                 <Text className="m-2">{post.content}</Text>
                 <div className="mt-4">
                   {post?.attachments?.length > 0 && (
-                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
+                    <div
+                      className={`grid gap-4 ${
+                        post?.attachments?.length === 1
+                          ? "grid-cols-1"
+                          : post?.attachments?.length === 2
+                            ? "grid-cols-2"
+                            : "grid-cols-2 md:grid-cols-3"
+                      }`}
+                    >
+                      {" "}
                       {post.attachments.slice(0, 6).map((attachment, index) => (
                         <div key={index} className="relative">
                           <Image
@@ -249,16 +258,14 @@ export default function Home() {
                       />
                     )}
 
-                    <span className="text-sm">{post?.likesCount}</span>
+                    <Text size={"xs"}>{post?.likesCount}</Text>
                   </button>
                   <button
                     className="flex items-center gap-1"
                     onClick={() => handleCommentClick(post.id)}
                   >
                     <FaRegComment size={20} />
-                    <span className="text-sm">
-                      {comments?.data.content.length}
-                    </span>
+                  <Text size={"xs"}>{post?.commentsCount}</Text>
                   </button>
                   <FaPaperPlane size={20} />
                 </div>

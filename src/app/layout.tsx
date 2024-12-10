@@ -38,7 +38,7 @@ export default function RootLayout({
       <body className="bg-bgSecondary">
       <WithAuth excludePaths={['/login', '/signup']}>
         <QueryClientProvider client={queryClient}>
-          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
             {!isLoginPage && <NavBar />}
             <Notification />
             <TRPCReactProvider>{children}</TRPCReactProvider>

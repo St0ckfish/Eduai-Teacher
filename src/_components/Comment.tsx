@@ -72,18 +72,6 @@ const Comment = ({
     setIsEditing(false);
   };
 
-  // Handle like button click
-  // const handleLikeClick = () => {
-  //   likeComment(
-  //     { postId, commentId, comment: currentComment },
-  //     {
-  //       onError: () => {
-  //         // If an error occurs, reset the like state and count
-  //         console.error('Error liking the comment');
-  //       }
-  //     }
-  //   );
-  // };
   const handleLikeClick = () => {
     likeComment(
       { postId, commentId, liked: !isLiked }, // Toggle like/unlike state
@@ -183,7 +171,6 @@ const Comment = ({
               )}
             </button>
           </div>
-          <div>reply</div>
         </div>
         {updateError && (
           <div className="text-red-500">Error updating comment</div>
