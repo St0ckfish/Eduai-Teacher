@@ -17,7 +17,7 @@ import { AiOutlinePlus } from "react-icons/ai";
 
 const Textbooks = () => {
   const [openedLessonId, setOpenedLessonId] = useState<string | null>(null);
-  console.log('openedLessonId', openedLessonId);
+  const [openedTopicId, setOpenedTopicId] = useState<string | null>(null); // حالة لتتبع الموضوع المفتوح
   const [isOpenLesson, setIsOpenLesson] = useState(false);
   const [selectedSubject, setSelectedSubject] = useState<string | null>(null);
   const [selectedCourseId, setSelectedCourseId] = useState<number | null>(null);
@@ -29,11 +29,9 @@ const Textbooks = () => {
   const { data: lessons, isLoading: isLessons } = useGetLessonsByCourseId(
     selectedCourseId ?? 0,
   );
-  const { data: lessonTopics, isLoading: isLessonTopicsLoading } = useGetLessonTopics(
-    openedLessonId ?? "",
-  );
+  const { data: lessonTopics, isLoading: isLessonTopicsLoading } =
+    useGetLessonTopics(openedLessonId ?? "");
   console.log(lessonTopics);
-
 
   useEffect(() => {
     if (summary?.data?.[0]?.subject && !selectedSubject) {
@@ -62,8 +60,17 @@ const Textbooks = () => {
   };
 
   const handleClickLesson = (lessonId: string) => {
-    // setSelectedCourseId(Number(courseId));
-    setOpenedLessonId(lessonId);
+    if (openedLessonId === lessonId.toString()) {
+      setOpenedLessonId(null);
+    } else {
+      setOpenedLessonId(lessonId.toString());
+    }
+  };
+
+  const handleTopicClick = (topicId: string) => {
+    setOpenedTopicId((prevTopicId) =>
+      prevTopicId === topicId ? null : topicId,
+    );
   };
 
   return (
@@ -146,19 +153,96 @@ const Textbooks = () => {
           )}
         </div>
         <div className="w-4/5">
-          {lessons?.data?.content.map((lesson) => (
+          {lessons?.data?.content.map((lesson, index) => (
             <div key={lesson.lessonId}>
-              <div className="mb-4 flex items-center justify-between">
-                <Text font={"semiBold"} size={"xl"}>
-                  {lesson.lessonName}
+              <div
+                onClick={() => handleClickLesson(lesson.lessonId.toString())}
+                className="my-4 flex cursor-pointer items-center justify-between"
+              >
+                <Text font={"bold"} size={"xl"}>
+                  Chapter {index + 1}: {lesson.lessonName}
                 </Text>
-                <div
-                  className="w-fit cursor-pointer"
-                  onClick={() => handleClickLesson(lesson.lessonId.toString())}
-                >
+                <div className="w-fit">
                   <AiOutlinePlus size={25} className="text-primary" />
                 </div>
               </div>
+
+              {openedLessonId === lesson.lessonId.toString() && (
+                <div className="pl-4">
+                  {isLessonTopicsLoading ? (
+                    <Spinner />
+                  ) : (
+                    lessonTopics?.data?.content.map((topic, idx) => (
+                      <div key={topic.topicId} className="py-4">
+                        <div
+                          className="flex cursor-pointer items-center justify-between"
+                          onClick={() =>
+                            handleTopicClick(topic.topicId.toString())
+                          }
+                        >
+                          <Text size={"xl"}>
+                            Lesson {idx + 1}: {topic.topicName}
+                          </Text>
+                          {openedTopicId === topic.topicId.toString() ? (
+                            <IoIosArrowUp size={20} className="text-primary" />
+                          ) : (
+                            <IoIosArrowDown
+                              size={20}
+                              className="text-primary"
+                            />
+                          )}
+                        </div>
+
+                        {openedTopicId === topic.topicId.toString() && (
+                          <div className="mt-4">
+                            {topic.hasFile ? (
+                              <div className="mt-2">
+                                <Text font={"medium"} color={"primary"}>
+                                  <a
+                                    href={topic.fileLink || ""}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex w-1/4 items-center justify-start gap-3 rounded-lg border border-borderPrimary bg-bgPrimary p-3 text-textPrimary transition hover:bg-bgSecondary"
+                                  >
+                                    <GrDocumentPdf size={25} />
+                                    Download file
+                                  </a>
+                                </Text>
+                              </div>
+                            ) : (
+                              <div className="mt-2">
+                                <Text font={"medium"} color={"default"}>
+                                  There is no files
+                                </Text>
+                              </div>
+                            )}
+
+                            {/* {topic.videoUrls.length > 0 && (
+                            <div className="mt-2">
+                              <Text font={"medium"}>Video Links</Text>
+                              <ul className="mt-1 list-disc pl-5">
+                                {topic.videoUrls.map((url, index) => (
+                                  <li key={index}>
+                                    <a
+                                      href={url}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="text-primary underline"
+                                    >
+                                      {`${url}`}
+                                    </a>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          )} */}
+                          </div>
+                        )}
+                      </div>
+                    ))
+                  )}
+                </div>
+              )}
             </div>
           ))}
         </div>
