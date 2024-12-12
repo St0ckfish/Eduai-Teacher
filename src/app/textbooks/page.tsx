@@ -17,7 +17,7 @@ import { AiOutlinePlus } from "react-icons/ai";
 
 const Textbooks = () => {
   const [openedLessonId, setOpenedLessonId] = useState<string | null>(null);
-  const [openedTopicId, setOpenedTopicId] = useState<string | null>(null); // حالة لتتبع الموضوع المفتوح
+  const [openedTopicId, setOpenedTopicId] = useState<string | null>(null); 
   const [isOpenLesson, setIsOpenLesson] = useState(false);
   const [selectedSubject, setSelectedSubject] = useState<string | null>(null);
   const [selectedCourseId, setSelectedCourseId] = useState<number | null>(null);
