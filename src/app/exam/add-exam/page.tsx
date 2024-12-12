@@ -6,7 +6,7 @@ import Container from "~/_components/Container";
 import Input from "~/_components/Input";
 import SearchableSelect from "~/_components/SearchSelect";
 import { Text } from "~/_components/Text";
-import { useCreateExam, useGetAllClasses, useGetAllCourses, useGetAllTeachers } from "~/APIs/hooks/useExam";
+import { useCreateExam, useGetAllClasses, useGetAllCourses } from "~/APIs/hooks/useExam";
 import { type ExamFormData } from "~/types";
 
 const Bus = () => {
@@ -37,7 +37,29 @@ const Bus = () => {
 
   const {data: classes, isLoading: isClasses} = useGetAllClasses()
   const {data: courses, isLoading: isCourses} = useGetAllCourses()
-  const {data: teachers, isLoading: isTeachers} = useGetAllTeachers()
+
+  const classesOptions =
+  classes?.data?.map(
+      (school: {
+        classroomId: string;
+        classroomName: string;
+        classroomStudyLevel: string;
+      }) => ({
+        value: school.classroomId,
+        label: `${school.classroomStudyLevel} - ${school.classroomName}`,
+      }),
+    ) || [];
+  const coursesOptions =
+  courses?.data?.map(
+      (school: {
+        courseId: string;
+        courseName: string;
+        courseCode: string;
+      }) => ({
+        value: school.courseId,
+        label: `${school.courseName} - ${school.courseCode}`,
+      }),
+    ) || [];
 
   const examEndingOptions = [
     { label: "1st", value: "1st" },
@@ -55,26 +77,6 @@ const Bus = () => {
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="mt-4 grid grid-cols-1 gap-6 md:grid-cols-2 w-full md:w-3/4">
               <div>
-                <label htmlFor="teacherId" className="block">
-                  <Controller
-                    name="teacherId"
-                    control={control}
-                    rules={{ required: "Teacher selection is required" }}
-                    render={({ field: { onChange, value } }) => (
-                      <SearchableSelect
-                        error={errors.teacherId?.message?.toString() ?? ""}
-                        value={value}
-                        onChange={onChange}
-                        placeholder="Teacher Id"
-                        options={examEndingOptions}
-                        bgColor="bg-bgPrimary"
-                        border="border-border"
-                      />
-                    )}
-                  />
-                </label>
-              </div>
-              <div>
                 <label htmlFor="courseId" className="block">
                   <Controller
                     name="courseId"
@@ -86,7 +88,7 @@ const Bus = () => {
                         value={value}
                         onChange={onChange}
                         placeholder="Course Id"
-                        options={examEndingOptions}
+                        options={coursesOptions}
                         bgColor="bg-bgPrimary"
                         border="border-border"
                       />
@@ -106,7 +108,7 @@ const Bus = () => {
                         value={value}
                         onChange={onChange}
                         placeholder="Classroom Id"
-                        options={examEndingOptions}
+                        options={classesOptions}
                         bgColor="bg-bgPrimary"
                         border="border-border"
                       />
