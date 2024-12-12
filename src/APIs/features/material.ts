@@ -24,3 +24,39 @@ export const fetchLessonSession = async (
   );
   return response.data.data;
 };
+
+// Update the title and description
+export const updateSessionMaterialDetails = async (
+  materialId: string,
+  data: { title: string; description: string }
+): Promise<Material> => {
+  const response = await axiosInstance.put(
+    `/api/v1/management/session-material/${materialId}`,
+    data
+  );
+  return response.data;
+};
+
+// Update the file with form data
+export const updateSessionMaterialFile = async (
+  materialId: string,
+  formData: FormData
+): Promise<Material> => {
+  const response = await axiosInstance.put(
+    `/api/v1/management/session-material/file/${materialId}`,
+    formData,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    }
+  );
+  return response.data;
+};
+
+export const deleteMaterial = async (materialId: string): Promise<void> => {
+  const response = await axiosInstance.delete(
+    `api/v1/management/session-material/${materialId}`
+  );
+  return response.data;
+};
