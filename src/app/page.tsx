@@ -2,7 +2,6 @@
 import Image from "next/image";
 import Container from "~/_components/Container";
 import {
-  FaEllipsisH,
   FaRegComment,
   FaRegHeart,
   FaPaperPlane,
@@ -24,7 +23,7 @@ import {
 } from "~/APIs/hooks/useComments";
 import { useAddAttendance, useRemoveAttendance, useUpcomingEvents } from "~/APIs/hooks/useEvents";
 import { isToday, isAfter } from "date-fns";
-import { CustomEvent } from "~/types";
+import { type CustomEvent } from "~/types";
 import { toast } from "react-toastify";
 
 export default function Home() {
@@ -37,7 +36,7 @@ export default function Home() {
   const { mutate: addAttendance } = useAddAttendance({
     onSuccess: () => {
       toast.success("Attendance confirmed successfully!");
-      refetchEvents();
+      void refetchEvents();
     },
     onError: () => {
       toast.error("Error confirmed attendance!");
@@ -46,7 +45,7 @@ export default function Home() {
   const { mutate: removeAttendance } = useRemoveAttendance({
     onSuccess: () => {
       toast.success("Attendance removed successfully!");
-      refetchEvents();
+      void refetchEvents();
     },
 
     onError: () => {
@@ -95,7 +94,7 @@ export default function Home() {
     refetch: refetchComments,
     isLoading: isLoadingComments,
   } = useGetAllCommentsForPost({
-    postId: selectedPostId || 0,
+    postId: selectedPostId ?? 0,
     page: 0,
     size: 10,
   });
@@ -113,7 +112,7 @@ export default function Home() {
       { postId, liked },
       {
         onSuccess: () => {
-          refetch(); // Only refetch posts after successful like/unlike mutation
+          void refetch(); // Only refetch posts after successful like/unlike mutation
         },
       },
     );
@@ -130,7 +129,7 @@ export default function Home() {
         {
           onSuccess: () => {
             // Refetch the comments after the comment is added successfully
-            refetchComments();
+            void refetchComments();
             setComment(""); // Clear the input field after sending
           },
         },
@@ -144,12 +143,12 @@ export default function Home() {
 
   const handleConfirmAttendance = (eventId: string) => {
     addAttendance(eventId);
-    refetchEvents();
+    void refetchEvents();
   };
 
   const handleRemoveAttendance = (eventId: string) => {
     removeAttendance(eventId);
-    refetchEvents();
+    void refetchEvents();
   };
   //
   function CalendarDemo() {

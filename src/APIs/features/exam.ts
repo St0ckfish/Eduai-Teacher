@@ -29,14 +29,14 @@ export const fetchAllTeachers = async (): Promise<any> => {
 
 export const fetchAllCourses = async (): Promise<any> => {
     const response = await axiosInstance.get<any>(
-        `/api/v1/management/course/all?size=1000000&page=0`
+        `/api/v1/teacher/current-courses`
     );
     return response.data;
 };
 
 export const fetchAllClasses = async (): Promise<any> => {
     const response = await axiosInstance.get<any>(
-        `/api/v1/management/classroom/all?size=1000000&page=0&semesterId=`
+        `/api/v1/teacher/current-classrooms`
     );
     return response.data;
 };

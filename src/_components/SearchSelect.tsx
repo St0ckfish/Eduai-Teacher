@@ -109,9 +109,9 @@ const SearchableSelect: React.FC<SearchableSelectProps> = ({
         {isOpen && (
           <ul className="absolute z-10 mt-1 max-h-60 w-full overflow-y-auto rounded-lg border border-gray-300 bg-white shadow-lg dark:border-gray-600 dark:bg-bgSecondary">
             {filteredOptions.length > 0 ? (
-              filteredOptions.map((option) => (
+              filteredOptions.map((option, index) => (
                 <li
-                  key={option.value}
+                  key={index}
                   onClick={() => handleOptionClick(option.value, option.label)}
                   className="cursor-pointer p-2 hover:bg-bgSecondary/75"
                 >
