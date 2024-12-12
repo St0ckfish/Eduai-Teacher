@@ -16,12 +16,20 @@ import { AttendanceStatus, type Material, type TeacherSchedule } from "~/types";
 import { useState } from "react";
 import Button from "~/_components/Button";
 import Input from "~/_components/Input";
-import { useCreateSessionMaterial, useLessonSessionId } from "~/APIs/hooks/useMaterial";
+import {
+  useCreateSessionMaterial,
+  useDeleteMaterial,
+  useLessonSessionId,
+  useUpdateSessionMaterialDetails,
+  useUpdateSessionMaterialFile,
+} from "~/APIs/hooks/useMaterial";
 import { toast } from "react-toastify";
 import Link from "next/link";
 import { FaDownload } from "react-icons/fa6";
 import { FaEllipsisV } from "react-icons/fa";
 import { useRecordAttendance } from "~/APIs/hooks/useAttendance";
+import { BiSolidEditAlt } from "react-icons/bi";
+import { MdDelete } from "react-icons/md";
 
 function CalendarDemo({
   onDateSelect,
@@ -79,8 +87,6 @@ const Schedule = () => {
   };
 
   const handleSubmit = () => {
-
-
     if (!selectedScheduleId) {
       toast.error("ID is required to create a material.");
       return;
@@ -123,8 +129,11 @@ const Schedule = () => {
     [selectedDate],
   );
 
-  const { data: dataLessonId} = useLessonSessionId(formattedDate, selectedScheduleId ?? "");
-  console.log("dataLessonId", dataLessonId);
+  const { data: dataLessonId } = useLessonSessionId(
+    formattedDate,
+    selectedScheduleId ?? "",
+  );
+  console.log("👾 ~ Schedule ~ dataLessonId:", dataLessonId);
 
   function convertToAmPm(time24: string): string {
     const timeRegex = /^([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$/;
@@ -196,7 +205,7 @@ const Schedule = () => {
     useGetAllSchedules(formattedDate);
   console.log("scheduleData", scheduleData);
   const { data: attendanceData, isLoading: isAttendanceLoading } =
-    useGetAllSessionAttendance(selectedScheduleId ?? "");
+    useGetAllSessionAttendance(dataLessonId?.sessionId.toString() ?? "");
 
   const {
     data: Materiales,
@@ -205,7 +214,7 @@ const Schedule = () => {
   } = useGetAllSessionMateriale(dataLessonId?.sessionId.toString() ?? "");
 
   const { data: Explaineds, isLoading: isExplainedLoading } =
-    useGetAllSessionExplained(selectedScheduleId ?? "");
+    useGetAllSessionExplained(dataLessonId?.sessionId.toString() ?? "");
   console.log(selectedScheduleId);
 
   const handleDateSelect = (date: Date) => {
@@ -234,12 +243,12 @@ const Schedule = () => {
     },
     onError: () => {
       toast.error("Failed to record attendance.");
-    }
+    },
   });
 
   const handleAttendanceRecord = (
-    studentId: string, 
-    status: AttendanceStatus
+    studentId: string,
+    status: AttendanceStatus,
   ) => {
     if (!selectedScheduleId) {
       toast.error("Please select a session first.");
@@ -249,7 +258,128 @@ const Schedule = () => {
     recordAttendance({
       studentId,
       sessionId: selectedScheduleId,
-      status
+      status,
+    });
+  };
+  // Edit and Delete Material
+  const [isEditing, setIsEditing] = useState(false);
+  const [isModalEditOpen, setIsModalEditOpen] = useState(false);
+  const [currentMaterial, setCurrentMaterial] = useState(null);
+  const [currentMaterialId, setCurrentMaterialId] = useState(null);
+  const [menuOpenMaterialId, setMenuOpenMaterialId] = useState(null);
+  const [materialEditData, setMaterialEditData] = useState<{
+    title: string;
+    description: string;
+    file: any;
+  }>({
+    title: "",
+    description: "",
+    file: null,
+  });
+
+  console.log("👾 ~ Schedule ~ currentMaterialId:", currentMaterialId);
+  const { mutate: updateMaterialDetails } = useUpdateSessionMaterialDetails();
+  const { mutate: updateFile } = useUpdateSessionMaterialFile();
+  const { mutate: deleteMaterial } = useDeleteMaterial();
+
+  console.log("👾 ~ Schedule ~ materialEditData:", materialEditData);
+
+  const handleEditChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setMaterialEditData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleEditFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files ? e.target.files[0] : null;
+    setMaterialEditData((prev) => ({ ...prev, file }));
+  };
+
+  const handleEditClick = (materialId: any) => {
+    setCurrentMaterialId(materialId);
+
+    const materialToEdit = Materiales?.data?.find(
+      (m) => m.materialId === materialId,
+    );
+    if (materialToEdit) {
+      setMaterialEditData({
+        title: materialToEdit.title,
+        description: materialToEdit.description,
+        file: materialToEdit.fileLink || null,
+      });
+      setIsModalEditOpen(true);
+    }
+  };
+
+  const handleCloseEditModal = () => {
+    setIsModalEditOpen(false);
+    setCurrentMaterial(null); // reset current material on close
+  };
+
+  const handleDeleteClick = (materialId: any) => {
+    console.log("👾 ~ handleDeleteClick ~ materialId:", materialId);
+    setMenuOpenMaterialId(null);
+  };
+
+  const toggleMenu = (materialId: any) => {
+    setMenuOpenMaterialId(
+      menuOpenMaterialId === materialId ? null : materialId,
+    );
+  };
+
+  const handleUpdateDetails = () => {
+    updateMaterialDetails(
+      {
+        materialId: currentMaterialId || "",
+        data: {
+          title: materialEditData.title,
+          description: materialEditData.description,
+        },
+      },
+      {
+        onSuccess: () => {
+          toast.success("Details updated successfully!");
+          setIsModalEditOpen(false);
+          retechMaterials();
+          setMenuOpenMaterialId(null);
+        },
+      },
+    );
+  };
+  const handleUpdateFile = () => {
+    const formData = new FormData();
+    formData.append("file", materialEditData.file);
+
+    updateFile(
+      {
+        materialId: currentMaterialId || "",
+        formData,
+      },
+      {
+        onSuccess: () => {
+          toast.success("File updated successfully!");
+          retechMaterials();
+          setMenuOpenMaterialId(null);
+        },
+      },
+    );
+  };
+
+  const handleDeleteMaterial = (id: string) => {
+    if (!id) {
+      console.error("Invalid material ID");
+      return;
+    }
+
+    deleteMaterial(id, {
+      onSuccess: () => {
+        toast.success("File deleted successfully!");
+        retechMaterials();
+        setMenuOpenMaterialId(null);
+      },
+      onError: (error) => {
+        toast.error("Failed to delete file");
+        console.error(error);
+      },
     });
   };
 
@@ -384,10 +514,10 @@ const Schedule = () => {
                       </th>
                       <td className="justify-end whitespace-nowrap px-6 py-4 text-end">
                         <button
-                          onClick={() => 
+                          onClick={() =>
                             handleAttendanceRecord(
-                              student.studentId.toString(), 
-                              AttendanceStatus.ABSENT
+                              student.studentId.toString(),
+                              AttendanceStatus.ABSENT,
                             )
                           }
                           disabled={isPending}
@@ -402,13 +532,13 @@ const Schedule = () => {
                       </td>
                       <td className="justify-end whitespace-nowrap px-6 py-4 text-end">
                         <button
-                        onClick={() => 
-                          handleAttendanceRecord(
-                            student.studentId.toString(), 
-                            AttendanceStatus.PRESENT
-                          )
-                        }
-                        disabled={isPending}
+                          onClick={() =>
+                            handleAttendanceRecord(
+                              student.studentId.toString(),
+                              AttendanceStatus.PRESENT,
+                            )
+                          }
+                          disabled={isPending}
                           className={`rounded-full p-3 shadow-lg ${
                             student.sessionStatus !== AttendanceStatus.ABSENT
                               ? "bg-success/10"
@@ -471,6 +601,7 @@ const Schedule = () => {
                 Add Material
               </button>
             </div>
+
             {selectedScheduleId ? (
               isMaterialeLoading ? (
                 <div className="text-center">
@@ -479,15 +610,15 @@ const Schedule = () => {
               ) : (Materiales?.data?.length ?? 0) > 0 ? (
                 Materiales?.data?.map((material) => (
                   <div
-                    key={material.fileId}
-                    className="rounded-md border border-borderPrimary p-4"
+                    key={material.materialId}
+                    className="relative z-0 rounded-md border border-borderPrimary p-4"
                   >
                     <div className="grid h-full gap-2 border-l-4 border-primary px-3">
                       <div className="flex items-start justify-between">
                         <Text font={"bold"} size={"xl"}>
                           {material.title}
                         </Text>
-                        <button>
+                        <button onClick={() => toggleMenu(material.materialId)}>
                           <FaEllipsisV />
                         </button>
                       </div>
@@ -500,6 +631,30 @@ const Schedule = () => {
                         </Link>
                       )}
                     </div>
+                    {menuOpenMaterialId === material.materialId && (
+                      <div className="-mt-22 absolute -right-5 top-10 z-10 w-fit rounded border bg-bgPrimary shadow-lg">
+                        <ul>
+                          <li
+                            className="flex cursor-pointer justify-between gap-2 px-4 py-2 transition hover:bg-bgSecondary hover:text-primary"
+                            onClick={() => handleEditClick(material.materialId)}
+                          >
+                            Edit
+                            <BiSolidEditAlt size={20} />
+                          </li>
+                          <li
+                            className="flex cursor-pointer justify-between gap-2 px-4 py-2 transition hover:bg-bgSecondary hover:text-error"
+                            onClick={() =>
+                              handleDeleteMaterial(
+                                material.materialId.toString(),
+                              )
+                            }
+                          >
+                            Delete
+                            <MdDelete size={20} />
+                          </li>
+                        </ul>
+                      </div>
+                    )}
                   </div>
                 ))
               ) : (
@@ -513,9 +668,54 @@ const Schedule = () => {
                 <Text color={"gray"}>Select a class</Text>
               </div>
             )}
+            {isModalEditOpen && (
+              <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black bg-opacity-50">
+                <div className="w-1/3 rounded-lg bg-bgSecondary p-6">
+                  <h2 className="mb-4 text-xl font-bold">Edit Material</h2>
+                  <div className="flex flex-col gap-4">
+                    <Input
+                      border="gray"
+                      theme="transparent"
+                      type="text"
+                      name="title"
+                      placeholder="Enter title"
+                      value={materialEditData.title}
+                      onChange={handleEditChange}
+                    />
+                    <Input
+                      border="gray"
+                      theme="transparent"
+                      name="description"
+                      placeholder="Enter description"
+                      value={materialEditData.description}
+                      onChange={handleEditChange}
+                    />
+                    <Input
+                      border="gray"
+                      theme="transparent"
+                      type="file"
+                      name="file"
+                      onChange={handleEditFileChange}
+                    />
+                    <div className="flex gap-2">
+                      <Button
+                        onClick={() => {
+                          handleUpdateDetails();
+                          handleUpdateFile(); // تأكد أن selectedFile تم تحديده
+                        }}
+                      >
+                        Save Changes
+                      </Button>
+                      <Button color="secondary" onClick={handleCloseEditModal}>
+                        Close
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
-          <div 
-          className="grid w-full gap-2 rounded-md bg-bgPrimary p-4">
+          <div className="grid w-full gap-2 rounded-md bg-bgPrimary p-4">
             {isExplainedLoading ? (
               <div className="flex w-full justify-center">
                 <Spinner />

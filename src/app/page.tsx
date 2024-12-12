@@ -165,7 +165,9 @@ export default function Home() {
     );
   }
 
-  if (isLoading || isEventsLoading) return <Spinner />;
+  if (isLoading || isEventsLoading) return <div className="flex justify-center items-center h-[750px]">
+     <Spinner />
+  </div>;
 
   return (
     <Container>
