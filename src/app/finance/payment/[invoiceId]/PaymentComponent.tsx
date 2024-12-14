@@ -572,6 +572,11 @@ const paymentMethods = [
                   onChange={handleFileChange}
                 />
               </label>
+              {errors.file && (
+                  <p className="mt-1 text-sm text-red-500">
+                    {errors.file.message?.toString()}
+                  </p>
+                )}
               <div className="mt-4 w-1/4">
               <Button type="submit" disabled={isSubmitting}>{isSubmitting ? "Confirm..." : "Confirm"}</Button>
             </div>

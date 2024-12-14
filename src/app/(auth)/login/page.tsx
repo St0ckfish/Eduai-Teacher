@@ -100,6 +100,10 @@ const Login = () => {
                   </Text>
                 </a>
               </div>
+              <div className="flex gap-2 items-center">
+              Remember Me
+                <input type="checkbox" name="remember" id="" />
+              </div>
               <div className="flex justify-center text-center">
               <Button type="submit" disabled={isSubmitting}>
                   {isSubmitting ? "Login..." : "Login"}
