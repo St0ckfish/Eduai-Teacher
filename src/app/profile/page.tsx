@@ -19,7 +19,7 @@ import { toast } from "react-toastify";
 
 const EditProfile = () => {
   const router = useRouter();
-  const { data, isLoading } = useProfile();
+  const { data, isLoading, refetch: refetchProfile } = useProfile();
   const { data: dataUpdate } = useGetProfileUpdate();
 
   const [name, setName] = useState(""); // Initialize state as empty
@@ -93,9 +93,10 @@ const EditProfile = () => {
     onSuccess: () => {
       router.push("/"); // Navigate to home page on success
       toast.success("Profile Edited successfully!");
+      void refetchProfile();
     },
     onError: () => {
-      toast.success("Error editing profile!");
+      toast.error("Error editing profile!");
     },
   });
   const handleSubmit = () => {
