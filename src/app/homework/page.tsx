@@ -6,7 +6,7 @@ import { useState } from "react";
 import { Calendar } from "~/components/ui/calendar";
 import { Text } from "~/_components/Text";
 import { useAddHomeWork, useGetAllHomeWorks } from "~/APIs/hooks/useHomeWork";
-import { useGetAllSchedules } from "~/APIs/hooks/useSchedule";
+import { useGetAllRealSession, useGetAllSchedules } from "~/APIs/hooks/useSchedule";
 import { format } from "date-fns";
 import Spinner from "~/_components/Spinner";
 import type { Homework, HomeWorkFormData, TeacherSchedule } from "~/types";
@@ -111,12 +111,12 @@ const Homework = () => {
     [selectedDate],
   );
 
-  const { data: sessions, isLoading: isSessions } =
-    useGetAllSchedules(formattedDate);
+  const { data: RealSessions, isLoading: isRealSessions } =
+  useGetAllRealSession(formattedDate);
   const sessionsOptions =
-    sessions?.data?.map((session: TeacherSchedule) => ({
-      value: session.id,
-      label: `${session.courseName} - ${session.day}, ${session.courseName}, ${session.endTime}`,
+  RealSessions?.data?.map((session: any) => ({
+      value: session.sessionId,
+      label: `${session.courseName} - ${session.date}, ${session.classroomCode}, ${session.endTime}`,
     })) ?? [];
   const { data: homeworks, isLoading: isHomework } = useGetAllHomeWorks(
     selectedSessionId ?? 0,
@@ -183,22 +183,22 @@ const Homework = () => {
           </div>
 
           {/* Sessions List */}
-          {isSessions ? (
+          {isRealSessions ? (
             <div className="flex w-full justify-center">
               <Spinner />
             </div>
           ) : (
             <>
-              {sessions?.data && (
+              {RealSessions?.data && (
                 <div className="mb-4">
                   <Text className="mb-2">Select a Session:</Text>
                   <div className="flex flex-wrap gap-2">
-                    {sessions.data.map((session: TeacherSchedule) => (
+                    {RealSessions.data.map((session: any) => (
                       <button
-                        key={session.id}
-                        onClick={() => handleSessionSelect(session.id)}
+                        key={session.sessionId}
+                        onClick={() => handleSessionSelect(session.sessionId)}
                         className={`rounded-md px-3 py-1 ${
-                          selectedSessionId === session.id
+                          selectedSessionId === session.sessionId
                             ? "bg-primary text-white"
                             : "bg-gray-200 text-black"
                         }`}
