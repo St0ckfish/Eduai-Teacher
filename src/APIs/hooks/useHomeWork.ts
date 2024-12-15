@@ -31,6 +31,7 @@ export const useGetAllHomeWorks = (
     queryKey: ["homework", sessionId],
     queryFn: () => fetchAllHomeWork(sessionId),
     staleTime: 1000 * 60 * 5,
+    retry: false,
     ...options,
   });
 };
