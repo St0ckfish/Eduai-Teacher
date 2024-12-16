@@ -122,7 +122,7 @@ const Bus = () => {
                     error={errors.name?.message?.toString() ?? ""}
                     placeholder="name"
                     theme="transparent"
-                    className="border border-gray-200"
+                    className="border border-gray-200 dark:border-gray-600"
                   />
                   {errors.name && (
                     <p className="mt-1 text-sm text-red-500">
@@ -136,7 +136,7 @@ const Bus = () => {
                     error={errors.examTypeId?.message?.toString() ?? ""}
                     placeholder="examTypeId"
                     theme="transparent"
-                    className="border border-gray-200"
+                    className="border border-gray-200 dark:border-gray-600"
                   />
                   {errors.examTypeId && (
                     <p className="mt-1 text-sm text-red-500">
@@ -151,7 +151,7 @@ const Bus = () => {
                     placeholder="examDate"
                     type="date"
                     theme="transparent"
-                    className="border border-gray-200"
+                    className="border border-gray-200 dark:border-gray-600"
                   />
                   {errors.examDate && (
                     <p className="mt-1 text-sm text-red-500">
@@ -166,7 +166,7 @@ const Bus = () => {
                     placeholder="examBeginning"
                     type="time"
                     theme="transparent"
-                    className="border border-gray-200"
+                    className="border border-gray-200 dark:border-gray-600"
                   />
                   {errors.examBeginning && (
                     <p className="mt-1 text-sm text-red-500">
@@ -181,7 +181,7 @@ const Bus = () => {
                     placeholder="examEnding"
                     type="time"
                     theme="transparent"
-                    className="border border-gray-200"
+                    className="border border-gray-200 dark:border-gray-600"
                   />
                   {errors.examEnding && (
                     <p className="mt-1 text-sm text-red-500">

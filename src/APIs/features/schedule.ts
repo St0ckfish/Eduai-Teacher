@@ -15,6 +15,13 @@ export const fetchAllSessionAttendance = async (sessionId: string): Promise<Sess
     return response.data;
 };
 
+export const fetchAllRealSession = async (date: string): Promise<any> => {
+    const response = await axiosInstance.get<any>(
+        `/api/v1/management/lesson-session/all?page=0&size=1000000&date=${date}`
+    );
+    return response.data;
+};
+
 export const fetchAllSessionMaterial = async (sessionId: string): Promise<SessionMaterialResponse> => {
     const response = await axiosInstance.get<SessionMaterialResponse>(
         `/api/v1/management/session-material/all/${sessionId}`

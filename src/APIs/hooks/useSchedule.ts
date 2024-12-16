@@ -9,6 +9,7 @@ import {
   fetchAllSessionAttendance,
   fetchAllSessionMaterial,
   fetchAllSessionExplained,
+  fetchAllRealSession,
 } from "../features/schedule";
 import type {
   SessionAttendanceResponse,
@@ -44,6 +45,18 @@ export const useGetAllSessionAttendance = (
   return useQuery<SessionAttendanceResponse, Error>({
     queryKey: ["sessionAttendance", sessionId],
     queryFn: () => fetchAllSessionAttendance(sessionId),
+    ...commonQueryOptions,
+    ...options,
+  });
+};
+
+export const useGetAllRealSession = (
+  date: string,
+  options?: UseQueryOptions<any, Error>,
+) => {
+  return useQuery<any, Error>({
+    queryKey: ["realSession", date],
+    queryFn: () => fetchAllRealSession(date),
     ...commonQueryOptions,
     ...options,
   });
