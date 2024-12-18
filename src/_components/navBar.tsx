@@ -15,6 +15,8 @@ import Spinner from "./Spinner";
 import { Switch } from "~/components/ui/switch";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import Cookie from "js-cookie";
+import { useBooleanValue, useUserDataStore } from "~/APIs/store";
+import { useGetProfileUpdate } from "~/APIs/hooks/useProfile";
 
 const useWindowDimensions = () => {
   const isClient = typeof window === "object";
@@ -82,12 +84,21 @@ const NavBarLink = ({
 };
 
 const NavBar = () => {
+  const toggleNav = useBooleanValue((state) => state.toggle)
   const [profile, setProfile] = useState(false);
   const toggleProfile = () => {
     setProfile(!profile);
   };
   const [isClient, setIsClient] = useState(false);
+const { data: dataUpdate } =
+    useGetProfileUpdate();
 
+    useUserDataStore.getState().setUserData({ 
+      username: dataUpdate?.data.username, 
+      email: dataUpdate?.data.email, 
+      name_en: dataUpdate?.data.name, 
+  });
+  const userData = useUserDataStore.getState().userData;
   useEffect(() => {
     setIsClient(true);
   }, []);
@@ -106,10 +117,12 @@ const NavBar = () => {
 
   const DeleteCookie = () => {
     Cookie.remove("token");
+    useUserDataStore.getState().clearUserData();
   };
 
   const toggleNavbarSmall = () => {
     setSmall(!small);
+    toggleNav();
     if (!small == true) {
       setIsOpen5(true);
     }
@@ -268,7 +281,7 @@ const NavBar = () => {
                               Signed in as
                             </p>
                             <p className="text-textPrimary text-sm font-medium">
-                              Example@gmail.com
+                              {userData?.email}
                             </p>
                           </div>
                           <div className="mt-2 py-2">

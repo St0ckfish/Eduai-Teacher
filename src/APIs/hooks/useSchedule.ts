@@ -10,6 +10,7 @@ import {
   fetchAllSessionMaterial,
   fetchAllSessionExplained,
   fetchAllRealSession,
+  createSession,
 } from "../features/schedule";
 import type {
   SessionAttendanceResponse,
@@ -24,6 +25,19 @@ const commonQueryOptions = {
   refetchOnWindowFocus: false,
   refetchOnReconnect: false,
   refetchOnMount: false,
+};
+
+export const useCreateSession = (
+  options?: UseMutationOptions<any, Error, Partial<any>>,
+) => {
+  const queryClient = useQueryClient();
+  return useMutation<any, Error, Partial<any>>({
+    mutationFn: createSession,
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["createSession"] });
+    },
+    ...options,
+  });
 };
 
 export const useGetAllSchedules = (

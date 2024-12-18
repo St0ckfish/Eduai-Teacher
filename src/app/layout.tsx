@@ -32,7 +32,7 @@ export default function RootLayout({
     >
       <head>
         <title>EduAI Teacher</title>
-        <meta name="description" content="Edu AI-Admin" />
+        <meta name="description" content="EduAI Teacher" />
         <link rel="icon" type="image/x-icon" href="/favicon.ico" />
       </head>
       <body className="bg-bgSecondary">

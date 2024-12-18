@@ -1,6 +1,13 @@
 import axiosInstance from "../axios";
 import type { SessionAttendanceResponse, SessionExplainedResponse, SessionMaterialResponse, TeacherScheduleResponse } from "../../types";
 
+export const createSession = async (
+    formData: Partial<any>,
+  ): Promise<any> => {
+    const response = await axiosInstance.post<any>("/api/v1/management/lesson-session", formData);
+    return response.data;
+  };
+
 export const fetchAllSchedule = async (date: string): Promise<TeacherScheduleResponse> => {
     const response = await axiosInstance.get<TeacherScheduleResponse>(
         `/api/v1/teacher-teaching/date-schedule?date=${date}`
