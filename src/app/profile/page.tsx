@@ -11,7 +11,7 @@ import {
 } from "~/APIs/hooks/useProfile";
 import { useGetAllNationalities } from "~/APIs/hooks/useAuth";
 import { useState, useEffect } from "react";
-import { TeacherProfileUpdate } from "~/types";
+import { type TeacherProfileUpdate } from "~/types";
 import Button from "~/_components/Button";
 import { useGetAllTextBookSummarys } from "~/APIs/hooks/useTextBook";
 import { useRouter } from "next/navigation";

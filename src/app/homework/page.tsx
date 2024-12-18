@@ -52,6 +52,7 @@ const Homework = () => {
     control,
     handleSubmit,
     register,
+    reset,
     formState: { errors },
   } = useForm<HomeWorkFormData>();
 
@@ -61,6 +62,7 @@ const Homework = () => {
 
   const handleCloseModal = () => {
     setModalOpen(false);
+    reset();
   };
   function formatDateTimeBeautifully(dateString: string): string {
     const date = new Date(dateString);

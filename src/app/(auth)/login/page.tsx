@@ -93,13 +93,6 @@ const Login = () => {
                   </p>
                 )}
               </label>
-              <div className="flex justify-end text-end">
-                <a href="/forget-password">
-                  <Text font={"medium"} size={"md"} color={"muted"}>
-                    Forgot Password ?
-                  </Text>
-                </a>
-              </div>
               <div className="flex gap-2 items-center">
               Remember Me
                 <input type="checkbox" name="remember" id="" />

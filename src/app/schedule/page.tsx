@@ -9,6 +9,7 @@ import {
   useGetAllSessionAttendance,
   useGetAllSessionExplained,
   useGetAllSessionMateriale,
+  useCreateSession
 } from "~/APIs/hooks/useSchedule";
 import Spinner from "~/_components/Spinner";
 import { format } from "date-fns";
@@ -123,16 +124,41 @@ const Schedule = () => {
   >(null);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-
+  const [selectedSchedule, setSelectedSchedule] = React.useState<TeacherSchedule | null>(null);
   const formattedDate = React.useMemo(
     () => format(selectedDate, "yyyy-MM-dd"),
     [selectedDate],
   );
 
-  const { data: dataLessonId } = useLessonSessionId(
+  const { data: dataLessonId, isLoading: isLessonIdLoading, refetch } = useLessonSessionId(
     formattedDate,
     selectedScheduleId ?? "",
   );
+
+  const {mutate: createSession, isPending: isCreatingSession} = useCreateSession({
+    onSuccess: (data) => {
+      toast.success("Session created successfully!");
+      void refetch();
+    },
+    onError: (error) => {
+      toast.error("Failed to create session");
+      console.error(error);
+    }
+  });
+
+  React.useEffect(() => {
+    if (selectedSchedule && (dataLessonId === null)) {
+      const sessionData = {
+        teacherCourseRegistrationId: selectedSchedule.teacherCourseRegistrationId,
+        startTime: selectedSchedule.startTime,
+        endTime: selectedSchedule.endTime,
+        date: formattedDate,
+      };
+
+      createSession(sessionData);
+      
+    }
+  }, [selectedSchedule, dataLessonId, formattedDate, refetch, createSession]);
   console.log("👾 ~ Schedule ~ dataLessonId:", dataLessonId);
 
   function convertToAmPm(time24: string): string {
@@ -145,7 +171,13 @@ const Schedule = () => {
       );
     }
 
-    const [hoursStr, minutes] = match;
+    const [, hoursStr, minutes] = match; // Destructure correctly, ignore seconds
+
+    // Add a null check before using hoursStr
+    if (hoursStr === undefined) {
+      throw new Error("Invalid time format. Unable to extract hours.");
+    }
+
     let hours = parseInt(hoursStr, 10);
     const period = hours >= 12 ? "PM" : "AM";
     hours = hours % 12;
@@ -203,7 +235,7 @@ const Schedule = () => {
 
   const { data: scheduleData, isLoading: isScheduleLoading } =
     useGetAllSchedules(formattedDate);
-  console.log("scheduleData", scheduleData);
+
   const { data: attendanceData, isLoading: isAttendanceLoading } =
     useGetAllSessionAttendance(dataLessonId?.sessionId.toString() ?? "");
 
@@ -223,8 +255,9 @@ const Schedule = () => {
     setSelectedScheduleId(null);
   };
 
-  const handleScheduleSelect = (scheduleId: string) => {
-    setSelectedScheduleId(scheduleId);
+  const handleScheduleSelect = (schedule: TeacherSchedule) => {
+    setSelectedScheduleId(schedule.id.toString());
+    setSelectedSchedule(schedule);
   };
 
   const handleOpenModal = () => {
@@ -262,9 +295,7 @@ const Schedule = () => {
     });
   };
   // Edit and Delete Material
-  const [isEditing, setIsEditing] = useState(false);
   const [isModalEditOpen, setIsModalEditOpen] = useState(false);
-  const [currentMaterial, setCurrentMaterial] = useState(null);
   const [currentMaterialId, setCurrentMaterialId] = useState(null);
   const [menuOpenMaterialId, setMenuOpenMaterialId] = useState(null);
   const [materialEditData, setMaterialEditData] = useState<{
@@ -312,12 +343,6 @@ const Schedule = () => {
 
   const handleCloseEditModal = () => {
     setIsModalEditOpen(false);
-    setCurrentMaterial(null); // reset current material on close
-  };
-
-  const handleDeleteClick = (materialId: any) => {
-    console.log("👾 ~ handleDeleteClick ~ materialId:", materialId);
-    setMenuOpenMaterialId(null);
   };
 
   const toggleMenu = (materialId: any) => {
@@ -339,7 +364,7 @@ const Schedule = () => {
         onSuccess: () => {
           toast.success("Details updated successfully!");
           setIsModalEditOpen(false);
-          retechMaterials();
+          void retechMaterials();
           setMenuOpenMaterialId(null);
         },
       },
@@ -357,7 +382,7 @@ const Schedule = () => {
       {
         onSuccess: () => {
           toast.success("File updated successfully!");
-          retechMaterials();
+           void retechMaterials();
           setMenuOpenMaterialId(null);
         },
       },
@@ -373,7 +398,7 @@ const Schedule = () => {
     deleteMaterial(id, {
       onSuccess: () => {
         toast.success("File deleted successfully!");
-        retechMaterials();
+        void retechMaterials();
         setMenuOpenMaterialId(null);
       },
       onError: (error) => {
@@ -382,6 +407,7 @@ const Schedule = () => {
       },
     });
   };
+
 
   return (
     <Container>
@@ -444,12 +470,12 @@ const Schedule = () => {
                       </td>
                       <td className="whitespace-nowrap rounded-e-2xl px-6 py-4">
                         <button
-                          onClick={() =>
-                            handleScheduleSelect(schedule.id.toString())
-                          }
+                          onClick={() => handleScheduleSelect(schedule)}
                           className="underline"
                         >
-                          Select
+                          {isCreatingSession && selectedScheduleId === schedule.id.toString() 
+                  ? "Creating..." 
+                  : "Select"}
                         </button>
                       </td>
                     </tr>

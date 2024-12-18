@@ -31,8 +31,8 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <head>
-        <title>EduAI Teacher</title>
-        <meta name="description" content="Edu AI-Admin" />
+        <title>Welcome to EduAI Teacher Portal</title>
+        <meta name="description" content="Manage your classes, track student progress, and communicate seamlessly with parents. Your go-to tool for efficient teaching and organization." />
         <link rel="icon" type="image/x-icon" href="/favicon.ico" />
       </head>
       <body className="bg-bgSecondary">
