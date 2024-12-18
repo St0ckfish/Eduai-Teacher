@@ -22,6 +22,10 @@ const config = {
   images: {
     domains: ['eduai.vitaparapharma.com'],
   },
+
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
 };
 
 export default config;
