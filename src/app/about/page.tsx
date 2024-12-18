@@ -1,3 +1,4 @@
+"use client"
 import Container from "~/_components/Container";
 import { Text } from "~/_components/Text";
 

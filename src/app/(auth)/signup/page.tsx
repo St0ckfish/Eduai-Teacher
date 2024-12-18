@@ -229,7 +229,7 @@ const Signup = () => {
                       message: "Username must be at least 3 characters",
                     },
                   })}
-                  error={errors.username?.message?.toString() ?? ""}
+                  error={typeof errors.username?.message === 'string' ? errors.username.message : ''}
                   placeholder="Username"
                   theme="transparent"
                 />

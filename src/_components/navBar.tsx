@@ -84,18 +84,19 @@ const NavBarLink = ({
 };
 
 const NavBar = () => {
-  const toggleNav = useBooleanValue((state) => state.toggle);
+  const toggleNav = useBooleanValue((state) => state.toggle)
   const [profile, setProfile] = useState(false);
   const toggleProfile = () => {
     setProfile(!profile);
   };
   const [isClient, setIsClient] = useState(false);
-  const { data: dataUpdate } = useGetProfileUpdate();
+const { data: dataUpdate } =
+    useGetProfileUpdate();
 
-  useUserDataStore.getState().setUserData({
-    username: dataUpdate?.data.username,
-    email: dataUpdate?.data.email,
-    name_en: dataUpdate?.data.name,
+    useUserDataStore.getState().setUserData({ 
+      username: dataUpdate?.data.username, 
+      email: dataUpdate?.data.email, 
+      name_en: dataUpdate?.data.name, 
   });
   const userData = useUserDataStore.getState().userData;
   useEffect(() => {
@@ -206,9 +207,9 @@ const NavBar = () => {
 
                 <div className="flex flex-row items-center justify-end gap-2">
                   <Switch
-                    checked={theme === "dark"}
-                    onCheckedChange={handleThemeChange}
-                    className="mx-1"
+                    checked={theme === "dark"} 
+                    onCheckedChange={handleThemeChange} 
+                    className="mx-1" 
                   />
                   <Link
                     href="/notifies"
@@ -256,7 +257,7 @@ const NavBar = () => {
                           onClick={toggleProfile}
                           id="hs-dropdown-with-header"
                           type="button"
-                          className="border-bgSeconday inline-flex h-[2.375rem] w-[2.375rem] items-center justify-center gap-x-2 rounded-full border text-sm font-semibold text-gray-800 outline-none hover:bg-thead disabled:pointer-events-none disabled:opacity-50"
+                          className="border-bgSeconday hover:bg-thead inline-flex h-[2.375rem] w-[2.375rem] items-center justify-center gap-x-2 rounded-full border text-sm font-semibold text-gray-800 outline-none disabled:pointer-events-none disabled:opacity-50"
                         >
                           <div>
                             <img
@@ -270,23 +271,23 @@ const NavBar = () => {
 
                       {profile && (
                         <DropdownMenu.Content
-                          className={`fixed right-[20px] top-[20px] min-w-60 rounded-lg bg-bgPrimary p-2 text-textPrimary shadow-md`}
+                          className={`text-textPrimary fixed right-[20px] top-[20px] min-w-60 rounded-lg bg-bgPrimary p-2 shadow-md`}
                           aria-labelledby="hs-dropdown-with-header"
                           align="end"
                           sideOffset={5}
                         >
                           <div className="rounded-t-lg bg-bgPrimary px-5 py-3">
-                            <p className="text-sm text-textPrimary">
+                            <p className="text-textPrimary text-sm">
                               Signed in as
                             </p>
-                            <p className="text-sm font-medium text-textPrimary">
+                            <p className="text-textPrimary text-sm font-medium">
                               {userData?.email}
                             </p>
                           </div>
                           <div className="mt-2 py-2">
                             <DropdownMenu.Item asChild>
                               <Link
-                                className="flex items-center gap-x-3.5 rounded-lg border-none px-3 py-2 text-sm text-textPrimary outline-none hover:bg-bgSecondary"
+                                className="text-textPrimary flex items-center gap-x-3.5 rounded-lg border-none px-3 py-2 text-sm outline-none hover:bg-bgSecondary"
                                 href="/profile"
                               >
                                 <svg
@@ -311,8 +312,8 @@ const NavBar = () => {
                             </DropdownMenu.Item>
                             <DropdownMenu.Item asChild>
                               <a
-                                onClick={() => DeleteCookie()}
-                                className="flex items-center gap-x-3.5 rounded-lg border-none px-3 py-2 text-sm text-textPrimary outline-none hover:bg-error hover:text-white"
+                              onClick={()=> DeleteCookie()}
+                                className="text-textPrimary flex items-center gap-x-3.5 rounded-lg border-none px-3 py-2 text-sm outline-none hover:bg-error hover:text-white"
                                 href="/login"
                               >
                                 Sign out
@@ -329,7 +330,7 @@ const NavBar = () => {
           </header>
           <div className="sticky inset-x-0 top-0 z-20 border-y border-borderPrimary bg-bgPrimary px-4 sm:px-6 md:px-8 lg:hidden">
             <div className="flex items-center justify-between py-2">
-              <ol className="ms-3 flex items-center overflow-scroll whitespace-nowrap">
+              <ol className="ms-3 flex items-center whitespace-nowrap">
                 <li className="flex items-center text-sm text-textPrimary">
                   {/* Breadcrumb or other content */}
                 </li>
@@ -417,7 +418,7 @@ const NavBar = () => {
                 } `}
                 data-hs-accordion-always-open
               >
-                <ul className="h-screen space-y-1.5 overflow-y-auto">
+                <ul className="space-y-1.5">
                   <div
                     className={`flex ${small ? "w-[40px]" : ""} justify-center`}
                   >
