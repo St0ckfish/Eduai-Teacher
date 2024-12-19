@@ -1,11 +1,7 @@
 "use client";
 import Image from "next/image";
 import Container from "~/_components/Container";
-import {
-  FaRegComment,
-  FaRegHeart,
-  FaPaperPlane,
-} from "react-icons/fa";
+import { FaRegComment, FaRegHeart, FaPaperPlane } from "react-icons/fa";
 import { AiOutlineClockCircle } from "react-icons/ai";
 import { IoSend } from "react-icons/io5";
 import { FaHeart } from "react-icons/fa6";
@@ -21,7 +17,11 @@ import {
   useCreateComment,
   useGetAllCommentsForPost,
 } from "~/APIs/hooks/useComments";
-import { useAddAttendance, useRemoveAttendance, useUpcomingEvents } from "~/APIs/hooks/useEvents";
+import {
+  useAddAttendance,
+  useRemoveAttendance,
+  useUpcomingEvents,
+} from "~/APIs/hooks/useEvents";
 import { isToday, isAfter } from "date-fns";
 import { type CustomEvent } from "~/types";
 import { toast } from "react-toastify";
@@ -53,7 +53,6 @@ export default function Home() {
     },
   });
 
-  
   const [selectedPostId, setSelectedPostId] = useState<number | null>(null);
   const [comment, setComment] = useState("");
   console.log(comment);
@@ -164,9 +163,12 @@ export default function Home() {
     );
   }
 
-  if (isLoading || isEventsLoading) return <div className="flex justify-center items-center h-[750px]">
-     <Spinner />
-  </div>;
+  if (isLoading || isEventsLoading)
+    return (
+      <div className="flex h-[750px] items-center justify-center">
+        <Spinner />
+      </div>
+    );
 
   return (
     <Container>
@@ -266,7 +268,7 @@ export default function Home() {
                     onClick={() => handleCommentClick(post.id)}
                   >
                     <FaRegComment size={20} />
-                  <Text size={"xs"}>{post?.commentsCount}</Text>
+                    <Text size={"xs"}>{post?.commentsCount}</Text>
                   </button>
                   <FaPaperPlane size={20} />
                 </div>
@@ -339,7 +341,7 @@ export default function Home() {
               todayEvents.map((event) => (
                 <div
                   key={event.id}
-                  className="my-2 border-b border-borderPrimary"
+                  className="my-2"
                 >
                   <div className="my-4">
                     <div>
@@ -370,11 +372,12 @@ export default function Home() {
                         </div>
                         <div>
                           {event.isAttendee ? (
-                            <Button 
-                            onClick={() =>
-                              handleRemoveAttendance(event.id.toString())
-                            }
-                            color="secondary">
+                            <Button
+                              onClick={() =>
+                                handleRemoveAttendance(event.id.toString())
+                              }
+                              color="secondary"
+                            >
                               Attendance Confirmed
                             </Button>
                           ) : (
@@ -393,11 +396,11 @@ export default function Home() {
                 </div>
               ))
             ) : (
-              <Text>No events scheduled for today.</Text>
+              <Text color="gray" font={"semiBold"} size={"lg"} className="m-2">No Events Found</Text>
             )}
           </div>
 
-          <div className="my-2 border-b border-borderPrimary">
+          <div className="my-2 border-y py-2 border-borderPrimary/50">
             <Text font="bold" size="2xl">
               Upcoming Events
             </Text>
@@ -458,52 +461,8 @@ export default function Home() {
                 </div>
               ))
             ) : (
-              <Text>No upcoming events scheduled.</Text>
+              <Text color="gray" font={"semiBold"} size={"lg"} className="m-2">No Events Found</Text>
             )}
-          </div>
-
-          <div className="my-2 border-b border-borderPrimary">
-            <Text font={"bold"} size={"2xl"}>
-              Public Holidays Calendar
-            </Text>
-            <div className="flex w-full justify-center">
-              <div className="mt-4 flex w-fit items-center justify-center shadow-lg">
-                <CalendarDemo />
-              </div>
-            </div>
-
-            <div className="mt-4 flex items-center rounded-xl border border-borderPrimary">
-              <div className="m-4 border-r-4 border-primary py-4 pr-4 text-primary">
-                <div className="flex flex-col items-center font-bold">
-                  <Text color={"primary"} size={"xl"} font={"bold"}>
-                    20
-                  </Text>
-                  <Text color={"primary"} size={"xl"} font={"bold"}>
-                    August
-                  </Text>
-                </div>
-              </div>
-              <div>
-                <Text font={"bold"}>Revolution of the King and the People</Text>
-                <Text color={"gray"}>Tuesday</Text>
-              </div>
-            </div>
-            <div className="mt-4 flex items-center rounded-xl border border-borderPrimary">
-              <div className="m-4 border-r-4 border-primary py-4 pr-4 text-primary">
-                <div className="flex flex-col items-center font-bold">
-                  <Text color={"primary"} size={"xl"} font={"bold"}>
-                    21
-                  </Text>
-                  <Text color={"primary"} size={"xl"} font={"bold"}>
-                    August
-                  </Text>
-                </div>
-              </div>
-              <div>
-                <Text font={"bold"}>Youth Day</Text>
-                <Text color={"gray"}>Wednesday</Text>
-              </div>
-            </div>
           </div>
         </div>
       </div>

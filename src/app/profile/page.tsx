@@ -19,9 +19,8 @@ import { toast } from "react-toastify";
 
 const EditProfile = () => {
   const router = useRouter();
-  const { data, isLoading } = useProfile();
-  const { data: dataUpdate } =
-    useGetProfileUpdate();
+  const { data, isLoading, refetch: refetchProfile } = useProfile();
+  const { data: dataUpdate } = useGetProfileUpdate();
 
   const [name, setName] = useState(""); // Initialize state as empty
   const [phone, setPhone] = useState(""); // Initialize state as empty
@@ -48,12 +47,18 @@ const EditProfile = () => {
     if (data?.data) {
       setName(data.data.name || "");
       setPhone(data.data.number || "");
-      setGender(dataUpdate?.data.gender === "MALE" ? "MALE" : dataUpdate?.data.gender === "FEMALE" ? "FEMALE" : "MALE");
+      setGender(
+        dataUpdate?.data.gender === "MALE"
+          ? "MALE"
+          : dataUpdate?.data.gender === "FEMALE"
+            ? "FEMALE"
+            : "MALE",
+      );
       setNationality(dataUpdate?.data.nationality || "");
       setQualification(data.data.qualification || "");
       setSubject(data.data.subjects[0] || "");
     }
-  }, [data]);
+  }, [data, dataUpdate]);
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setName(e.target.value);
@@ -63,10 +68,9 @@ const EditProfile = () => {
     setPhone(e.target.value);
   };
 
-
   const handleGenderChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-    e.target.value === "MALE"? setGender("MALE"): setGender("FEMALE");
+    e.target.value === "MALE" ? setGender("MALE") : setGender("FEMALE");
   };
 
   const handleNationalityChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -83,12 +87,16 @@ const EditProfile = () => {
     setSubject(e.target.value);
   };
 
-  const {data: dataSubjects} = useGetAllTextBookSummarys();
+  const { data: dataSubjects } = useGetAllTextBookSummarys();
   console.log(dataSubjects);
   const { mutate: updateProfileMutation } = useUpdateProfile({
     onSuccess: () => {
-      router.push('/'); // Navigate to home page on success
+      router.push("/"); // Navigate to home page on success
       toast.success("Profile Edited successfully!");
+      void refetchProfile();
+    },
+    onError: () => {
+      toast.error("Error editing profile!");
     },
   });
   const handleSubmit = () => {
@@ -107,9 +115,7 @@ const EditProfile = () => {
     };
     console.log(updatedProfile);
     updateProfileMutation(updatedProfile);
-
   };
-
 
   if (isLoading || isNationalities) {
     return <Spinner />;

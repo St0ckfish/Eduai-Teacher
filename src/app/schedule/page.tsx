@@ -171,7 +171,13 @@ const Schedule = () => {
       );
     }
 
-    const [hoursStr, minutes] = match;
+    const [, hoursStr, minutes] = match; // Destructure correctly, ignore seconds
+
+    // Add a null check before using hoursStr
+    if (hoursStr === undefined) {
+      throw new Error("Invalid time format. Unable to extract hours.");
+    }
+
     let hours = parseInt(hoursStr, 10);
     const period = hours >= 12 ? "PM" : "AM";
     hours = hours % 12;

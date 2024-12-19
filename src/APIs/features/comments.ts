@@ -1,4 +1,4 @@
-import type { CommentsResponse, PostCommentRequest } from "~/types";
+import type { CommentsResponse } from "~/types";
 import axiosInstance from "../axios";
 
 export const fetchAllCommentsForPost = async (
