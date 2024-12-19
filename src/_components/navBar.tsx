@@ -16,7 +16,8 @@ import { Switch } from "~/components/ui/switch";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import Cookie from "js-cookie";
 import { useBooleanValue, useUserDataStore } from "~/APIs/store";
-import { useGetProfileUpdate } from "~/APIs/hooks/useProfile";
+import { useGetProfileUpdate, useProfile } from "~/APIs/hooks/useProfile";
+import { useNotificationsWebSocket } from "~/hooks/useNotifications";
 
 const useWindowDimensions = () => {
   const isClient = typeof window === "object";
@@ -90,13 +91,14 @@ const NavBar = () => {
     setProfile(!profile);
   };
   const [isClient, setIsClient] = useState(false);
-const { data: dataUpdate } =
-    useGetProfileUpdate();
+  const { data: dataUpdate } = useProfile();
 
     useUserDataStore.getState().setUserData({ 
       username: dataUpdate?.data.username, 
       email: dataUpdate?.data.email, 
       name_en: dataUpdate?.data.name, 
+      id: dataUpdate?.data.id?.toString(), 
+      picture: dataUpdate?.data.picture, 
   });
   const userData = useUserDataStore.getState().userData;
   useEffect(() => {
@@ -130,6 +132,9 @@ const { data: dataUpdate } =
       setIsOpen5(false);
     }
   };
+  const userId = userData.id;
+  const { notificationsCount, isConnected } = useNotificationsWebSocket(userId);
+  
 
   const OpenSideBar = () => {
     setIsOpen(!isOpen);
@@ -213,7 +218,7 @@ const { data: dataUpdate } =
                   />
                   <Link
                     href="/notifies"
-                    className="inline-flex h-[2.375rem] w-[2.375rem] items-center justify-center gap-x-2 rounded-full text-sm font-semibold text-textPrimary hover:bg-bgSecondary disabled:pointer-events-none disabled:opacity-50"
+                    className="relative inline-flex h-[2.375rem] w-[2.375rem] items-center justify-center gap-x-2 rounded-full text-sm font-semibold text-textPrimary hover:bg-bgSecondary disabled:pointer-events-none disabled:opacity-50"
                   >
                     <svg
                       className="size-4 flex-shrink-0"
@@ -230,6 +235,11 @@ const { data: dataUpdate } =
                       <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
                       <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
                     </svg>
+                    {notificationsCount > 0 && (
+                      <div className="absolute top-4 left-5 bg-sky-500 text-white w-4 h-4 rounded-full flex justify-center items-center text-center text-sm">
+                        <span>{notificationsCount}</span>
+                      </div>
+                    )}
                   </Link>
                   <Link
                     href="/chat"
@@ -262,7 +272,7 @@ const { data: dataUpdate } =
                           <div>
                             <img
                               className="inline-block h-[38px] w-[38px] rounded-full ring-2 ring-bgSecondary"
-                              src="/images/userr.png"
+                              src={`${userData.picture ?? "/images/userr.png"}`}
                               alt="User Avatar"
                             />
                           </div>

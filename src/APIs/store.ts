@@ -18,6 +18,8 @@ type UserData = {
     username: string;
     email: string;
     name_en: string;
+    id: string;
+    picture: string;
 }
 
 type UserDataState = {
@@ -31,7 +33,9 @@ export const useUserDataStore = create<UserDataState>((set) => ({
     userData: {
         username: '',
         email: '',
-        name_en: ''
+        name_en: '',
+        id: '',
+        picture: ''
     },
 
     setUserData: (data) => {
@@ -48,7 +52,9 @@ export const useUserDataStore = create<UserDataState>((set) => ({
             userData: {
                 username: '',
                 email: '',
-                name_en: ''
+                name_en: '',
+                id: '',
+                picture: '',
             }
         }))
     }
