@@ -131,11 +131,11 @@ const EditProfile = () => {
           <div className="mt-4 flex flex-col items-center">
             <div>
               <Image
-                src={data?.data?.picture || "/images/userr.png"}
+                src={data?.data?.picture ?? "/images/userr.png"}
                 alt="Profile Photo"
                 width={100}
                 height={100}
-                className="rounded-full"
+                className="rounded-full w-[100px] h-[100px]"
               />
             </div>
             <div className="flex flex-col items-center">

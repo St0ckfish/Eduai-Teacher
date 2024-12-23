@@ -1,6 +1,6 @@
  import { createComment, deleteComment, fetchAllCommentsForPost, likeComment, updateComment } from "../features/comments";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { CommentsResponse } from "~/types";
+import { type CommentsResponse } from "~/types";
 
 export function useGetAllCommentsForPost({
   postId,
