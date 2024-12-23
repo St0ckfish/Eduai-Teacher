@@ -370,7 +370,7 @@ const { data: dataUpdate } =
                 small ? "w-[90px]" : "w-[260px]"
               } drop-shadow-2xl lg:drop-shadow-none ${
                 !isOpen ? "w-0" : ""
-              } fixed inset-y-0 start-0 z-[60] bg-bgPrimary duration-300 ease-in lg:bottom-0 lg:end-auto lg:block lg:translate-x-0`}
+              } fixed inset-y-0 start-0 z-[60] bg-bgPrimary duration-300 ease-in lg:bottom-0 lg:end-auto lg:block lg:translate-x-0 overflow-y-auto`}
             >
               <div className="px-8 pt-4">
                 <Link href="/">
