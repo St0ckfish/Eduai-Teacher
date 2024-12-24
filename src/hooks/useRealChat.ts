@@ -33,7 +33,7 @@ export const useWebSocketChat = ({ userId, initialMessages, onNewMessage }: UseW
     }
 
     const stompClient = new Client({
-      brokerURL: `wss://eduai.vitaparapharma.com/ws?token=${token}`,
+      brokerURL: `wss://api.eduai.tech/ws?token=${token}`,
       debug: function (str: string) {
         console.log("[STOMP Debug]", str);
       },

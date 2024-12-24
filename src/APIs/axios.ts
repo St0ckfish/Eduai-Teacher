@@ -2,7 +2,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 
 const axiosInstance = axios.create({
-  baseURL: "https://eduai.vitaparapharma.com",
+  baseURL: "https://api.eduai.tech",
 });
 
 axiosInstance.interceptors.request.use(
