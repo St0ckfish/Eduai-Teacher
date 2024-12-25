@@ -137,7 +137,7 @@ const Homework = () => {
     mutate(data, {
       onSuccess: () => {
         toast.success("HomeWork submitted successfully!");
-        setModalOpen(false);
+        handleCloseModal();
       },
       onError: (
         err: Error & { response?: { data: { message: string; data: [] } } },
@@ -152,6 +152,7 @@ const Homework = () => {
   };
 
   return (
+    <>
     <Container>
       <div className="mb-4 flex w-full gap-10 max-[1080px]:grid">
         <div className="flex h-fit">
@@ -252,6 +253,7 @@ const Homework = () => {
           )}
         </div>
       </div>
+    </Container>
       <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
         <div>
           <Text font="bold" size="xl" className="mb-5">
@@ -331,7 +333,7 @@ const Homework = () => {
           </div>
         </form>
       </Modal>
-    </Container>
+    </>
   );
 };
 
