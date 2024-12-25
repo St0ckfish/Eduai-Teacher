@@ -39,3 +39,22 @@ export const updateProfile = async (profileData: TeacherProfileUpdate): Promise<
       throw error; // Re-throw the error to be handled by the caller
     }
   };
+
+
+  export const updateProfilePicture = async (picture: File): Promise<void> => {
+    try {
+      const formData = new FormData();
+      formData.append("picture", picture);
+  
+      const response = await axiosInstance.put('/api/v1/my-account/picture', formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+  
+      return response.data; // Return response data if needed
+    } catch (error: any) {
+      console.error("Error updating profile picture:", error.response?.data || error.message);
+      throw error; // Re-throw the error to handle it in the calling component
+    }
+  };
