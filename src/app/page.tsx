@@ -186,7 +186,7 @@ export default function Home() {
                         src={
                           post.isPublisherPictureExists
                             ? post.publisherPicture
-                            : "/images/default.png"
+                            : "/images/noImage.png"
                         }
                         className="h-[60px] w-[60px] rounded-full"
                         alt="Profile Photo"
@@ -223,7 +223,7 @@ export default function Home() {
                           <Image
                             priority
                             unoptimized
-                            src={attachment.viewLink}
+                            src={attachment.viewLink ?? "/images/noImage.png"}
                             alt={`Post Image ${index + 1}`}
                             width={500}
                             height={500}
