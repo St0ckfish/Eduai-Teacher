@@ -1,8 +1,8 @@
 // hooks/useWebSocketChat.ts
 import { type Client as StompClient, type IMessage, Client } from "@stomp/stompjs";
 import { useEffect, useRef, useState } from "react";
-import { toast } from "react-toastify";
 import Cookies from "js-cookie";
+import { baseUrlStock } from "~/APIs/axios";
 
 interface Message {
   chatId: number | string;
@@ -28,12 +28,11 @@ export const useWebSocketChat = ({ userId, initialMessages, onNewMessage }: UseW
     const token = Cookies.get("token");
 
     if (!token || !userId) {
-      toast.error("Authentication required to start chat");
       return;
     }
 
     const stompClient = new Client({
-      brokerURL: `wss://api.eduai.tech/ws?token=${token}`,
+      brokerURL: `${baseUrlStock}?token=${token}`,
       debug: function (str: string) {
         console.log("[STOMP Debug]", str);
       },
@@ -62,13 +61,11 @@ export const useWebSocketChat = ({ userId, initialMessages, onNewMessage }: UseW
 
     stompClient.onStompError = frame => {
       console.error("Broker reported error:", frame.headers.message);
-      toast.error("Chat connection error");
       setIsConnected(false);
     };
 
     stompClient.onWebSocketError = event => {
       console.error("WebSocket connection error:", event);
-      toast.error("Unable to establish chat connection");
       setIsConnected(false);
     };
 
@@ -84,7 +81,6 @@ export const useWebSocketChat = ({ userId, initialMessages, onNewMessage }: UseW
 
   const sendMessage = async (messagePayload: { chatId: string | number; content: string; imageUrl?: string }) => {
     if (!stompClientRef.current?.connected) {
-      toast.error("Chat connection lost. Please reconnect.");
       return false;
     }
 
@@ -96,7 +92,6 @@ export const useWebSocketChat = ({ userId, initialMessages, onNewMessage }: UseW
       return true;
     } catch (error) {
       console.error("Message sending failed:", error);
-      toast.error("Failed to send message");
       return false;
     }
   };
