@@ -1,7 +1,29 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+html {
+  touch-action: none;
+  -ms-touch-action: none;
+  min-zoom: 0.5;
+  max-zoom: 1.1;
+}
 
+@supports not (zoom: 1) {
+  html {
+    -ms-zoom: 1;
+    -moz-transform: scale(1);
+    -moz-transform-origin: 0 0;
+    -o-transform: scale(1);
+    -o-transform-origin: 0 0;
+    -webkit-transform: scale(1);
+    -webkit-transform-origin: 0 0;
+  }
+}
+
+* {
+  touch-action: pan-x pan-y;
+  -ms-touch-action: pan-x pan-y;
+}
 .light {
   --primary: 62, 90, 240; /* #3e5af0 */
   --bg-primary: 255, 255, 255; /* #ffffff */
