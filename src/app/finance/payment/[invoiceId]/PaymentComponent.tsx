@@ -197,7 +197,9 @@ const paymentMethods = [
   
   return (
     <Container>
-      <div className="w-full overflow-x-hidden rounded-xl bg-bgPrimary p-4">
+      <div className="flex w-full overflow-auto">
+
+      <div className="w-full overflow-x-auto rounded-xl bg-bgPrimary text-nowrap whitespace-nowrap p-4">
         <Text font={"bold"} size={"4xl"}>
           Payment
         </Text>
@@ -205,7 +207,7 @@ const paymentMethods = [
           Choose payment method
         </Text>
         <RadioGroup.Root
-          className="my-4 flex space-x-4"
+          className="my-4 flex space-x-4 overflow-x-auto"
           value={selectedPayment} // Bind the value to the state
           onValueChange={handlePaymentChange} // Update the state when a new option is selected
         >
@@ -213,9 +215,9 @@ const paymentMethods = [
             <RadioGroup.Item
               key={value}
               value={value}
-              className="group flex h-20 w-1/4 flex-col justify-center rounded-lg border-2 border-borderPrimary text-center text-textSecondary transition hover:border-primary hover:text-primary focus-visible:ring focus-visible:ring-blue-200 focus-visible:ring-opacity-75 data-[state=checked]:border-primary data-[state=checked]:text-primary"
+              className="group flex h-20 min-w-[300px] flex-col justify-center rounded-lg border-2 border-borderPrimary text-center text-textSecondary transition hover:border-primary hover:text-primary focus-visible:ring focus-visible:ring-blue-200 focus-visible:ring-opacity-75 data-[state=checked]:border-primary data-[state=checked]:text-primary"
               id={value}
-            >
+              >
               <div className="flex w-full justify-between px-4">
                 <div>
                   {icon}
@@ -231,6 +233,7 @@ const paymentMethods = [
           ))}
         </RadioGroup.Root>
       </div>
+              </div>
 
       {/* Conditional rendering for Adding Card */}
       <div className="mt-8 mb-10">
@@ -322,7 +325,8 @@ const paymentMethods = [
             </form>
           </div>
         ) : selectedPayment === "bank-card" ? (
-          <div className="mt-8 w-full overflow-x-hidden rounded-xl bg-bgPrimary p-4">
+          <div className="flex w-full overflow-auto">
+          <div className="mt-8 w-full overflow-x-auto rounded-xl bg-bgPrimary text-nowrap whitespace-nowrap p-4">
             <Text font={"bold"} size={"2xl"}>
               Bank Card
             </Text>
@@ -338,7 +342,7 @@ const paymentMethods = [
                 <RadioGroup.Item
                   key={visaNumber}
                   value={visaNumber}
-                  className="group flex h-20 w-1/4 flex-col justify-center rounded-lg border-2 border-borderPrimary text-center text-textSecondary transition hover:border-primary hover:text-primary focus-visible:ring focus-visible:ring-blue-200 focus-visible:ring-opacity-75 data-[state=checked]:border-primary data-[state=checked]:text-primary"
+                  className="group flex h-20 min-w-[300px] flex-col justify-center rounded-lg border-2 border-borderPrimary text-center text-textSecondary transition hover:border-primary hover:text-primary focus-visible:ring focus-visible:ring-blue-200 focus-visible:ring-opacity-75 data-[state=checked]:border-primary data-[state=checked]:text-primary"
                   id={visaNumber}
                 >
                   <div className="flex w-full justify-between px-4">
@@ -388,6 +392,7 @@ const paymentMethods = [
             <div className="mt-4 w-1/4">
               <Button>Pay 400 MAD</Button>
             </div>
+          </div>
           </div>
         ) : selectedPayment === "wallet" ? (
           <div className="mt-8 w-full overflow-x-hidden rounded-xl bg-bgPrimary p-4">
