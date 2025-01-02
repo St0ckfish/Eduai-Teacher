@@ -70,8 +70,8 @@ const Exam = () => {
 
   return (
     <Container>
-      <div className="flex w-full items-center justify-between gap-7">
-        <div className="flex w-[400px] items-center gap-10">
+      <div className="flex w-full items-center justify-between gap-7 max-[1150px]:grid">
+        <div className="flex w-[400px] items-center gap-10 max-[600px]:grid grid-cols-2">
           <Button 
             onClick={() => setActiveTab('all')}
             theme={activeTab === 'all' ?  undefined : 'outline'}

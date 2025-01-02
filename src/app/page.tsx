@@ -25,6 +25,7 @@ import {
 import { isToday, isAfter } from "date-fns";
 import { type CustomEvent } from "~/types";
 import { toast } from "react-toastify";
+import ImageComponent from "~/_components/ImageSrc";
 
 export default function Home() {
   const {
@@ -220,15 +221,17 @@ export default function Home() {
                       {" "}
                       {post.attachments.slice(0, 6).map((attachment, index) => (
                         <div key={index} className="relative">
-                          <Image
-                            priority
-                            unoptimized
-                            src={attachment.viewLink ?? "/images/noImage.png"}
-                            alt={`Post Image ${index + 1}`}
-                            width={500}
-                            height={500}
-                            className="h-full w-full rounded-md object-cover"
-                          />
+                          <ImageComponent
+                        src={attachment.viewLink}
+                        fallbackSrc="/images/noImage.png"
+                        aspectRatio="aspect-video"
+                        objectFit="cover"
+                        priority={true}
+                        className="h-full w-full rounded-md object-cover"
+                        alt={`Post Image ${index + 1}`}
+                        onLoadingComplete={() => console.log('Image loaded')}
+                        onError={(error) => console.error('Image failed to load:', error)}
+                      />
                         </div>
                       ))}
                       {post.attachments.length > 6 && (

@@ -111,7 +111,7 @@ const Comment = ({
         <Image
           src={imageUrl}
           alt="Profile Photo"
-          className="rounded-full"
+          className="rounded-full w-[60px] h-[60px]"
           width={60}
           height={60}
         />
