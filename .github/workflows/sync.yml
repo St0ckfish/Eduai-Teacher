@@ -22,15 +22,15 @@ jobs:
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
 
-      - name: Add remote and force push to organization repo
+      - name: Fetch and pull changes from remote
+        run: |
+          git remote add org https://${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/Exp0tech1/Eduai-Teacher.git
+          git fetch org
+          git pull org main --rebase
+
+      - name: Push to organization repo
         env:
           TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         run: |
-          echo "Adding remote repository..."
-          git remote add org https://${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/Exp0tech1/Eduai-Teacher.git
-          
-          echo "Fetching from remote..."
-          git fetch org
-          
-          echo "Force pushing to remote..."
-          git push -u org main --force
+          echo "Pushing to remote..."
+          git push -u org main
