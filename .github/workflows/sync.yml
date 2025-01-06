@@ -2,10 +2,10 @@ name: Sync Fork
 
 on:
   push:
-    branches: [ main ]  # سيعمل عند كل دفع للفرع الرئيسي
+    branches: [ main ]
   schedule:
-    - cron: '0 */6 * * *'  # سيعمل كل 6 ساعات
-  workflow_dispatch:  # للتشغيل اليدوي
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
 
 jobs:
   sync:
@@ -23,10 +23,10 @@ jobs:
           
       - name: Sync repositories
         run: |
-          # إضافة المستودع الهدف كـ remote
-          git remote add destination https://github.com/Exp0tech1/Eduai-Teacher.git
+          # إضافة المستودع الهدف كـ remote مع التوكن
+          git remote add destination https://${{ secrets.GITHUB_TOKEN }}@github.com/Exp0tech1/Eduai-Teacher.git
           
-          # جلب التحديثات من المستودع الهدف
+          # جلب التحديثات
           git fetch destination
           
           # محاولة الدمج
