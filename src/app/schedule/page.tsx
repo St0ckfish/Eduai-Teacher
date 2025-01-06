@@ -545,7 +545,7 @@ const handleExplainedSubmit = () => {
                 <Spinner />
               </div>
             ) : (
-              <table className="w-full table-auto overflow-x-auto p-4 text-left text-sm text-textPrimary">
+              <table className="w-full table-auto overflow-auto p-4 text-left text-sm text-textPrimary">
                 <thead className="text-xs uppercase text-textPrimary">
                   <tr>
                     <th scope="col" className="whitespace-nowrap px-6 py-3">
