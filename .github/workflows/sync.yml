@@ -1,18 +1,20 @@
-name: Sync Repo to Organization
+name: Sync Fork
 
 on:
-  push:
-    branches:
-      - main
+  schedule:
+    - cron: '0 * * * *'  # سيعمل كل ساعة
+  workflow_dispatch:      # يمكنك تشغيله يدوياً أيضاً
 
 jobs:
   sync:
     runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
 
-      - name: Push to org repository
-        run: |
-          git remote add org-origin https://github.com/Exp0tech1/Eduai-Teacher
-          git push org-origin main
+    steps:
+      - uses: actions/checkout@v3
+      - name: Sync Fork
+        uses: repo-sync/github-sync@v2
+        with:
+          source_repo: "Exp0tech1/Eduai-Teacher"  # المستودع المصدر الذي تريد النسخ منه
+          source_branch: "main"
+          destination_branch: "main"
+          github_token: ${{ secrets.GITHUB_TOKEN }}
