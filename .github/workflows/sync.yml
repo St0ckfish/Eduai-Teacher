@@ -1,44 +1,18 @@
-name: Sync Fork
+name: Sync Repo to Organization
 
 on:
   push:
-    branches: [ main ]
-  schedule:
-    - cron: '0 */6 * * *'
-  workflow_dispatch:
+    branches:
+      - main
 
 jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-        with:
-          persist-credentials: false
-          fetch-depth: 0
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-      - name: Create local changes
+      - name: Push to org repository
         run: |
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
-          
-      - name: Sync repositories
-        run: |
-          # إضافة المستودع الهدف كـ remote مع التوكن
-          git remote add destination https://${{ secrets.GITHUB_TOKEN }}@github.com/Exp0tech1/Eduai-Teacher.git
-          
-          # جلب التحديثات
-          git fetch destination
-          
-          # محاولة الدمج
-          git checkout main
-          git pull destination main --allow-unrelated-histories
-          
-          # دفع التغييرات
-          git push destination main
-
-      - name: Push changes
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: main
-          force: true
+          git remote add org-origin https://github.com/Exp0tech1/Eduai-Teacher
+          git push org-origin main
