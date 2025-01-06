@@ -14,5 +14,5 @@ jobs:
 
       - name: Push to org repository
         run: |
-          git remote add org-origin https://github.com/Exp0tech1/Eduai-Teacher.git
+          git remote add org-origin https://github.com/Exp0tech1/Eduai-Teacher
           git push org-origin main
