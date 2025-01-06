@@ -9,7 +9,8 @@ import {
   useGetAllSessionAttendance,
   useGetAllSessionExplained,
   useGetAllSessionMateriale,
-  useCreateSession
+  useCreateSession,
+  useCreateExpliand
 } from "~/APIs/hooks/useSchedule";
 import Spinner from "~/_components/Spinner";
 import { format } from "date-fns";
@@ -324,6 +325,43 @@ const Schedule = () => {
     const file = e.target.files ? e.target.files[0] : null;
     setMaterialEditData((prev) => ({ ...prev, file }));
   };
+
+  const [isExplainedModalOpen, setIsExplainedModalOpen] = useState(false);
+const [explainedData, setExplainedData] = useState({
+  topicId: "",
+  description: ""
+});
+
+const { mutate: createExplained } = useCreateExpliand({
+  onSuccess: () => {
+    toast.success("Explained topic added successfully!");
+    setIsExplainedModalOpen(false);
+    setExplainedData({ topicId: "", description: "" });
+    // Assuming there's a refetch function for explained data
+    void refetch();
+  },
+  onError: (error) => {
+    toast.error("Failed to add explained topic");
+  }
+});
+
+// Add these handlers for the explained form
+const handleExplainedChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const { name, value } = e.target;
+  setExplainedData(prev => ({ ...prev, [name]: value }));
+};
+
+const handleExplainedSubmit = () => {
+  if (!selectedScheduleId || !explainedData.topicId || !explainedData.description) {
+    toast.error("Please fill in all fields.");
+    return;
+  }
+
+  createExplained({
+    id: selectedScheduleId,
+    formData: explainedData
+  });
+};
 
   const handleEditClick = (materialId: any) => {
     setCurrentMaterialId(materialId);
@@ -751,22 +789,32 @@ const Schedule = () => {
                 <Text font={"bold"} size={"2xl"} className="mb-4">
                   Explained
                 </Text>
-                <button className="flex items-center gap-2 font-medium text-primary">
-                  <svg
-                    className="h-6 w-6 text-primary"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M12 4v16m8-8H4"
-                    />
-                  </svg>{" "}
-                  Add Explained
-                </button>
+                <button 
+        className={`flex items-center gap-2 font-medium ${
+          selectedScheduleId 
+            ? "cursor-pointer text-primary" 
+            : "cursor-not-allowed text-textSecondary"
+        }`}
+        onClick={() => selectedScheduleId && setIsExplainedModalOpen(true)}
+        disabled={!selectedScheduleId}
+      >
+        <svg
+          className={`h-6 w-6 ${
+            selectedScheduleId ? "text-primary" : "text-textSecondary"
+          }`}
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M12 4v16m8-8H4"
+          />
+        </svg>
+        Add Explained
+      </button>
               </div>
             )}
             {Explaineds?.data && Array.isArray(Explaineds.data) ? (
@@ -811,6 +859,41 @@ const Schedule = () => {
           </div>
         </div>
       </div>
+      {isExplainedModalOpen && (
+  <div className="fixed inset-0 z-[1100] flex items-center justify-center bg-black bg-opacity-50">
+    <div className="w-1/3 rounded-lg bg-bgSecondary p-6">
+      <h2 className="mb-4 text-xl font-bold">Add Explained Topic</h2>
+      <div className="flex flex-col gap-4">
+        <Input
+          border="gray"
+          theme="transparent"
+          type="text"
+          name="topicId"
+          placeholder="Enter topic ID"
+          value={explainedData.topicId}
+          onChange={handleExplainedChange}
+        />
+        <Input
+          border="gray"
+          theme="transparent"
+          name="description"
+          placeholder="Enter description"
+          value={explainedData.description}
+          onChange={handleExplainedChange}
+        />
+        <div className="flex gap-2">
+          <Button onClick={handleExplainedSubmit}>Add Explained</Button>
+          <Button 
+            color="secondary" 
+            onClick={() => setIsExplainedModalOpen(false)}
+          >
+            Close
+          </Button>
+        </div>
+      </div>
+    </div>
+  </div>
+)}
       {isModalOpen && (
         <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black bg-opacity-50">
           <div className="w-1/3 rounded-lg bg-bgSecondary p-6">

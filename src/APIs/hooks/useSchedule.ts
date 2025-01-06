@@ -11,6 +11,7 @@ import {
   fetchAllSessionExplained,
   fetchAllRealSession,
   createSession,
+  createExpliand,
 } from "../features/schedule";
 import type {
   SessionAttendanceResponse,
@@ -108,6 +109,23 @@ export const useDeleteSession = (
     mutationFn: deleteSession,
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ["deleteSession"] });
+    },
+    ...options,
+  });
+};
+
+export const useCreateExpliand = (
+  options?: UseMutationOptions<
+  any,
+    Error,
+    { formData: Partial<any>; id: string }
+  >,
+) => {
+  const queryClient = useQueryClient();
+  return useMutation<any, Error, { formData: Partial<any>; id: string }>({
+    mutationFn: createExpliand,
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["expliand"] });
     },
     ...options,
   });

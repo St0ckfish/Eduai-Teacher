@@ -43,6 +43,15 @@ export const fetchAllSessionExplained = async (sessionId: string): Promise<Sessi
     return response.data;
 };
 
+export const createExpliand = async (params: {
+  formData: Partial<any>;
+  id: string;
+}): Promise<any> => {
+    const { formData, id } = params;
+    const response = await axiosInstance.post<any>(`/api/v1/management/session-explained/${id}`, formData);
+    return response.data;
+  };
+
 export const deleteSession = async (
     sessionId: number,
 ): Promise<{ message: string }> => {
