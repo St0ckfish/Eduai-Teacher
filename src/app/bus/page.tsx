@@ -1,5 +1,5 @@
 const Bus = () => {
-  return <></>;
+  return <> </>;
 };
 
 export default Bus;
