@@ -98,9 +98,7 @@ const Login = () => {
                 <input type="checkbox" name="remember" id="" />
               </div>
               <div className="flex justify-center text-center">
-              <Button type="submit" disabled={isSubmitting}>
-                  {isSubmitting ? "Login..." : "Login"}
-                </Button>
+              <Button type="submit" disabled={isSubmitting}> {isSubmitting ? "Login..." : "Login"} </Button>
               </div>
               <div className="flex items-center justify-center gap-2 text-center">
                 <Text font={"medium"} size={"md"} color={"muted"}>
