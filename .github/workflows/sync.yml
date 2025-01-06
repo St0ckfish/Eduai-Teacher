@@ -1,20 +1,31 @@
 name: Sync Fork
 
 on:
-  schedule:
-    - cron: '0 * * * *'  # سيعمل كل ساعة
-  workflow_dispatch:      # يمكنك تشغيله يدوياً أيضاً
+  push:
+    branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   sync:
     runs-on: ubuntu-latest
-
+    
     steps:
       - uses: actions/checkout@v3
-      - name: Sync Fork
-        uses: repo-sync/github-sync@v2
         with:
-          source_repo: "Exp0tech1/Eduai-Teacher"  # المستودع المصدر الذي تريد النسخ منه
-          source_branch: "main"
-          destination_branch: "main"
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+          
+      - name: Configure Git
+        run: |
+          git config --global user.name "GitHub Action"
+          git config --global user.email "action@github.com"
+          
+      - name: Add remote
+        run: |
+          git remote add upstream https://github.com/Exp0tech1/Eduai-Teacher.git
+          
+      - name: Fetch and sync
+        run: |
+          git fetch upstream
+          git checkout main
+          git merge upstream/main --no-edit
+          git push origin main
