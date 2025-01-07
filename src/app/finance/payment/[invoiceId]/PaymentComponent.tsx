@@ -265,6 +265,7 @@ const paymentMethods = [
                   placeholder="1234 5678 9012 3456"
                   theme="transparent"
                   border="gray"
+                  type="number"
                   className="mt-2"
                   maxLength={3}
                 />
@@ -278,6 +279,7 @@ const paymentMethods = [
                   placeholder="MM/YY"
                   theme="transparent"
                   border="gray"
+                  type="date"
                   className="mt-2"
                   maxLength={3}
                 />
