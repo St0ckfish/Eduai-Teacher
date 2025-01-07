@@ -509,6 +509,7 @@ const paymentMethods = [
                   placeholder="receiptNumber"
                   theme="transparent"
                   label="Receipt number"
+                  type="number"
                 />
                 {errors?.request?.receiptNumber && (
                   <p className="mt-1 text-sm text-red-500">
@@ -542,6 +543,7 @@ const paymentMethods = [
                   placeholder="amount"
                   theme="transparent"
                   label="Amount deposited"
+                  type="number"
                 />
                 {errors.request?.amount && (
                   <p className="mt-1 text-sm text-red-500">
