@@ -32,6 +32,7 @@ import { FaEllipsisV } from "react-icons/fa";
 import { useRecordAttendance } from "~/APIs/hooks/useAttendance";
 import { BiSolidEditAlt } from "react-icons/bi";
 import { MdDelete } from "react-icons/md";
+import Modal from "~/_components/Modal";
 
 function CalendarDemo({
   onDateSelect,
@@ -125,6 +126,15 @@ const Schedule = () => {
   >(null);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const handleCloseModal1 = () => {
+    setIsModalOpen(false);
+  };
+  const handleCloseModal2 = () => {
+    setIsExplainedModalOpen(false);
+  };
+  const handleCloseModal3 = () => {
+    setIsModalEditOpen(false);
+  };
   const [selectedSchedule, setSelectedSchedule] = React.useState<TeacherSchedule | null>(null);
   const formattedDate = React.useMemo(
     () => format(selectedDate, "yyyy-MM-dd"),
@@ -136,7 +146,7 @@ const Schedule = () => {
     selectedScheduleId ?? "",
   );
 
-  const {mutate: createSession, isPending: isCreatingSession} = useCreateSession({
+  const { mutate: createSession, isPending: isCreatingSession } = useCreateSession({
     onSuccess: (data) => {
       toast.success("Session created successfully!");
       void refetch();
@@ -157,7 +167,7 @@ const Schedule = () => {
       };
 
       createSession(sessionData);
-      
+
     }
   }, [selectedSchedule, dataLessonId, formattedDate, refetch, createSession]);
   console.log("👾 ~ Schedule ~ dataLessonId:", dataLessonId);
@@ -265,9 +275,6 @@ const Schedule = () => {
     setIsModalOpen(true);
   };
 
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-  };
 
   const { isPending, mutate: recordAttendance } = useRecordAttendance({
     onSuccess: () => {
@@ -327,41 +334,41 @@ const Schedule = () => {
   };
 
   const [isExplainedModalOpen, setIsExplainedModalOpen] = useState(false);
-const [explainedData, setExplainedData] = useState({
-  topicId: "",
-  description: ""
-});
-
-const { mutate: createExplained } = useCreateExpliand({
-  onSuccess: () => {
-    toast.success("Explained topic added successfully!");
-    setIsExplainedModalOpen(false);
-    setExplainedData({ topicId: "", description: "" });
-    // Assuming there's a refetch function for explained data
-    void refetch();
-  },
-  onError: (error) => {
-    toast.error("Failed to add explained topic");
-  }
-});
-
-// Add these handlers for the explained form
-const handleExplainedChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  const { name, value } = e.target;
-  setExplainedData(prev => ({ ...prev, [name]: value }));
-};
-
-const handleExplainedSubmit = () => {
-  if (!selectedScheduleId || !explainedData.topicId || !explainedData.description) {
-    toast.error("Please fill in all fields.");
-    return;
-  }
-
-  createExplained({
-    id: selectedScheduleId,
-    formData: explainedData
+  const [explainedData, setExplainedData] = useState({
+    topicId: "",
+    description: ""
   });
-};
+
+  const { mutate: createExplained } = useCreateExpliand({
+    onSuccess: () => {
+      toast.success("Explained topic added successfully!");
+      setIsExplainedModalOpen(false);
+      setExplainedData({ topicId: "", description: "" });
+      // Assuming there's a refetch function for explained data
+      void refetch();
+    },
+    onError: (error) => {
+      toast.error("Failed to add explained topic");
+    }
+  });
+
+  // Add these handlers for the explained form
+  const handleExplainedChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setExplainedData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleExplainedSubmit = () => {
+    if (!selectedScheduleId || !explainedData.topicId || !explainedData.description) {
+      toast.error("Please fill in all fields.");
+      return;
+    }
+
+    createExplained({
+      id: selectedScheduleId,
+      formData: explainedData
+    });
+  };
 
   const handleEditClick = (materialId: any) => {
     setCurrentMaterialId(materialId);
@@ -420,7 +427,7 @@ const handleExplainedSubmit = () => {
       {
         onSuccess: () => {
           toast.success("File updated successfully!");
-           void retechMaterials();
+          void retechMaterials();
           setMenuOpenMaterialId(null);
         },
       },
@@ -448,492 +455,524 @@ const handleExplainedSubmit = () => {
 
 
   return (
-    <Container>
-      <div className="mb-4 flex w-full gap-10 max-[1080px]:grid">
-        <div className="flex">
-          <CalendarDemo onDateSelect={handleDateSelect} />
-        </div>
+    <>
+      <Container>
+        <div className="mb-4 flex w-full gap-10 max-[1080px]:grid">
+          <div className="flex">
+            <CalendarDemo onDateSelect={handleDateSelect} />
+          </div>
 
-        <div className="flex w-full overflow-auto rounded-md bg-bgPrimary p-4">
-          <div className="relative w-full overflow-auto sm:rounded-lg">
-            <Text font={"semiBold"} className="mb-3">
-              Sessions for {format(selectedDate, "MMMM d, yyyy")}
-            </Text>
-            {isScheduleLoading ? (
-              <div className="flex w-full justify-center">
-                <Spinner />
-              </div>
-            ) : (
-              <table className="w-full border-separate border-spacing-y-2 overflow-x-auto p-4 text-left text-sm">
-                <thead className="text-xs uppercase text-textPrimary">
-                  <tr>
-                    <th scope="col" className="whitespace-nowrap px-6 py-3">
-                      Class
-                    </th>
-                    <th scope="col" className="whitespace-nowrap px-6 py-3">
-                      Subject
-                    </th>
-                    <th scope="col" className="whitespace-nowrap px-6 py-3">
-                      Time
-                    </th>
-                    <th scope="col" className="whitespace-nowrap px-6 py-3">
-                      Duration
-                    </th>
-                    <th scope="col" className="whitespace-nowrap px-6 py-3">
-                      Action
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="rounded-lg">
-                  {scheduleData?.data?.map((schedule: TeacherSchedule) => (
-                    <tr
-                      key={schedule.id}
-                      className={`bg-bgSecondary font-semibold hover:bg-primary hover:text-white ${selectedScheduleId === schedule.id.toString() ? "bg-primary text-white" : ""}`}
-                    >
-                      <th
-                        scope="row"
-                        className="whitespace-nowrap rounded-s-2xl px-6 py-4 font-medium"
-                      >
-                        {schedule.classroomName}
-                      </th>
-                      <td className="whitespace-nowrap px-6 py-4">
-                        {schedule.courseName}
-                      </td>
-                      <td className="whitespace-nowrap px-6 py-4">
-                        {convertToAmPm(schedule.startTime)} -{" "}
-                        {convertToAmPm(schedule.endTime)}
-                      </td>
-                      <td className="whitespace-nowrap px-6 py-4">
-                        {`${getTimeDifference(schedule.startTime, schedule.endTime).hours}h ${getTimeDifference(schedule.startTime, schedule.endTime).minutes}m`}
-                      </td>
-                      <td className="whitespace-nowrap rounded-e-2xl px-6 py-4">
-                        <button
-                          onClick={() => handleScheduleSelect(schedule)}
-                          className="underline"
-                        >
-                          {isCreatingSession && selectedScheduleId === schedule.id.toString() 
-                  ? "Creating..." 
-                  : "Select"}
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                  {(!scheduleData?.data || scheduleData.data.length === 0) && (
-                    <tr>
-                      <td
-                        colSpan={5}
-                        className="px-6 py-4 text-center text-gray-500"
-                      >
-                        No sessions scheduled for this date
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            )}
-          </div>
-        </div>
-      </div>
-      <div className="flex w-full gap-10 max-[1080px]:grid">
-        <div className="flex h-fit w-[450px] rounded-md bg-bgPrimary p-4 max-[1080px]:w-full max-[800px]:overflow-auto">
-          <div className="relative w-full overflow-auto">
-            <Text font={"bold"} size={"2xl"} className="mb-4">
-              Daily Attendance
-            </Text>
-            {isAttendanceLoading ? (
-              <div className="flex w-full justify-center">
-                <Spinner />
-              </div>
-            ) : (
-              <table className="w-full table-auto overflow-auto p-4 text-left text-sm text-textPrimary">
-                <thead className="text-xs uppercase text-textPrimary">
-                  <tr>
-                    <th scope="col" className="whitespace-nowrap px-6 py-3">
-                      Student
-                    </th>
-                    <th
-                      scope="col"
-                      className="justify-end whitespace-nowrap px-6 py-3 text-end"
-                    >
-                      Absent
-                    </th>
-                    <th
-                      scope="col"
-                      className="justify-end whitespace-nowrap px-6 py-3 text-end"
-                    >
-                      Present
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {attendanceData?.data?.map((student) => (
-                    <tr key={student.studentId} className="font-semibold">
-                      <th
-                        scope="row"
-                        className="grid gap-2 whitespace-nowrap px-6 py-4 font-medium text-textSecondary"
-                      >
-                        {student.studentName}
-                        {/* Assuming you want to show some additional info */}
-                        {/* <p className="text-textMuted">{student.additionalInfo}</p> */}
-                      </th>
-                      <td className="justify-end whitespace-nowrap px-6 py-4 text-end">
-                        <button
-                          onClick={() =>
-                            handleAttendanceRecord(
-                              student.studentId.toString(),
-                              AttendanceStatus.ABSENT,
-                            )
-                          }
-                          disabled={isPending}
-                          className={`rounded-full p-3 shadow-lg ${
-                            student.sessionStatus !== AttendanceStatus.ABSENT
-                              ? "bg-gray-200"
-                              : "bg-error/10"
-                          }`}
-                        >
-                          <img src="/images/remove.png" alt="Absent" />
-                        </button>
-                      </td>
-                      <td className="justify-end whitespace-nowrap px-6 py-4 text-end">
-                        <button
-                          onClick={() =>
-                            handleAttendanceRecord(
-                              student.studentId.toString(),
-                              AttendanceStatus.PRESENT,
-                            )
-                          }
-                          disabled={isPending}
-                          className={`rounded-full p-3 shadow-lg ${
-                            student.sessionStatus !== AttendanceStatus.ABSENT
-                              ? "bg-success/10"
-                              : "bg-gray-200"
-                          }`}
-                        >
-                          <img src="/images/check.png" alt="Present" />
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                  {(!attendanceData?.data ||
-                    attendanceData.data.length === 0) && (
-                    <tr>
-                      <td
-                        colSpan={3}
-                        className="px-6 py-4 text-center text-gray-500"
-                      >
-                        {selectedScheduleId
-                          ? "No attendance data available for this session"
-                          : "Select a session to view attendance"}
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            )}
-          </div>
-        </div>
-        <div className="grid w-full gap-4">
-          <div className="grid w-full gap-2 rounded-md bg-bgPrimary p-4">
-            <div className="flex w-full items-start justify-between">
-              <Text font={"bold"} size={"2xl"} className="mb-4">
-                Materials
+          <div className="flex w-full overflow-auto rounded-md bg-bgPrimary p-4">
+            <div className="relative w-full overflow-auto sm:rounded-lg">
+              <Text font={"semiBold"} className="mb-3">
+                Sessions for {format(selectedDate, "MMMM d, yyyy")}
               </Text>
-              <button
-                className={`flex items-center gap-2 font-medium ${
-                  selectedScheduleId
-                    ? "cursor-pointer text-primary"
-                    : "cursor-not-allowed text-textSecondary"
-                }`}
-                disabled={!selectedScheduleId}
-                onClick={handleOpenModal}
-              >
-                <svg
-                  className={`h-6 w-6 ${
-                    selectedScheduleId ? "text-primary" : "text-textSecondary"
-                  }`}
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M12 4v16m8-8H4"
-                  />
-                </svg>
-                Add Material
-              </button>
-            </div>
-
-            {selectedScheduleId ? (
-              isMaterialeLoading ? (
-                <div className="text-center">
+              {isScheduleLoading ? (
+                <div className="flex w-full justify-center">
                   <Spinner />
                 </div>
-              ) : (Materiales?.data?.length ?? 0) > 0 ? (
-                Materiales?.data?.map((material) => (
+              ) : (
+                <table className="w-full border-separate border-spacing-y-2 overflow-x-auto p-4 text-left text-sm">
+                  <thead className="text-xs uppercase text-textPrimary">
+                    <tr>
+                      <th scope="col" className="whitespace-nowrap px-6 py-3">
+                        Class
+                      </th>
+                      <th scope="col" className="whitespace-nowrap px-6 py-3">
+                        Subject
+                      </th>
+                      <th scope="col" className="whitespace-nowrap px-6 py-3">
+                        Time
+                      </th>
+                      <th scope="col" className="whitespace-nowrap px-6 py-3">
+                        Duration
+                      </th>
+                      <th scope="col" className="whitespace-nowrap px-6 py-3">
+                        Action
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="rounded-lg">
+                    {scheduleData?.data?.map((schedule: TeacherSchedule) => (
+                      <tr
+                        key={schedule.id}
+                        className={`bg-bgSecondary font-semibold hover:bg-primary hover:text-white ${selectedScheduleId === schedule.id.toString() ? "bg-primary text-white" : ""}`}
+                      >
+                        <th
+                          scope="row"
+                          className="whitespace-nowrap rounded-s-2xl px-6 py-4 font-medium"
+                        >
+                          {schedule.classroomName}
+                        </th>
+                        <td className="whitespace-nowrap px-6 py-4">
+                          {schedule.courseName}
+                        </td>
+                        <td className="whitespace-nowrap px-6 py-4">
+                          {convertToAmPm(schedule.startTime)} -{" "}
+                          {convertToAmPm(schedule.endTime)}
+                        </td>
+                        <td className="whitespace-nowrap px-6 py-4">
+                          {`${getTimeDifference(schedule.startTime, schedule.endTime).hours}h ${getTimeDifference(schedule.startTime, schedule.endTime).minutes}m`}
+                        </td>
+                        <td className="whitespace-nowrap rounded-e-2xl px-6 py-4">
+                          <button
+                            onClick={() => handleScheduleSelect(schedule)}
+                            className="underline"
+                          >
+                            {isCreatingSession && selectedScheduleId === schedule.id.toString()
+                              ? "Creating..."
+                              : "Select"}
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                    {(!scheduleData?.data || scheduleData.data.length === 0) && (
+                      <tr>
+                        <td
+                          colSpan={5}
+                          className="px-6 py-4 text-center text-gray-500"
+                        >
+                          No sessions scheduled for this date
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              )}
+            </div>
+          </div>
+        </div>
+        <div className="flex w-full gap-10 max-[1080px]:grid">
+          <div className="flex h-fit w-[450px] rounded-md bg-bgPrimary p-4 max-[1080px]:w-full max-[800px]:overflow-auto">
+            <div className="relative w-full overflow-auto">
+              <Text font={"bold"} size={"2xl"} className="mb-4">
+                Daily Attendance
+              </Text>
+              {isAttendanceLoading ? (
+                <div className="flex w-full justify-center">
+                  <Spinner />
+                </div>
+              ) : (
+                <table className="w-full table-auto overflow-auto p-4 text-left text-sm text-textPrimary">
+                  <thead className="text-xs uppercase text-textPrimary">
+                    <tr>
+                      <th scope="col" className="whitespace-nowrap px-6 py-3">
+                        Student
+                      </th>
+                      <th
+                        scope="col"
+                        className="justify-end whitespace-nowrap px-6 py-3 text-end"
+                      >
+                        Absent
+                      </th>
+                      <th
+                        scope="col"
+                        className="justify-end whitespace-nowrap px-6 py-3 text-end"
+                      >
+                        Present
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {attendanceData?.data?.map((student) => (
+                      <tr key={student.studentId} className="font-semibold">
+                        <th
+                          scope="row"
+                          className="grid gap-2 whitespace-nowrap px-6 py-4 font-medium text-textSecondary"
+                        >
+                          {student.studentName}
+                          {/* Assuming you want to show some additional info */}
+                          {/* <p className="text-textMuted">{student.additionalInfo}</p> */}
+                        </th>
+                        <td className="justify-end whitespace-nowrap px-6 py-4 text-end">
+                          <button
+                            onClick={() =>
+                              handleAttendanceRecord(
+                                student.studentId.toString(),
+                                AttendanceStatus.ABSENT,
+                              )
+                            }
+                            disabled={isPending}
+                            className={`rounded-full p-3 shadow-lg ${student.sessionStatus !== AttendanceStatus.ABSENT
+                                ? "bg-gray-200"
+                                : "bg-error/10"
+                              }`}
+                          >
+                            <img src="/images/remove.png" alt="Absent" />
+                          </button>
+                        </td>
+                        <td className="justify-end whitespace-nowrap px-6 py-4 text-end">
+                          <button
+                            onClick={() =>
+                              handleAttendanceRecord(
+                                student.studentId.toString(),
+                                AttendanceStatus.PRESENT,
+                              )
+                            }
+                            disabled={isPending}
+                            className={`rounded-full p-3 shadow-lg ${student.sessionStatus !== AttendanceStatus.ABSENT
+                                ? "bg-success/10"
+                                : "bg-gray-200"
+                              }`}
+                          >
+                            <img src="/images/check.png" alt="Present" />
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                    {(!attendanceData?.data ||
+                      attendanceData.data.length === 0) && (
+                        <tr>
+                          <td
+                            colSpan={3}
+                            className="px-6 py-4 text-center text-gray-500"
+                          >
+                            {selectedScheduleId
+                              ? "No attendance data available for this session"
+                              : "Select a session to view attendance"}
+                          </td>
+                        </tr>
+                      )}
+                  </tbody>
+                </table>
+              )}
+            </div>
+          </div>
+          <div className="grid w-full gap-4">
+            <div className="grid w-full gap-2 rounded-md bg-bgPrimary p-4">
+              <div className="flex w-full items-start justify-between">
+                <Text font={"bold"} size={"2xl"} className="mb-4">
+                  Materials
+                </Text>
+                <button
+                  className={`flex items-center gap-2 font-medium ${selectedScheduleId
+                      ? "cursor-pointer text-primary"
+                      : "cursor-not-allowed text-textSecondary"
+                    }`}
+                  disabled={!selectedScheduleId}
+                  onClick={handleOpenModal}
+                >
+                  <svg
+                    className={`h-6 w-6 ${selectedScheduleId ? "text-primary" : "text-textSecondary"
+                      }`}
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M12 4v16m8-8H4"
+                    />
+                  </svg>
+                  Add Material
+                </button>
+              </div>
+
+              {selectedScheduleId ? (
+                isMaterialeLoading ? (
+                  <div className="text-center">
+                    <Spinner />
+                  </div>
+                ) : (Materiales?.data?.length ?? 0) > 0 ? (
+                  Materiales?.data?.map((material) => (
+                    <div
+                      key={material.materialId}
+                      className="relative z-0 rounded-md border border-borderPrimary p-4"
+                    >
+                      <div className="grid h-full gap-2 border-l-4 border-primary px-3">
+                        <div className="flex items-start justify-between">
+                          <Text font={"bold"} size={"xl"}>
+                            {material.title}
+                          </Text>
+                          <button onClick={() => toggleMenu(material.materialId)}>
+                            <FaEllipsisV />
+                          </button>
+                        </div>
+                        <div>
+                          <Text color={"gray"}>{material.description}</Text>
+                        </div>
+                        {material.fileLink && (
+                          <Link href={material.fileLink}>
+                            <FaDownload className="mb-2 text-primary" />
+                          </Link>
+                        )}
+                      </div>
+                      {menuOpenMaterialId === material.materialId && (
+                        <div className="-mt-22 absolute -right-5 top-10 z-10 w-fit rounded border bg-bgPrimary shadow-lg">
+                          <ul>
+                            <li
+                              className="flex cursor-pointer justify-between gap-2 px-4 py-2 transition hover:bg-bgSecondary hover:text-primary"
+                              onClick={() => handleEditClick(material.materialId)}
+                            >
+                              Edit
+                              <BiSolidEditAlt size={20} />
+                            </li>
+                            <li
+                              className="flex cursor-pointer justify-between gap-2 px-4 py-2 transition hover:bg-bgSecondary hover:text-error"
+                              onClick={() =>
+                                handleDeleteMaterial(
+                                  material.materialId.toString(),
+                                )
+                              }
+                            >
+                              Delete
+                              <MdDelete size={20} />
+                            </li>
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-center text-gray-500">
+                    No Materials Available{" "}
+                    {selectedScheduleId ? `at class ${selectedScheduleId}` : ""}
+                  </div>
+                )
+              ) : (
+                <div className="text-center">
+                  <Text color={"gray"}>Select a class</Text>
+                </div>
+              )}
+
+<Modal isOpen={isModalEditOpen} onClose={handleCloseModal3}>
+
+<h2 className="mb-4 text-xl font-bold">Edit Material</h2>
+<div className="flex flex-col gap-4">
+  <Input
+    border="gray"
+    theme="transparent"
+    type="text"
+    name="title"
+    placeholder="Enter title"
+    value={materialEditData.title}
+    onChange={handleEditChange}
+  />
+  <Input
+    border="gray"
+    theme="transparent"
+    name="description"
+    placeholder="Enter description"
+    value={materialEditData.description}
+    onChange={handleEditChange}
+  />
+  <Input
+    border="gray"
+    theme="transparent"
+    type="file"
+    name="file"
+    onChange={handleEditFileChange}
+    />
+  <div className="flex gap-2">
+    <Button
+      onClick={() => {
+        handleUpdateDetails();
+        handleUpdateFile(); // تأكد أن selectedFile تم تحديده
+      }}
+      >
+      Save Changes
+    </Button>
+    <Button color="secondary" onClick={handleCloseEditModal}>
+      Close
+    </Button>
+  </div>
+</div>
+      </Modal>
+
+            </div>
+            <div className="grid w-full gap-2 rounded-md bg-bgPrimary p-4">
+              {isExplainedLoading ? (
+                <div className="flex w-full justify-center">
+                  <Spinner />
+                </div>
+              ) : (
+                <div className="flex w-full items-start justify-between">
+                  <Text font={"bold"} size={"2xl"} className="mb-4">
+                    Explained
+                  </Text>
+                  <button
+                    className={`flex items-center gap-2 font-medium ${selectedScheduleId
+                        ? "cursor-pointer text-primary"
+                        : "cursor-not-allowed text-textSecondary"
+                      }`}
+                    onClick={() => selectedScheduleId && setIsExplainedModalOpen(true)}
+                    disabled={!selectedScheduleId}
+                  >
+                    <svg
+                      className={`h-6 w-6 ${selectedScheduleId ? "text-primary" : "text-textSecondary"
+                        }`}
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M12 4v16m8-8H4"
+                      />
+                    </svg>
+                    Add Explained
+                  </button>
+                </div>
+              )}
+              {Explaineds?.data && Array.isArray(Explaineds.data) ? (
+                Explaineds.data.map((explained) => (
                   <div
-                    key={material.materialId}
-                    className="relative z-0 rounded-md border border-borderPrimary p-4"
+                    key={explained.id}
+                    className="rounded-md border border-borderPrimary p-4"
                   >
                     <div className="grid h-full gap-2 border-l-4 border-primary px-3">
                       <div className="flex items-start justify-between">
                         <Text font={"bold"} size={"xl"}>
-                          {material.title}
+                          {explained.topicName}
                         </Text>
-                        <button onClick={() => toggleMenu(material.materialId)}>
-                          <FaEllipsisV />
+                        <button>
+                          <svg
+                            className="h-6 w-6 text-textPrimary"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
+                            {" "}
+                            <circle cx="12" cy="12" r="1" />{" "}
+                            <circle cx="12" cy="5" r="1" />{" "}
+                            <circle cx="12" cy="19" r="1" />
+                          </svg>
                         </button>
                       </div>
                       <div>
-                        <Text color={"gray"}>{material.description}</Text>
+                        <Text color={"gray"}>{explained.description}</Text>
                       </div>
-                      {material.fileLink && (
-                        <Link href={material.fileLink}>
-                          <FaDownload className="mb-2 text-primary" />
-                        </Link>
-                      )}
                     </div>
-                    {menuOpenMaterialId === material.materialId && (
-                      <div className="-mt-22 absolute -right-5 top-10 z-10 w-fit rounded border bg-bgPrimary shadow-lg">
-                        <ul>
-                          <li
-                            className="flex cursor-pointer justify-between gap-2 px-4 py-2 transition hover:bg-bgSecondary hover:text-primary"
-                            onClick={() => handleEditClick(material.materialId)}
-                          >
-                            Edit
-                            <BiSolidEditAlt size={20} />
-                          </li>
-                          <li
-                            className="flex cursor-pointer justify-between gap-2 px-4 py-2 transition hover:bg-bgSecondary hover:text-error"
-                            onClick={() =>
-                              handleDeleteMaterial(
-                                material.materialId.toString(),
-                              )
-                            }
-                          >
-                            Delete
-                            <MdDelete size={20} />
-                          </li>
-                        </ul>
-                      </div>
-                    )}
                   </div>
                 ))
               ) : (
-                <div className="text-center text-gray-500">
-                  No Materials Available{" "}
-                  {selectedScheduleId ? `at class ${selectedScheduleId}` : ""}
+                <div className="px-6 py-4 text-center text-gray-500">
+                  No explained topics available
                 </div>
-              )
-            ) : (
-              <div className="text-center">
-                <Text color={"gray"}>Select a class</Text>
-              </div>
-            )}
-            {isModalEditOpen && (
-              <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black bg-opacity-50">
-                <div className="w-1/3 rounded-lg bg-bgSecondary p-6">
-                  <h2 className="mb-4 text-xl font-bold">Edit Material</h2>
-                  <div className="flex flex-col gap-4">
-                    <Input
-                      border="gray"
-                      theme="transparent"
-                      type="text"
-                      name="title"
-                      placeholder="Enter title"
-                      value={materialEditData.title}
-                      onChange={handleEditChange}
-                    />
-                    <Input
-                      border="gray"
-                      theme="transparent"
-                      name="description"
-                      placeholder="Enter description"
-                      value={materialEditData.description}
-                      onChange={handleEditChange}
-                    />
-                    <Input
-                      border="gray"
-                      theme="transparent"
-                      type="file"
-                      name="file"
-                      onChange={handleEditFileChange}
-                    />
-                    <div className="flex gap-2">
-                      <Button
-                        onClick={() => {
-                          handleUpdateDetails();
-                          handleUpdateFile(); // تأكد أن selectedFile تم تحديده
-                        }}
-                      >
-                        Save Changes
-                      </Button>
-                      <Button color="secondary" onClick={handleCloseEditModal}>
-                        Close
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-          <div className="grid w-full gap-2 rounded-md bg-bgPrimary p-4">
-            {isExplainedLoading ? (
-              <div className="flex w-full justify-center">
-                <Spinner />
-              </div>
-            ) : (
-              <div className="flex w-full items-start justify-between">
-                <Text font={"bold"} size={"2xl"} className="mb-4">
-                  Explained
-                </Text>
-                <button 
-        className={`flex items-center gap-2 font-medium ${
-          selectedScheduleId 
-            ? "cursor-pointer text-primary" 
-            : "cursor-not-allowed text-textSecondary"
-        }`}
-        onClick={() => selectedScheduleId && setIsExplainedModalOpen(true)}
-        disabled={!selectedScheduleId}
-      >
-        <svg
-          className={`h-6 w-6 ${
-            selectedScheduleId ? "text-primary" : "text-textSecondary"
-          }`}
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            d="M12 4v16m8-8H4"
-          />
-        </svg>
-        Add Explained
-      </button>
-              </div>
-            )}
-            {Explaineds?.data && Array.isArray(Explaineds.data) ? (
-              Explaineds.data.map((explained) => (
-                <div
-                  key={explained.id}
-                  className="rounded-md border border-borderPrimary p-4"
-                >
-                  <div className="grid h-full gap-2 border-l-4 border-primary px-3">
-                    <div className="flex items-start justify-between">
-                      <Text font={"bold"} size={"xl"}>
-                        {explained.topicName}
-                      </Text>
-                      <button>
-                        <svg
-                          className="h-6 w-6 text-textPrimary"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          {" "}
-                          <circle cx="12" cy="12" r="1" />{" "}
-                          <circle cx="12" cy="5" r="1" />{" "}
-                          <circle cx="12" cy="19" r="1" />
-                        </svg>
-                      </button>
-                    </div>
-                    <div>
-                      <Text color={"gray"}>{explained.description}</Text>
-                    </div>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <div className="px-6 py-4 text-center text-gray-500">
-                No explained topics available
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-      {isExplainedModalOpen && (
-  <div className="fixed inset-0 z-[1100] flex items-center justify-center bg-black bg-opacity-50">
-    <div className="w-1/3 rounded-lg bg-bgSecondary p-6">
-      <h2 className="mb-4 text-xl font-bold">Add Explained Topic</h2>
-      <div className="flex flex-col gap-4">
-        <Input
-          border="gray"
-          theme="transparent"
-          type="text"
-          name="topicId"
-          placeholder="Enter topic ID"
-          value={explainedData.topicId}
-          onChange={handleExplainedChange}
-        />
-        <Input
-          border="gray"
-          theme="transparent"
-          name="description"
-          placeholder="Enter description"
-          value={explainedData.description}
-          onChange={handleExplainedChange}
-        />
-        <div className="flex gap-2">
-          <Button onClick={handleExplainedSubmit}>Add Explained</Button>
-          <Button 
-            color="secondary" 
-            onClick={() => setIsExplainedModalOpen(false)}
-          >
-            Close
-          </Button>
-        </div>
-      </div>
-    </div>
-  </div>
-)}
-      {isModalOpen && (
-        <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black bg-opacity-50">
-          <div className="w-1/3 rounded-lg bg-bgSecondary p-6">
-            <h2 className="mb-4 text-xl font-bold">Add Material</h2>
-            <div className="flex flex-col gap-4">
-              <Input
-                border="gray"
-                theme="transparent"
-                type="text"
-                name="title"
-                placeholder="Enter title"
-                value={materialData.title}
-                onChange={handleChange}
-              />
-              <Input
-                border="gray"
-                theme="transparent"
-                name="description"
-                placeholder="Enter description"
-                value={materialData.description}
-                onChange={handleChange}
-              />
-              <Input
-                border="gray"
-                theme="transparent"
-                type="file"
-                name="file"
-                onChange={handleFileChange}
-              />
-              <div className="flex gap-2">
-                <Button onClick={handleSubmit}>Add Material</Button>
-                <Button color="secondary" onClick={handleCloseModal}>
-                  Close
-                </Button>
-              </div>
+              )}
             </div>
           </div>
         </div>
-      )}
-    </Container>
+
+
+      </Container>
+      <Modal isOpen={isModalOpen} onClose={handleCloseModal1}>
+        <h2 className="mb-4 text-xl font-bold">Add Material</h2>
+        <div className="flex flex-col gap-4">
+          <Input
+            border="gray"
+            theme="transparent"
+            type="text"
+            name="title"
+            placeholder="Enter title"
+            value={materialData.title}
+            onChange={handleChange}
+          />
+          <Input
+            border="gray"
+            theme="transparent"
+            name="description"
+            placeholder="Enter description"
+            value={materialData.description}
+            onChange={handleChange}
+          />
+          <Input
+            border="gray"
+            theme="transparent"
+            type="file"
+            name="file"
+            onChange={handleFileChange}
+          />
+          <div className="flex gap-2">
+            <Button onClick={handleSubmit}>Add Material</Button>
+            <Button color="secondary" onClick={handleCloseModal1}>
+              Close
+            </Button>
+          </div>
+        </div>
+      </Modal>
+      <Modal isOpen={isModalEditOpen} onClose={handleCloseModal3}>
+
+<h2 className="mb-4 text-xl font-bold">Edit Material</h2>
+<div className="flex flex-col gap-4">
+  <Input
+    border="gray"
+    theme="transparent"
+    type="text"
+    name="title"
+    placeholder="Enter title"
+    value={materialEditData.title}
+    onChange={handleEditChange}
+  />
+  <Input
+    border="gray"
+    theme="transparent"
+    name="description"
+    placeholder="Enter description"
+    value={materialEditData.description}
+    onChange={handleEditChange}
+  />
+  <Input
+    border="gray"
+    theme="transparent"
+    type="file"
+    name="file"
+    onChange={handleEditFileChange}
+    />
+  <div className="flex gap-2">
+    <Button
+      onClick={() => {
+        handleUpdateDetails();
+        handleUpdateFile(); // تأكد أن selectedFile تم تحديده
+      }}
+      >
+      Save Changes
+    </Button>
+    <Button color="secondary" onClick={handleCloseEditModal}>
+      Close
+    </Button>
+  </div>
+</div>
+      </Modal>
+      <Modal isOpen={isExplainedModalOpen} onClose={handleCloseModal2}>
+        <h2 className="mb-4 text-xl font-bold">Add Explained Topic</h2>
+        <div className="flex flex-col gap-4">
+          <Input
+            border="gray"
+            theme="transparent"
+            type="text"
+            name="topicId"
+            placeholder="Enter topic ID"
+            value={explainedData.topicId}
+            onChange={handleExplainedChange}
+          />
+          <Input
+            border="gray"
+            theme="transparent"
+            name="description"
+            placeholder="Enter description"
+            value={explainedData.description}
+            onChange={handleExplainedChange}
+          />
+          <div className="flex gap-2">
+            <Button onClick={handleExplainedSubmit}>Add Explained</Button>
+            <Button
+              color="secondary"
+              onClick={() => setIsExplainedModalOpen(false)}
+            >
+              Close
+            </Button>
+          </div>
+        </div>
+      </Modal>
+    </>
   );
 };
 
