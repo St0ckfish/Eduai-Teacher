@@ -1,9 +1,10 @@
+"use client"
 import Container from "~/_components/Container";
 
 const Chat = () => {
     return ( 
         <Container>
-            j
+            aw
         </Container>
      );
 }
