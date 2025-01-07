@@ -550,7 +550,7 @@ const Schedule = () => {
               </Text>
               {isAttendanceLoading ? (
                 <div className="flex w-full justify-center">
-                  <Spinner />
+                  <p></p>
                 </div>
               ) : (
                 <table className="w-full table-auto overflow-auto p-4 text-left text-sm text-textPrimary">
@@ -673,7 +673,7 @@ const Schedule = () => {
               {selectedScheduleId ? (
                 isMaterialeLoading ? (
                   <div className="text-center">
-                    <Spinner />
+                    <p></p>
                   </div>
                 ) : (Materiales?.data?.length ?? 0) > 0 ? (
                   Materiales?.data?.map((material) => (
