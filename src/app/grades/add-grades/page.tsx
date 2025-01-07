@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import Box from "~/_components/Box";
@@ -19,7 +20,7 @@ const Grades = () => {
   // State to store selected exam id (ensure it's a string)
   const [selectedExamId, setSelectedExamId] = useState<string>("");
   const { data: dataExamsResults, isLoading, error } = useGetExamResults(selectedExamId);
-
+  const router = useRouter();
   // Handle exam selection
   const handleSelectExam = (event: any) => {
     setSelectedExamId(event.target.value);
@@ -55,6 +56,7 @@ const Grades = () => {
       onSuccess: () => {
         toast.success(`Updated grade for ${studentName}!`);
         setGrades((prev) => ({ ...prev, [id]: "" }));
+        router.push("/grades");
       },
       onError: () => {
         toast.error("Failed to submit grade.");
