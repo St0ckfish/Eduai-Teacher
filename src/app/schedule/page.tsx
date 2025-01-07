@@ -785,7 +785,7 @@ const Schedule = () => {
             <div className="grid w-full gap-2 rounded-md bg-bgPrimary p-4">
               {isExplainedLoading ? (
                 <div className="flex w-full justify-center">
-                  <Spinner />
+                  <p></p>
                 </div>
               ) : (
                 <div className="flex w-full items-start justify-between">
