@@ -5,8 +5,8 @@ import Link from "next/link";
 import { AiFillHome } from "react-icons/ai";
 import { RiCalendarScheduleFill } from "react-icons/ri";
 import { FiFlag } from "react-icons/fi";
-import { HiOutlineSquares2X2 } from "react-icons/hi2";
-import { FaBusAlt } from "react-icons/fa";
+import { HiOutlineNewspaper, HiOutlineSquares2X2 } from "react-icons/hi2";
+import { FaBusAlt, FaQuestion } from "react-icons/fa";
 import { CiSquareCheck } from "react-icons/ci";
 import { usePathname } from "next/navigation";
 import { MdAttachMoney } from "react-icons/md";
@@ -16,7 +16,10 @@ import { Switch } from "~/components/ui/switch";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import Cookie from "js-cookie";
 import { useBooleanValue, useUserDataStore } from "~/APIs/store";
-import { useGetProfileUpdate, useProfile } from "~/APIs/hooks/useProfile";
+import { useProfile } from "~/APIs/hooks/useProfile";
+import { SiGnuprivacyguard } from "react-icons/si";
+import { FaQuoteLeft } from "react-icons/fa6";
+import { FcSupport } from "react-icons/fc";
 import { useNotificationsWebSocket } from "~/hooks/useNotifications";
 
 const useWindowDimensions = () => {
@@ -318,6 +321,51 @@ const NavBar = () => {
                                   <path d="M16 3.13a4 4 0 0 1 0 7.75" />
                                 </svg>
                                 Profile
+                              </Link>
+                            </DropdownMenu.Item>
+                            <DropdownMenu.Item asChild>
+                            <Link
+                                className="text-textPrimary flex items-center gap-x-3.5 rounded-lg border-none px-3 py-2 text-sm outline-none hover:bg-bgSecondary"
+                                href="/about"
+                              >
+                                <FaQuoteLeft />
+                                About Us
+                              </Link>
+                            </DropdownMenu.Item>
+                            <DropdownMenu.Item asChild>
+                            <Link
+                                className="text-textPrimary flex items-center gap-x-3.5 rounded-lg border-none px-3 py-2 text-sm outline-none hover:bg-bgSecondary"
+                                href="/faq"
+                              >
+                                <FaQuestion />
+                                FAQ
+                              </Link>
+                            </DropdownMenu.Item>
+                            <DropdownMenu.Item asChild>
+                            <Link
+                                className="text-textPrimary flex items-center gap-x-3.5 rounded-lg border-none px-3 py-2 text-sm outline-none hover:bg-bgSecondary"
+                                href="/terms"
+                              >
+                                <HiOutlineNewspaper />
+                                Terms and Conditions
+                              </Link>
+                            </DropdownMenu.Item>
+                            <DropdownMenu.Item asChild>
+                            <Link
+                                className="text-textPrimary flex items-center gap-x-3.5 rounded-lg border-none px-3 py-2 text-sm outline-none hover:bg-bgSecondary"
+                                href="/privacy"
+                              >
+                                <SiGnuprivacyguard />
+                                Privacy Policy
+                              </Link>
+                            </DropdownMenu.Item>
+                            <DropdownMenu.Item asChild>
+                            <Link
+                                className="text-textPrimary flex items-center gap-x-3.5 rounded-lg border-none px-3 py-2 text-sm outline-none hover:bg-bgSecondary"
+                                href="/support"
+                              >
+                                <FcSupport />
+                                Support
                               </Link>
                             </DropdownMenu.Item>
                             <DropdownMenu.Item asChild>

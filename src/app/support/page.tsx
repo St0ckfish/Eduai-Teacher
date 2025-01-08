@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import { ChangeEvent, useState } from "react";
+import { type ChangeEvent, useState } from "react";
 import { AiOutlineCloudUpload } from "react-icons/ai";
 import Button from "~/_components/Button";
 import Container from "~/_components/Container";
