@@ -58,7 +58,7 @@ const FAQ = () => {
             <div className="w-full overflow-x-hidden rounded-xl bg-bgPrimary p-8">
                 {/* Header Section */}
                 <div className="mb-8 text-center">
-                    <h1 className="mb-4 text-3xl font-bold">We're here to help you with anything and everyting on EDUAI</h1>
+                    <h1 className="mb-4 text-3xl font-bold">We&apos;re here to help you with anything and everyting on EDUAI</h1>
                 </div>
 
                 {/* FAQ Items */}
