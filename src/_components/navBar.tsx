@@ -453,7 +453,7 @@ const NavBar = () => {
                 isOpen 
                     ? "max-lg:translate-x-0" 
                     : "max-lg:-translate-x-full"
-              } fixed inset-y-0 start-0 z-[60] bg-bgPrimary duration-300 ease-in lg:bottom-0 lg:end-auto lg:block `}
+              } fixed inset-y-0 start-0 z-[60] bg-bgPrimary duration-300 ease-in lg:bottom-0 lg:end-auto lg:block ${small ? "" : "overflow-y-auto"}`}
             >
               <div className="px-8 pt-4">
                 <Link href="/">
@@ -551,7 +551,7 @@ const NavBar = () => {
                     </button>
                     {isOpen5 && (
                       <ul
-                        className={`${small ? "hidden w-fit translate-x-5 whitespace-nowrap rounded-xl bg-bgPrimary p-2 group-hover:grid" : ""} mx-9 mt-2 grid gap-2 text-[14px] font-semibold`}
+                        className={`${small ? "hidden w-fit translate-x-5 whitespace-nowrap -translate-y-[100px] rounded-xl bg-bgPrimary p-2 group-hover:grid" : ""} mx-9 mt-2 grid gap-2 text-[14px] font-semibold`}
                       >
                         <Link
                         onClick={()=> setIsOpen(false)}
