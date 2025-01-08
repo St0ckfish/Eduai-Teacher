@@ -2,7 +2,7 @@ import axiosInstance from "../axios";
 
 export const getAllMessages = async (id: string): Promise<any> => {
     const response = await axiosInstance.get<any>(
-        `/api/v1/messages/messagesInChat/${id}`
+        `/api/v1/messages/messagesInChat/${id}?page=0&size=100`
     );
     return response.data;
 };
