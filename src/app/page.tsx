@@ -130,6 +130,7 @@ export default function Home() {
           onSuccess: () => {
             // Refetch the comments after the comment is added successfully
             void refetchComments();
+            void refetch();
             setComment(""); // Clear the input field after sending
           },
         },
