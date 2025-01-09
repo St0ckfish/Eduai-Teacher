@@ -545,7 +545,7 @@ const NavBar = () => {
                         <p
                           className={`text-textPrimary ${isOpen5 ? "text-primary" : ""}`}
                         >
-                          Menu
+                          Academic
                         </p>
                       )}
                     </button>
