@@ -1,9 +1,10 @@
 import axios from "axios";
 import Cookies from "js-cookie";
 export const baseUrlStock = `wss://eduai.vitaparapharma.com/`; //wss://eduai.vitaparapharma.com //wss://195.35.28.106:8091 //wss://api.eduai.tech
+export const baseURL = `https://eduai.vitaparapharma.com/`; //wss://eduai.vitaparapharma.com //wss://195.35.28.106:8091 //wss://api.eduai.tech
 
 const axiosInstance = axios.create({
-  baseURL: "https://eduai.vitaparapharma.com/",
+  baseURL: baseURL,
 });
 
 axiosInstance.interceptors.request.use(

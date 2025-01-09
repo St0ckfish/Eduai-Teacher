@@ -7,7 +7,7 @@ import {
   useCreateComplaint,
   useGetAllComplains,
 } from "~/APIs/hooks/useComplains";
-import { ComplaintResponse, Student } from "~/types";
+import { type ComplaintResponse, type Student } from "~/types";
 import { useGetStudents } from "~/APIs/hooks/useStudent";
 import { useState } from "react";
 import { toast } from "react-toastify";
