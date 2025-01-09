@@ -6,10 +6,10 @@ import { useState } from "react";
 import { Calendar } from "~/components/ui/calendar";
 import { Text } from "~/_components/Text";
 import { useAddHomeWork, useGetAllHomeWorks } from "~/APIs/hooks/useHomeWork";
-import { useGetAllRealSession, useGetAllSchedules } from "~/APIs/hooks/useSchedule";
+import { useGetAllRealSession } from "~/APIs/hooks/useSchedule";
 import { format } from "date-fns";
 import Spinner from "~/_components/Spinner";
-import type { Homework, HomeWorkFormData, TeacherSchedule } from "~/types";
+import type { Homework, HomeWorkFormData } from "~/types";
 import Modal from "~/_components/Modal";
 import Input from "~/_components/Input";
 import SearchableSelect from "~/_components/SearchSelect";
@@ -113,14 +113,14 @@ const Homework = () => {
     [selectedDate],
   );
 
-  const { data: RealSessions, isLoading: isRealSessions } =
+  const { data: RealSessions, refetch, isLoading: isRealSessions } =
   useGetAllRealSession(formattedDate);
   const sessionsOptions =
   RealSessions?.data?.map((session: any) => ({
       value: session.sessionId,
       label: `${session.courseName} - ${session.date}, ${session.classroomCode}, ${session.endTime}`,
     })) ?? [];
-  const { data: homeworks, isLoading: isHomework } = useGetAllHomeWorks(
+  const { data: homeworks, isLoading: isHomework, refetch: refetchHomework } = useGetAllHomeWorks(
     selectedSessionId ?? 0,
   );
 
@@ -137,6 +137,7 @@ const Homework = () => {
     mutate(data, {
       onSuccess: () => {
         toast.success("HomeWork submitted successfully!");
+        void refetchHomework();
         handleCloseModal();
       },
       onError: (

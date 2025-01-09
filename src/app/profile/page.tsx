@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 import Image from "next/image";
 import Container from "~/_components/Container";
@@ -8,19 +9,21 @@ import {
   useGetProfileUpdate,
   useProfile,
   useUpdateProfile,
+  useUpdateProfilePicture,
 } from "~/APIs/hooks/useProfile";
 import { useGetAllNationalities } from "~/APIs/hooks/useAuth";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { type TeacherProfileUpdate } from "~/types";
 import Button from "~/_components/Button";
 import { useGetAllTextBookSummarys } from "~/APIs/hooks/useTextBook";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
+import { MdEdit } from "react-icons/md";
 
 const EditProfile = () => {
   const router = useRouter();
   const { data, isLoading, refetch: refetchProfile } = useProfile();
-  const { data: dataUpdate } = useGetProfileUpdate();
+  const { data: dataUpdate, refetch: refetchDataUpdate } = useGetProfileUpdate();
 
   const [name, setName] = useState(""); // Initialize state as empty
   const [phone, setPhone] = useState(""); // Initialize state as empty
@@ -117,6 +120,55 @@ const EditProfile = () => {
     updateProfileMutation(updatedProfile);
   };
 
+    // Profile Picture
+    const [preview, setPreview] = useState<string | null>(null);
+    const [uploading, setUploading] = useState(false); // For spinner
+    const fileInputRef = useRef<HTMLInputElement | null>(null);
+  
+    const mutation = useUpdateProfilePicture({
+      onSuccess: () => {
+        toast.success("Profile picture updated successfully!");
+        setUploading(false); // Stop spinner
+        refetchDataUpdate();
+        refetchProfile();
+      },
+      onError: (error) => {
+        toast.error("Failed to update profile picture. Please try again.");
+        setUploading(false); // Stop spinner
+      },
+    });
+  
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (e.target.files && e.target.files[0]) {
+        const file = e.target.files[0];
+  
+        // Validate file type and size
+        const validTypes = ["image/jpeg", "image/png", "image/webp"];
+        if (!validTypes.includes(file.type)) {
+          toast.error(
+            "Invalid file type. Please upload a JPG, PNG, or WEBP image.",
+          );
+          return;
+        }
+        if (file.size > 5 * 1024 * 1024) {
+          // 5MB limit
+          toast.error("File size exceeds 5MB. Please upload a smaller image.");
+          return;
+        }
+  
+        setPreview(URL.createObjectURL(file)); // Preview the selected image
+        setUploading(true); // Show spinner while uploading
+        mutation.mutate(file); // Upload the picture
+      }
+    };
+  
+    const handleEditClick = () => {
+      if (fileInputRef.current) {
+        fileInputRef.current.click();
+      }
+    };
+  
+
   if (isLoading || isNationalities) {
     return <Spinner />;
   }
@@ -129,15 +181,41 @@ const EditProfile = () => {
             Edit Profile
           </Text>
           <div className="mt-4 flex flex-col items-center">
-            <div>
-              <Image
-                src={data?.data?.picture ?? "/images/userr.png"}
+            <div className="relative">
+              <img
+                src={preview ?? data?.data?.picture ?? "/images/userr.png"}
                 alt="Profile Photo"
                 width={100}
                 height={100}
-                className="rounded-full w-[100px] h-[100px]"
+                className="inline-block h-24 w-24 rounded-full ring-2 ring-bgSecondary"
+              />
+
+              {/* Edit Button */}
+              <div className="relative">
+                <button
+                  onClick={handleEditClick}
+                  className="absolute mx-auto my-auto -top-4 -right-4 flex h-8 w-8 items-center justify-center rounded-full bg-primary p-2 text-white shadow-lg"
+                  aria-label="Edit Profile Picture"
+                  style={{ transform: "translate(-50%, -50%)" }}
+                >
+                  {uploading ? (
+                    <Spinner size={20} /> // Show spinner while uploading
+                  ) : (
+                    <MdEdit />
+                  )}
+                </button>
+              </div>
+
+              {/* Hidden File Input */}
+              <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                ref={fileInputRef}
+                onChange={handleFileChange}
               />
             </div>
+
             <div className="flex flex-col items-center">
               <Text font={"bold"} size={"2xl"} className="mt-2">
                 {data?.data?.name}

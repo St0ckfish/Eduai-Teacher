@@ -5,6 +5,7 @@ import {
   fetchTeacherProfile,
   fetchTeacherProfileUpdate,
   updateProfile,
+  updateProfilePicture,
 } from "../features/profile";
 
 export const useProfile = (
@@ -41,6 +42,16 @@ export const useUpdateProfile = (
   ) => {
     return useMutation<void, Error, ChangePassword>({
       mutationFn: changePassword, // Use the changePassword mutation function
+      ...options, // Spread any additional options like onSuccess, onError, etc.
+    });
+  };
+
+  
+  export const useUpdateProfilePicture = (
+    options?: UseMutationOptions<void, Error, File>
+  ) => {
+    return useMutation<void, Error, File>({
+      mutationFn: updateProfilePicture,
       ...options, // Spread any additional options like onSuccess, onError, etc.
     });
   };
