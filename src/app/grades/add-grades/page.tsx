@@ -1,5 +1,5 @@
-/* eslint-disable @next/next/no-img-element */
 "use client";
+/* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -10,30 +10,34 @@ import Container from "~/_components/Container";
 import Input from "~/_components/Input";
 import Spinner from "~/_components/Spinner";
 import { Text } from "~/_components/Text";
-import { useGetAllExams, useGetExamResults, usePutGrade } from "~/APIs/hooks/useExam";
+import {
+  useGetAllExams,
+  useGetExamResults,
+  usePutGrade,
+} from "~/APIs/hooks/useExam";
+import useLanguageStore from "~/APIs/store";
 import type { ExamResult } from "~/types";
 
 const Grades = () => {
-
-  const { mutate: putGrade} = usePutGrade();
+  const { mutate: putGrade } = usePutGrade();
   const { data: dataExams } = useGetAllExams();
-
-  // State to store selected exam id (ensure it's a string)
-  const [selectedExamId, setSelectedExamId] = useState<string>("");
-  const { data: dataExamsResults, isLoading, error } = useGetExamResults(selectedExamId);
-  const router = useRouter();
-  // Handle exam selection
-  const handleSelectExam = (event: any) => {
-    setSelectedExamId(event.target.value);
-    console.log("Selected Exam ID:", event.target.value);
+  const translate = (en: string, fr: string, ar: string) => {
+    const language = useLanguageStore.getState().language;
+    return language === "fr" ? fr : language === "ar" ? ar : en;
   };
 
-  // State to store grades for each student, using Record<string, string>
+  const [selectedExamId, setSelectedExamId] = useState<string>("");
+  const { data: dataExamsResults, isLoading, error } =
+    useGetExamResults(selectedExamId);
+  const router = useRouter();
+
   const [grades, setGrades] = useState<Record<string, string>>({});
 
-  // Handle grade change for each student
+  const handleSelectExam = (event: any) => {
+    setSelectedExamId(event.target.value);
+  };
+
   const handleGradeChange = (id: string, value: string) => {
-    // Ensure value is numeric and within the range of 0 to 20
     if (
       value === "" ||
       (!isNaN(Number(value)) && Number(value) >= 0 && Number(value) <= 20)
@@ -42,30 +46,48 @@ const Grades = () => {
     }
   };
 
-  // Handle grade submission
-  const handleSubmitGrade = (id: string, grade: string, studentName: string ) => {
+  const handleSubmitGrade = (id: string, grade: string, studentName: string) => {
     const gradeNumber = Number(grade);
 
-    // Ensure grade is a valid number and within the range 0 to 20
     if (isNaN(gradeNumber) || gradeNumber < 0 || gradeNumber > 20) {
-      toast.error(`Grade should be a number between 0 and 20`);
-      return; // Exit the function early if the grade is invalid
+      toast.error(
+        translate(
+          "Grade should be a number between 0 and 20.",
+          "La note doit être un nombre entre 0 et 20.",
+          "الدرجة يجب أن تكون بين 0 و 20."
+        )
+      );
+      return;
     }
 
-    putGrade({examResultId: id, scoreData: {score: gradeNumber, scoreDate: new Date().toISOString()}}, 
-    {
-      onSuccess: () => {
-        toast.success(`Updated grade for ${studentName}!`);
-        setGrades((prev) => ({ ...prev, [id]: "" }));
-        router.push("/grades");
+    putGrade(
+      {
+        examResultId: id,
+        scoreData: { score: gradeNumber, scoreDate: new Date().toISOString() },
       },
-      onError: () => {
-        toast.error("Failed to submit grade.");
-      },
-    },)
-    // Proceed with grade submission logic if the grade is valid
-    console.log("Grade Submitted for Student ID:", id, "Grade:", grade);
-    // Add your logic to save the grade here (API call, etc.)
+      {
+        onSuccess: () => {
+          toast.success(
+            translate(
+              `Updated grade for ${studentName}!`,
+              `Note mise à jour pour ${studentName}!`,
+              `تم تحديث درجة ${studentName}!`
+            )
+          );
+          setGrades((prev) => ({ ...prev, [id]: "" }));
+          router.push("/grades");
+        },
+        onError: () => {
+          toast.error(
+            translate(
+              "Failed to submit grade.",
+              "Échec de la soumission de la note.",
+              "فشل في إرسال الدرجة."
+            )
+          );
+        },
+      }
+    );
   };
 
   return (
@@ -76,7 +98,13 @@ const Grades = () => {
             className="flex w-full items-center gap-3 whitespace-nowrap rounded-xl bg-bgPrimary px-6 py-4 font-semibold outline-none duration-200 ease-in hover:shadow-lg"
             onChange={handleSelectExam}
           >
-            <option value="">Select Exam</option>
+            <option value="">
+              {translate(
+                "Select Exam",
+                "Sélectionnez un examen",
+                "اختر الامتحان"
+              )}
+            </option>
             {dataExams?.map((exam) => (
               <option key={exam.id} value={exam.id}>
                 {exam.examName}
@@ -92,7 +120,7 @@ const Grades = () => {
             <Text font={"bold"} size={"2xl"}>
               {
                 dataExams?.find(
-                  (exam) => exam.id === Number(selectedExamId) // Ensure the comparison is between numbers
+                  (exam) => exam.id === Number(selectedExamId)
                 )?.examName
               }
             </Text>
@@ -102,17 +130,27 @@ const Grades = () => {
                 <Spinner />
               </div>
             ) : error ? (
-              <Text>Error fetching students</Text>
+              <Text>
+                {translate(
+                  "Error fetching students.",
+                  "Erreur lors de la récupération des étudiants.",
+                  "حدث خطأ أثناء جلب الطلاب."
+                )}
+              </Text>
             ) : (
               <div className="mt-5">
                 <table className="w-full table-auto">
                   <thead>
                     <tr>
                       <th className="px-6 py-3 text-left text-xl font-bold">
-                        Student Name
+                        {translate(
+                          "Student Name",
+                          "Nom de l'étudiant",
+                          "اسم الطالب"
+                        )}
                       </th>
                       <th className="px-6 py-3 text-center text-xl font-bold">
-                        Grade
+                        {translate("Grade", "Note", "الدرجة")}
                       </th>
                     </tr>
                   </thead>
@@ -125,36 +163,36 @@ const Grades = () => {
                         <td className="rounded-l-xl px-6 py-4 text-left">
                           {student.studentName}
                         </td>
-                        <td
-                          className={`${
-                            student.score >= 10 ? "text-success" : "text-error" // Assuming 10 as passing score
-                          } px-6 py-4 text-center`}
-                        >
+                        <td className="px-6 py-4 text-center">
                           <div className="flex justify-center gap-2">
                             <div className="flex">
                               <Input
-                                placeholder="Add grade..."
+                                placeholder={translate(
+                                  "Add grade...",
+                                  "Ajouter une note...",
+                                  "أضف درجة..."
+                                )}
                                 border="none"
-                                value={grades[student.id] || ""} // Ensure value is a string
+                                value={grades[student.id] || ""}
                                 onChange={(e) =>
                                   handleGradeChange(
-                                    student.id.toString(), // Use student.studentId here
-                                    e.target.value,
+                                    student.id.toString(),
+                                    e.target.value
                                   )
-                                } // Handle grade change
+                                }
                               />
                               <Button
                                 theme="outline"
                                 onClick={() =>
                                   handleSubmitGrade(
                                     student.id.toString(),
-                                    grades[student.id] || "0", // Ensure grade is a string when passing to the function
+                                    grades[student.id] || "0",
                                     student.studentName
                                   )
                                 }
                                 className="ml-6"
                               >
-                                Save
+                                {translate("Save", "Enregistrer", "حفظ")}
                               </Button>
                             </div>
                           </div>
@@ -167,7 +205,14 @@ const Grades = () => {
             )}
           </Box>
         ) : (
-          <img src="/images/exam.png" alt="exam" />
+          <img
+            src="/images/exam.png"
+            alt={translate(
+              "Exam Illustration",
+              "Illustration de l'examen",
+              "صورة توضيحية للامتحان"
+            )}
+          />
         )}
       </div>
     </Container>
