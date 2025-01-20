@@ -14,24 +14,29 @@ import {
   useGetStudyStageBySubject,
 } from "~/APIs/hooks/useTextBook";
 import { AiOutlinePlus } from "react-icons/ai";
+import useLanguageStore from "~/APIs/store";
 
 const Textbooks = () => {
   const [openedLessonId, setOpenedLessonId] = useState<string | null>(null);
-  const [openedTopicId, setOpenedTopicId] = useState<string | null>(null); 
+  const [openedTopicId, setOpenedTopicId] = useState<string | null>(null);
   const [isOpenLesson, setIsOpenLesson] = useState(false);
   const [selectedSubject, setSelectedSubject] = useState<string | null>(null);
   const [selectedCourseId, setSelectedCourseId] = useState<number | null>(null);
 
   const { data: summary, isLoading: isSummary } = useGetAllTextBookSummarys();
   const { data: stages, isLoading: isStages } = useGetStudyStageBySubject(
-    selectedSubject?.toUpperCase() ?? "",
+    selectedSubject?.toUpperCase() ?? ""
   );
   const { data: lessons, isLoading: isLessons } = useGetLessonsByCourseId(
-    selectedCourseId ?? 0,
+    selectedCourseId ?? 0
   );
   const { data: lessonTopics, isLoading: isLessonTopicsLoading } =
     useGetLessonTopics(openedLessonId ?? "");
-  console.log(lessonTopics);
+
+  const translate = (en: string, fr: string, ar: string) => {
+    const language = useLanguageStore.getState().language;
+    return language === "fr" ? fr : language === "ar" ? ar : en;
+  };
 
   useEffect(() => {
     if (summary?.data?.[0]?.subject && !selectedSubject) {
@@ -60,17 +65,11 @@ const Textbooks = () => {
   };
 
   const handleClickLesson = (lessonId: string) => {
-    if (openedLessonId === lessonId.toString()) {
-      setOpenedLessonId(null);
-    } else {
-      setOpenedLessonId(lessonId.toString());
-    }
+    setOpenedLessonId((prev) => (prev === lessonId.toString() ? null : lessonId.toString()));
   };
 
   const handleTopicClick = (topicId: string) => {
-    setOpenedTopicId((prevTopicId) =>
-      prevTopicId === topicId ? null : topicId,
-    );
+    setOpenedTopicId((prevTopicId) => (prevTopicId === topicId ? null : topicId));
   };
 
   return (
@@ -113,7 +112,11 @@ const Textbooks = () => {
                     selectedSubject === subject.subject ? "white" : "default"
                   }
                 >
-                  Number of grades
+                  {translate(
+                    "Number of grades",
+                    "Nombre de niveaux",
+                    "عدد المراحل"
+                  )}
                 </Text>
               </div>
             </button>
@@ -132,7 +135,11 @@ const Textbooks = () => {
               className="gap-4"
               value={selectedCourseId?.toString() ?? ""}
               onValueChange={handleCourseIdChange}
-              aria-label="Grade Selection"
+              aria-label={translate(
+                "Grade Selection",
+                "Sélection de niveau",
+                "اختيار المرحلة"
+              )}
             >
               {stages?.data.map((stage: StudyStage) => (
                 <RadioGroup.Item
@@ -160,7 +167,12 @@ const Textbooks = () => {
                 className="my-4 flex cursor-pointer items-center justify-between"
               >
                 <Text font={"bold"} size={"xl"}>
-                  Chapter {index + 1}: {lesson.lessonName}
+                  {translate(
+                    "Chapter",
+                    "Chapitre",
+                    "الفصل"
+                  )}{" "}
+                  {index + 1}: {lesson.lessonName}
                 </Text>
                 <div className="w-fit">
                   <AiOutlinePlus size={25} className="text-primary" />
@@ -181,7 +193,12 @@ const Textbooks = () => {
                           }
                         >
                           <Text size={"xl"}>
-                            Lesson {idx + 1}: {topic.topicName}
+                            {translate(
+                              "Lesson",
+                              "Leçon",
+                              "الدرس"
+                            )}{" "}
+                            {idx + 1}: {topic.topicName}
                           </Text>
                           {openedTopicId === topic.topicId.toString() ? (
                             <IoIosArrowUp size={20} className="text-primary" />
@@ -205,37 +222,25 @@ const Textbooks = () => {
                                     className="flex w-1/4 items-center justify-start gap-3 rounded-lg border border-borderPrimary bg-bgPrimary p-3 text-textPrimary transition hover:bg-bgSecondary"
                                   >
                                     <GrDocumentPdf size={25} />
-                                    Download file
+                                    {translate(
+                                      "Download file",
+                                      "Télécharger le fichier",
+                                      "تحميل الملف"
+                                    )}
                                   </a>
                                 </Text>
                               </div>
                             ) : (
                               <div className="mt-2">
                                 <Text font={"medium"} color={"default"}>
-                                  There is no files
+                                  {translate(
+                                    "There is no files",
+                                    "Il n'y a pas de fichiers",
+                                    "لا توجد ملفات"
+                                  )}
                                 </Text>
                               </div>
                             )}
-
-                            {/* {topic.videoUrls.length > 0 && (
-                            <div className="mt-2">
-                              <Text font={"medium"}>Video Links</Text>
-                              <ul className="mt-1 list-disc pl-5">
-                                {topic.videoUrls.map((url, index) => (
-                                  <li key={index}>
-                                    <a
-                                      href={url}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      className="text-primary underline"
-                                    >
-                                      {`${url}`}
-                                    </a>
-                                  </li>
-                                ))}
-                              </ul>
-                            </div>
-                          )} */}
                           </div>
                         )}
                       </div>

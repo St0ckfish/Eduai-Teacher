@@ -4,10 +4,14 @@ import Container from "~/_components/Container";
 import Spinner from "~/_components/Spinner";
 import { Text } from "~/_components/Text";
 import { useGetAllFees } from "~/APIs/hooks/useFees";
+import useLanguageStore from "~/APIs/store";
 
 const Finance = () => {
   const { data: fees, isLoading: isFees } = useGetAllFees();
-
+  const translate = (en: string, fr: string, ar: string) => {
+    const language = useLanguageStore.getState().language;
+    return language === "fr" ? fr : language === "ar" ? ar : en;
+  };
   const sortedFees = fees?.data ? [...fees.data].sort((a, b) => {
     const unpaidStatuses = ['Not Paid', 'Not Fully Paid'];
     const isPaidA = unpaidStatuses.includes(a.paymentStatus);
@@ -33,7 +37,7 @@ const Finance = () => {
     <div className="mb-4 rounded-lg bg-bgSecondary p-4 shadow lg:mb-0 lg:rounded-none lg:p-0">
       <div className="grid grid-cols-1 gap-2 lg:grid-cols-8 lg:gap-0">
         <div className="flex justify-between lg:block lg:px-4 lg:py-2">
-          <span className="font-medium lg:hidden">Semester Name:</span>
+          <span className="font-medium lg:hidden">{translate("Semester Name:", "Nom du semestre:", "اسم الفصل:")}</span>
           <span>{fee.semesterName}</span>
         </div>
         <div className="flex justify-between lg:block lg:px-4 lg:py-2">
@@ -67,7 +71,9 @@ const Finance = () => {
             color={isPaid ? "secondary" : "primary"}
             href={isPaid ? "/finance/" : `/finance/payment/${fee.invoiceId}`}
           >
-            {isPaid ? 'Details' : 'Pay Fees'}
+            {isPaid 
+              ? translate("Details", "Détails", "تفاصيل")
+              : translate("Pay Fees", "Payer les frais", "دفع الرسوم")}
           </Button>
         </div>
       </div>
@@ -77,13 +83,13 @@ const Finance = () => {
   return (
     <Container>
       <div className="w-full rounded-md bg-bgPrimary p-4">
-        <Text font="bold" size="4xl">Finance</Text>
+        <Text font="bold" size="4xl">{translate("Finance", "Finance", "المالية")}</Text>
         
         {/* Unpaid Section */}
         <div className="my-4">
           <div className="ml-4 flex items-center gap-2 text-primary">
             <div className="h-1 w-1 bg-primary"></div>
-            <Text font="bold" size="2xl" color="primary">Unpaid / Not Fully Paid</Text>
+            <Text font="bold" size="2xl" color="primary">{translate("Unpaid / Not Fully Paid", "Non payé / Non totalement payé", "غير مدفوع / غير مدفوع بالكامل")}</Text>
           </div>
           
           <div className="mt-4">
@@ -95,13 +101,13 @@ const Finance = () => {
               <div className="w-full">
                 <div className="hidden lg:block">
                   <div className="grid grid-cols-8 gap-4">
-                    <div className="px-4 py-2 text-left font-medium">Semester Name</div>
-                    <div className="px-4 py-2 text-left font-medium">Due Date</div>
-                    <div className="px-4 py-2 text-left font-medium">Discount Amount</div>
-                    <div className="px-4 py-2 text-left font-medium">Paid Amount</div>
-                    <div className="px-4 py-2 text-left font-medium">Fees Currency</div>
-                    <div className="px-4 py-2 text-left font-medium">Payment Status</div>
-                    <div className="px-4 py-2 text-left font-medium">Total Fees Amount</div>
+                    <div className="px-4 py-2 text-left font-medium">{translate("Semester Name", "Nom du semestre", "اسم الفصل")}</div>
+                    <div className="px-4 py-2 text-left font-medium">{translate("Due Date", "Date d'échéance", "تاريخ الاستحقاق")}</div>
+                    <div className="px-4 py-2 text-left font-medium">{translate("Discount Amount", "Montant de la remise", "قيمة الخصم")}</div>
+                    <div className="px-4 py-2 text-left font-medium">{translate("Paid Amount", "Montant payé", "المبلغ المدفوع")}</div>
+                    <div className="px-4 py-2 text-left font-medium">{translate("Fees Currency", "Devise des frais", "عملة الرسوم")}</div>
+                    <div className="px-4 py-2 text-left font-medium">{translate("Payment Status", "Statut du paiement", "حالة الدفع")}</div>
+                    <div className="px-4 py-2 text-left font-medium">{translate("Total Fees Amount", "Montant total des frais", "إجمالي الرسوم")}</div>
                     <div className="px-4 py-2 text-left font-medium"></div>
                   </div>
                 </div>
@@ -122,19 +128,19 @@ const Finance = () => {
         <div className="mt-8">
           <div className="ml-4 flex items-center gap-2 text-success">
             <div className="h-1 w-1 bg-success"></div>
-            <div className="text-xl">Paid</div>
+            <div className="text-xl">{translate("Paid", "Payé", "مدفوع")}</div>
           </div>
           
           <div className="mt-4">
             <div className="hidden lg:block">
               <div className="grid grid-cols-8 gap-4">
-                <div className="px-4 py-2 text-left font-medium">Semester Name</div>
-                <div className="px-4 py-2 text-left font-medium">Due Date</div>
-                <div className="px-4 py-2 text-left font-medium">Discount Amount</div>
-                <div className="px-4 py-2 text-left font-medium">Paid Amount</div>
-                <div className="px-4 py-2 text-left font-medium">Fees Currency</div>
-                <div className="px-4 py-2 text-left font-medium">Payment Status</div>
-                <div className="px-4 py-2 text-left font-medium">Total Fees Amount</div>
+              <div className="px-4 py-2 text-left font-medium">{translate("Semester Name", "Nom du semestre", "اسم الفصل")}</div>
+                <div className="px-4 py-2 text-left font-medium">{translate("Due Date", "Date d'échéance", "تاريخ الاستحقاق")}</div>
+                <div className="px-4 py-2 text-left font-medium">{translate("Discount Amount", "Montant de la remise", "قيمة الخصم")}</div>
+                <div className="px-4 py-2 text-left font-medium">{translate("Paid Amount", "Montant payé", "المبلغ المدفوع")}</div>
+                <div className="px-4 py-2 text-left font-medium">{translate("Fees Currency", "Devise des frais", "عملة الرسوم")}</div>
+                <div className="px-4 py-2 text-left font-medium">{translate("Payment Status", "Statut du paiement", "حالة الدفع")}</div>
+                <div className="px-4 py-2 text-left font-medium">{translate("Total Fees Amount", "Montant total des frais", "إجمالي الرسوم")}</div>
                 <div className="px-4 py-2 text-left font-medium"></div>
               </div>
             </div>

@@ -16,6 +16,7 @@ import SearchableSelect from "~/_components/SearchSelect";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { toast } from "react-toastify";
 import Button from "~/_components/Button";
+import useLanguageStore from "~/APIs/store";
 
 function CalendarDemo({
   onDateSelect,
@@ -47,7 +48,12 @@ const Homework = () => {
   >(null);
   const [isModalOpen, setModalOpen] = useState(false);
   const { mutate, isPending: isSubmitting } = useAddHomeWork();
+  const { language } = useLanguageStore();
 
+  const translate = (en: string, fr: string, ar: string) => {
+    const language = useLanguageStore.getState().language;
+    return language === "fr" ? fr : language === "ar" ? ar : en;
+  };
   const {
     control,
     handleSubmit,
@@ -172,8 +178,8 @@ const Homework = () => {
 
           <div className="grid w-full gap-2 rounded-md bg-bgPrimary p-4">
             <div className="flex w-full items-start justify-between">
-              <Text font={"bold"} size={"2xl"}>
-                Homework
+            <Text font={"bold"} size={"2xl"}>
+                {translate("Homework", "Devoir", "الواجب")}
               </Text>
               <button
                 onClick={() => handleOpenModal()}
@@ -192,7 +198,7 @@ const Homework = () => {
                     d="M12 4v16m8-8H4"
                   />
                 </svg>{" "}
-                Add Homework
+                {translate("Add Homework", "Ajouter un devoir", "إضافة واجب")}
               </button>
             </div>
 
@@ -205,7 +211,7 @@ const Homework = () => {
               <>
                 {RealSessions?.data && (
                   <div className="mb-4">
-                    <Text className="mb-2">Select a Session:</Text>
+                    <Text className="mb-2">{translate("Select a Session:", "Sélectionnez une session :", "اختر جلسة:")}</Text>
                     <div className="flex flex-wrap gap-2">
                       {RealSessions.data.map((session: any) => (
                         <button
@@ -247,7 +253,7 @@ const Homework = () => {
                         </div>
                         <div>
                           <Text color="error" font="medium">
-                            Deadline:{" "}
+                          {translate("Deadline:", "Date limite :", "الموعد النهائي:")}
                             {formatDateTimeBeautifully(homework.deadline)}
                           </Text>
                           <Text color="gray">{homework.description}</Text>
@@ -257,7 +263,7 @@ const Homework = () => {
                   ))
                 ) : (
                   <div className="text-center text-gray-500">
-                    No homework found for the selected session
+                    {translate("No homework found for the selected session", "Aucun devoir trouvé pour la session sélectionnée", "لا يوجد واجب للجلسة المحددة")}
                   </div>
                 )}
               </div>
@@ -269,7 +275,7 @@ const Homework = () => {
         <div>
           <Text font="bold" size="xl" className="mb-5">
             {" "}
-            Add HomeWork
+            {translate("Add Homework", "Ajouter un devoir", "إضافة واجب")}
           </Text>
         </div>
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -277,10 +283,8 @@ const Homework = () => {
             <label htmlFor="title" className="block">
               <Input
                 error={errors.title?.message?.toString() ?? ""}
-                {...register("title", {
-                  required: "Title is required",
-                })}
-                placeholder="Title"
+                {...register("title", { required: translate("Title is required", "Le titre est requis", "العنوان مطلوب") })}
+              placeholder={translate("Title", "Titre", "العنوان")}
                 theme="transparent"
               />
               {errors.title && (
@@ -297,11 +301,9 @@ const Homework = () => {
               )}
               <Input
                 error={errors.deadline?.message?.toString() ?? ""}
-                {...register("deadline", {
-                  required: "Deadline is required",
-                })}
-                type="datetime-local"
-                placeholder="Deadline"
+                {...register("deadline", { required: translate("Deadline is required", "La date limite est requise", "الموعد النهائي مطلوب") })}
+              type="datetime-local"
+              placeholder={translate("Deadline", "Date limite", "الموعد النهائي")}
                 theme="transparent"
               />
               {errors.deadline && (
@@ -313,10 +315,8 @@ const Homework = () => {
             <label htmlFor="description" className="block">
               <Input
                 error={errors.description?.message?.toString() ?? ""}
-                {...register("description", {
-                  required: "Description is required",
-                })}
-                placeholder="Description"
+                {...register("description", { required: translate("Description is required", "La description est requise", "الوصف مطلوب") })}
+              placeholder={translate("Description", "Description", "الوصف")}
                 theme="transparent"
               />
               {errors.description && (
@@ -328,19 +328,14 @@ const Homework = () => {
             <Controller
               name="sessionId"
               control={control}
-              rules={{ required: "Session selection is required" }}
+              rules={{ required: translate("Session selection is required", "La sélection de la session est requise", "اختيار الجلسة مطلوب") }}
               defaultValue=""
-              render={({ field: { onChange, value } }) => (
-                <SearchableSelect
-                  onChange={onChange}
-                  value={value}
-                  placeholder="Select Session"
-                  options={sessionsOptions}
-                />
+              render={({ field }) => (
+                <SearchableSelect {...field} placeholder={translate("Select Session", "Sélectionnez une session", "اختر جلسة")} options={sessionsOptions} />
               )}
             />
             <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? "Add HomeWork..." : "Add HomeWork"}
+            {isSubmitting ? translate("Adding Homework...", "Ajout de devoir...", "جاري إضافة الواجب...") : translate("Add Homework", "Ajouter un devoir", "إضافة واجب")}
             </Button>
           </div>
         </form>

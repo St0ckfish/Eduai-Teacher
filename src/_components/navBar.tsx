@@ -15,38 +15,14 @@ import Spinner from "./Spinner";
 import { Switch } from "~/components/ui/switch";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import Cookie from "js-cookie";
-import { useBooleanValue, useUserDataStore } from "~/APIs/store";
+import useLanguageStore, { useBooleanValue, useUserDataStore } from "~/APIs/store";
 import { useProfile } from "~/APIs/hooks/useProfile";
 import { SiGnuprivacyguard } from "react-icons/si";
 import { FaQuoteLeft } from "react-icons/fa6";
 import { FcSupport } from "react-icons/fc";
 import { useNotificationsWebSocket } from "~/hooks/useNotifications";
+import { Globe } from "lucide-react";
 
-const useWindowDimensions = () => {
-  const isClient = typeof window === "object";
-  const [windowSize, setWindowSize] = useState(
-    isClient
-      ? { width: window.innerWidth, height: window.innerHeight }
-      : { width: undefined, height: undefined },
-  );
-
-  useEffect(() => {
-    if (!isClient) {
-      return;
-    }
-
-    const handleResize = () => {
-      setWindowSize({ width: window.innerWidth, height: window.innerHeight });
-    };
-
-    window.addEventListener("resize", handleResize);
-    handleResize();
-
-    return () => window.removeEventListener("resize", handleResize);
-  }, [isClient]);
-
-  return windowSize;
-};
 
 interface NavBarLinkProps {
   href: string;
@@ -170,14 +146,40 @@ const NavBar = () => {
     setIsOpen(!isOpen);
   };
 
+  const { language, setLanguage } = useLanguageStore();
+  const [isOpenL, setIsOpenL] = useState(false)
+  const dropdownRef = useRef<HTMLDivElement>(null)
+  
+  const languages = [
+    { code: 'en', label: 'English' },
+    { code: 'ar', label: 'العربية' },
+    { code: 'fr', label: 'Français' },
+  ]
 
+  useEffect(() => {
+    const handleClickOutside = (event: { target: any; }) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsOpenL(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
+
+  const translate = (en: string, fr: string, ar: string) => {
+    const language = useLanguageStore.getState().language; // Assuming useLanguageStore manages language state
+    return language === "fr" ? fr : language === "ar" ? ar : en;
+  };
+  
   const navLinks = [
-    { href: "/", icon: AiFillHome, label: "Home" },
-    { href: "/schedule", icon: RiCalendarScheduleFill, label: "My Schedule" },
-    { href: "/bus", icon: FaBusAlt, label: "Bus Tracker" },
-    { href: "/finance", icon: MdAttachMoney, label: "Finance" },
-    { href: "/complaint", icon: FiFlag, label: "Complaint" },
-    { href: "/attendance", icon: CiSquareCheck, label: "My attendance" },
+    { href: "/", icon: AiFillHome, label: translate("Home", "Accueil", "الرئيسية") },
+    { href: "/schedule", icon: RiCalendarScheduleFill, label: translate("My Schedule", "Mon emploi du temps", "جدولي") },
+    { href: "/bus", icon: FaBusAlt, label: translate("Bus Tracker", "Suivi du bus", "متتبع الحافلة") },
+    { href: "/finance", icon: MdAttachMoney, label: translate("Finance", "Finance", "المالية") },
+    { href: "/complaint", icon: FiFlag, label: translate("Complaint", "Réclamation", "شكوى") },
+    { href: "/attendance", icon: CiSquareCheck, label: translate("My Attendance", "Ma présence", "حضوري") },
   ];
 
   if (!isClient)
@@ -285,6 +287,35 @@ const NavBar = () => {
                       />
                     </svg>
                   </Link>
+
+                  <div className="relative" ref={dropdownRef}>
+      <button
+        className="flex items-center gap-2 px-4 py-2 border rounded-md hover:bg-gray-50"
+        onClick={() => setIsOpenL(!isOpenL)}
+      >
+        <Globe className="h-4 w-4" />
+        <span>{languages.find(lang => lang.code === language)?.label}</span>
+      </button>
+      
+      {isOpenL && (
+        <div className="absolute right-0 mt-2 w-48 bg-white border rounded-md shadow-lg">
+          {languages.map((lang) => (
+            <button
+              key={lang.code}
+              onClick={() => {
+                setLanguage(lang.code)
+                setIsOpenL(false)
+              }}
+              className={`w-full text-left px-4 py-2 hover:bg-gray-50 ${
+                language === lang.code ? 'bg-gray-100' : ''
+              }`}
+            >
+              {lang.label}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
 
                   <div className="hs-dropdown relative inline-flex [--placement:bottom-right]">
                     <DropdownMenu.Root>
@@ -545,7 +576,7 @@ const NavBar = () => {
                         <p
                           className={`text-textPrimary ${isOpen5 ? "text-primary" : ""}`}
                         >
-                          Academic
+                          {translate("Academic", "Académique", "أكاديمي")}
                         </p>
                       )}
                     </button>
@@ -553,38 +584,42 @@ const NavBar = () => {
                       <ul
                         className={`${small ? "hidden w-fit translate-x-5 whitespace-nowrap -translate-y-[100px] rounded-xl bg-bgPrimary p-2 group-hover:grid" : ""} mx-9 mt-2 grid gap-2 text-[14px] font-semibold`}
                       >
-                        <Link
-                        onClick={()=> setIsOpen(false)}
-                          className={`hover:text-primary ${url === "/homework" ? "text-primary" : ""}`}
-                          href="/homework"
-                        >
-                          {" "}
-                          Homework{" "}
-                        </Link>
-                        <Link
-                        onClick={()=> setIsOpen(false)}
-                          className={`hover:text-primary ${url === "/textbooks" ? "text-primary" : ""}`}
-                          href="/textbooks"
-                        >
-                          {" "}
-                          Textbooks{" "}
-                        </Link>
-                        <Link
-                        onClick={()=> setIsOpen(false)}
-                          className={`hover:text-primary ${url === "/grades" ? "text-primary" : ""}`}
-                          href="/grades"
-                        >
-                          {" "}
-                          Grades{" "}
-                        </Link>
-                        <Link
-                        onClick={()=> setIsOpen(false)}
-                          className={`hover:text-primary ${url === "/exam" ? "text-primary" : ""}`}
-                          href="/exam"
-                        >
-                          {" "}
-                          Exam{" "}
-                        </Link>
+<Link
+      onClick={() => setIsOpen(false)}
+      className={`hover:text-primary ${
+        url === "/homework" ? "text-primary" : ""
+      }`}
+      href="/homework"
+    >
+      {translate("Homework", "Devoirs", "الواجبات")}
+    </Link>
+    <Link
+      onClick={() => setIsOpen(false)}
+      className={`hover:text-primary ${
+        url === "/textbooks" ? "text-primary" : ""
+      }`}
+      href="/textbooks"
+    >
+      {translate("Textbooks", "Manuels", "الكتب المدرسية")}
+    </Link>
+    <Link
+      onClick={() => setIsOpen(false)}
+      className={`hover:text-primary ${
+        url === "/grades" ? "text-primary" : ""
+      }`}
+      href="/grades"
+    >
+      {translate("Grades", "Notes", "الدرجات")}
+    </Link>
+    <Link
+      onClick={() => setIsOpen(false)}
+      className={`hover:text-primary ${
+        url === "/exam" ? "text-primary" : ""
+      }`}
+      href="/exam"
+    >
+      {translate("Exam", "Examen", "الامتحان")}
+    </Link>
                       </ul>
                     )}
                   </li>

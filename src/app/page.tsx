@@ -26,6 +26,7 @@ import { isToday, isAfter } from "date-fns";
 import { type CustomEvent } from "~/types";
 import { toast } from "react-toastify";
 import ImageComponent from "~/_components/ImageSrc";
+import useLanguageStore from "~/APIs/store";
 
 export default function Home() {
   const {
@@ -53,6 +54,11 @@ export default function Home() {
       toast.success("Error remove attendance!");
     },
   });
+
+  const translate = (en: string, fr: string, ar: string) => {
+    const language = useLanguageStore.getState().language;
+    return language === "fr" ? fr : language === "ar" ? ar : en;
+  };
 
   const [selectedPostId, setSelectedPostId] = useState<number | null>(null);
   const [comment, setComment] = useState("");
@@ -88,6 +94,9 @@ export default function Home() {
       setUpcomingEvents(upcomingEvents);
     }
   }, [dataEvents]);
+
+  const { language } = useLanguageStore();
+
 
   const {
     data: comments,
@@ -238,7 +247,11 @@ export default function Home() {
                       {post.attachments.length > 6 && (
                         <div className="relative flex items-center justify-center rounded-md bg-gray-200">
                           <Text font="bold" size="lg" className="text-primary">
-                            +{post.attachments.length - 6} more
+                            +{post.attachments.length - 6}  {language === "ar"
+    ? "المزيد"
+    : language === "fr"
+    ? "plus"
+    : "more"}
                           </Text>
                         </div>
                       )}
@@ -308,8 +321,12 @@ export default function Home() {
 
                         {comments?.data.content.length === 0 && (
                           <Text color="gray" className="py-4 text-center">
-                            No comments yet
-                          </Text>
+                          {language === "ar"
+                            ? "لا توجد تعليقات حتى الآن"
+                            : language === "fr"
+                            ? "Pas encore de commentaires"
+                            : "No comments yet"}
+                        </Text>
                         )}
                       </>
                     )}
@@ -319,7 +336,13 @@ export default function Home() {
                       <Input
                         border="gray"
                         theme="comment"
-                        placeholder="Add comment..."
+                        placeholder={
+                          language === "ar"
+                            ? "أضف تعليقًا..."
+                            : language === "fr"
+                            ? "Ajouter un commentaire..."
+                            : "Add comment..."
+                        }
                         type="comment"
                         value={comment} // Set the input value to the state
                         onChange={(e) => setComment(e.target.value)} // Update state on input change
@@ -338,9 +361,13 @@ export default function Home() {
         </div>
         <div className="w-full rounded-md bg-bgPrimary p-4 md:w-1/2">
           <div>
-            <Text font="bold" size="2xl">
-              Today&apos;s Events
-            </Text>
+          <Text font="bold" size="2xl">
+  {language === "ar"
+    ? "فعاليات اليوم"
+    : language === "fr"
+    ? "Événements d'aujourd'hui"
+    : "Today's Events"}
+</Text>
             {todayEvents.length > 0 ? (
               todayEvents.map((event) => (
                 <div
@@ -377,20 +404,28 @@ export default function Home() {
                         <div>
                           {event.isAttendee ? (
                             <Button
-                              onClick={() =>
-                                handleRemoveAttendance(event.id.toString())
-                              }
-                              color="secondary"
-                            >
-                              Attendance Confirmed
-                            </Button>
+                            onClick={() =>
+                              handleRemoveAttendance(event.id.toString())
+                            }
+                            color="secondary"
+                          >
+                           {language === "ar"
+                       ? "تم تأكيد الحضور"
+                       : language === "fr"
+                       ? "Présence confirmée"
+                       : "Attendance Confirmed"}
+                          </Button>
                           ) : (
                             <Button
                               onClick={() =>
                                 handleConfirmAttendance(event.id.toString())
                               }
                             >
-                              Confirm Attendance
+                              {language === "ar"
+                         ? "تأكيد الحضور"
+                         : language === "fr"
+                         ? "Confirmer la présence"
+                         : "Confirm Attendance"}
                             </Button>
                           )}
                         </div>
@@ -400,14 +435,20 @@ export default function Home() {
                 </div>
               ))
             ) : (
-              <Text color="gray" font={"semiBold"} size={"lg"} className="m-2">No Events Found</Text>
+              <Text color="gray" font="semiBold" size="lg" className="m-2">
+  {language === "ar"
+    ? "لا توجد فعاليات مجدولة لليوم."
+    : language === "fr"
+    ? "Aucun événement prévu pour aujourd'hui."
+    : "No events scheduled for today."}
+</Text>
             )}
           </div>
 
           <div className="my-2 border-y py-2 border-borderPrimary/50">
-            <Text font="bold" size="2xl">
-              Upcoming Events
-            </Text>
+          <Text font="bold" size="2xl">
+  {translate("Upcoming Events", "Événements à venir", "الأحداث القادمة")}
+</Text>
             {upcomingEvents.length > 0 ? (
               upcomingEvents.map((event) => (
                 <div key={event.id} className="my-4">
@@ -444,29 +485,38 @@ export default function Home() {
                     <div>
                       {event.isAttendee ? (
                         <Button
-                          color="secondary"
-                          onClick={() =>
-                            handleRemoveAttendance(event.id.toString())
-                          }
-                        >
-                          Attendance Confirmed
-                        </Button>
+                        onClick={() => handleRemoveAttendance(event.id.toString())}
+                        color="secondary"
+                      >
+                        {language === "ar"
+                          ? "تم تأكيد الحضور"
+                          : language === "fr"
+                          ? "Présence confirmée"
+                          : "Attendance Confirmed"}
+                      </Button>
                       ) : (
                         <Button
-                          onClick={() =>
-                            handleConfirmAttendance(event.id.toString())
-                          }
-                        >
-                          Confirm Attendance
-                        </Button>
+                       onClick={() => handleConfirmAttendance(event.id.toString())}
+                     >
+                       {language === "ar"
+                         ? "تأكيد الحضور"
+                         : language === "fr"
+                         ? "Confirmer la présence"
+                         : "Confirm Attendance"}
+                     </Button>
                       )}
                     </div>
                   </div>
                 </div>
               ))
             ) : (
-              <Text color="gray" font={"semiBold"} size={"lg"} className="m-2">No Events Found</Text>
-            )}
+<Text color="gray" font="semiBold" size="lg" className="m-2">
+  {language === "ar"
+    ? "لا توجد فعاليات قادمة مجدولة."
+    : language === "fr"
+    ? "Aucun événement à venir programmé."
+    : "No upcoming events scheduled."}
+</Text>            )}
           </div>
         </div>
       </div>

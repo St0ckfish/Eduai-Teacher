@@ -33,6 +33,7 @@ import { useRecordAttendance } from "~/APIs/hooks/useAttendance";
 import { BiSolidEditAlt } from "react-icons/bi";
 import { MdDelete } from "react-icons/md";
 import Modal from "~/_components/Modal";
+import useLanguageStore from "~/APIs/store";
 
 function CalendarDemo({
   onDateSelect,
@@ -322,7 +323,12 @@ const Schedule = () => {
   const { mutate: deleteMaterial } = useDeleteMaterial();
 
   console.log("👾 ~ Schedule ~ materialEditData:", materialEditData);
+  const { language } = useLanguageStore();
 
+  const translate = (en: string, fr: string, ar: string) => {
+    const language = useLanguageStore.getState().language;
+    return language === "fr" ? fr : language === "ar" ? ar : en;
+  };
   const handleEditChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setMaterialEditData((prev) => ({ ...prev, [name]: value }));
@@ -456,194 +462,217 @@ const Schedule = () => {
 
   return (
     <>
-      <Container>
-        <div className="mb-4 flex w-full gap-10 max-[1080px]:grid">
-          <div className="flex">
-            <CalendarDemo onDateSelect={handleDateSelect} />
-          </div>
+<Container>
+  <div className="mb-4 flex w-full gap-10 max-[1080px]:grid">
+    <div className="flex">
+      <CalendarDemo onDateSelect={handleDateSelect} />
+    </div>
 
-          <div className="flex w-full overflow-auto rounded-md bg-bgPrimary p-4">
-            <div className="relative w-full overflow-auto sm:rounded-lg">
-              <Text font={"semiBold"} className="mb-3">
-                Sessions for {format(selectedDate, "MMMM d, yyyy")}
-              </Text>
-              {isScheduleLoading ? (
-                <div className="flex w-full justify-center">
-                  <Spinner />
-                </div>
-              ) : (
-                <table className="w-full border-separate border-spacing-y-2 overflow-x-auto p-4 text-left text-sm">
-                  <thead className="text-xs uppercase text-textPrimary">
-                    <tr>
-                      <th scope="col" className="whitespace-nowrap px-6 py-3">
-                        Class
-                      </th>
-                      <th scope="col" className="whitespace-nowrap px-6 py-3">
-                        Subject
-                      </th>
-                      <th scope="col" className="whitespace-nowrap px-6 py-3">
-                        Time
-                      </th>
-                      <th scope="col" className="whitespace-nowrap px-6 py-3">
-                        Duration
-                      </th>
-                      <th scope="col" className="whitespace-nowrap px-6 py-3">
-                        Action
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="rounded-lg">
-                    {scheduleData?.data?.map((schedule: TeacherSchedule) => (
-                      <tr
-                        key={schedule.id}
-                        className={`bg-bgSecondary font-semibold hover:bg-primary hover:text-white ${selectedScheduleId === schedule.id.toString() ? "bg-primary text-white" : ""}`}
-                      >
-                        <th
-                          scope="row"
-                          className="whitespace-nowrap rounded-s-2xl px-6 py-4 font-medium"
-                        >
-                          {schedule.classroomName}
-                        </th>
-                        <td className="whitespace-nowrap px-6 py-4">
-                          {schedule.courseName}
-                        </td>
-                        <td className="whitespace-nowrap px-6 py-4">
-                          {convertToAmPm(schedule.startTime)} -{" "}
-                          {convertToAmPm(schedule.endTime)}
-                        </td>
-                        <td className="whitespace-nowrap px-6 py-4">
-                          {`${getTimeDifference(schedule.startTime, schedule.endTime).hours}h ${getTimeDifference(schedule.startTime, schedule.endTime).minutes}m`}
-                        </td>
-                        <td className="whitespace-nowrap rounded-e-2xl px-6 py-4">
-                          <button
-                            onClick={() => handleScheduleSelect(schedule)}
-                            className="underline"
-                          >
-                            {isCreatingSession && selectedScheduleId === schedule.id.toString()
-                              ? "Creating..."
-                              : "Select"}
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                    {(!scheduleData?.data || scheduleData.data.length === 0) && (
-                      <tr>
-                        <td
-                          colSpan={5}
-                          className="px-6 py-4 text-center text-gray-500"
-                        >
-                          No sessions scheduled for this date
-                        </td>
-                      </tr>
+    <div className="flex w-full overflow-auto rounded-md bg-bgPrimary p-4">
+      <div className="relative w-full overflow-auto sm:rounded-lg">
+        <Text font={"semiBold"} className="mb-3">
+          {translate(
+            `Sessions for ${format(selectedDate, "MMMM d, yyyy")}`,
+            `Sessions pour ${format(selectedDate, "d MMMM yyyy")}`,
+            `الجلسات بتاريخ ${format(selectedDate, "d MMMM yyyy")}`
+          )}
+        </Text>
+        {isScheduleLoading ? (
+          <div className="flex w-full justify-center">
+            <Spinner />
+          </div>
+        ) : (
+          <table className="w-full border-separate border-spacing-y-2 overflow-x-auto p-4 text-left text-sm">
+            <thead className="text-xs uppercase text-textPrimary">
+              <tr>
+                <th scope="col" className="whitespace-nowrap px-6 py-3">
+                  {translate("Class", "Classe", "الفصل")}
+                </th>
+                <th scope="col" className="whitespace-nowrap px-6 py-3">
+                  {translate("Subject", "Sujet", "المادة")}
+                </th>
+                <th scope="col" className="whitespace-nowrap px-6 py-3">
+                  {translate("Time", "Temps", "الوقت")}
+                </th>
+                <th scope="col" className="whitespace-nowrap px-6 py-3">
+                  {translate("Duration", "Durée", "المدة")}
+                </th>
+                <th scope="col" className="whitespace-nowrap px-6 py-3">
+                  {translate("Action", "Action", "الإجراء")}
+                </th>
+              </tr>
+            </thead>
+            <tbody className="rounded-lg">
+              {scheduleData?.data?.map((schedule) => (
+                <tr
+                  key={schedule.id}
+                  className={`bg-bgSecondary font-semibold hover:bg-primary hover:text-white ${
+                    selectedScheduleId === schedule.id.toString()
+                      ? "bg-primary text-white"
+                      : ""
+                  }`}
+                >
+                  <th
+                    scope="row"
+                    className="whitespace-nowrap rounded-s-2xl px-6 py-4 font-medium"
+                  >
+                    {schedule.classroomName}
+                  </th>
+                  <td className="whitespace-nowrap px-6 py-4">
+                    {schedule.courseName}
+                  </td>
+                  <td className="whitespace-nowrap px-6 py-4">
+                    {convertToAmPm(schedule.startTime)} -{" "}
+                    {convertToAmPm(schedule.endTime)}
+                  </td>
+                  <td className="whitespace-nowrap px-6 py-4">
+                    {`${getTimeDifference(schedule.startTime, schedule.endTime).hours}h ${getTimeDifference(schedule.startTime, schedule.endTime).minutes}m`}
+                  </td>
+                  <td className="whitespace-nowrap rounded-e-2xl px-6 py-4">
+                    <button
+                      onClick={() => handleScheduleSelect(schedule)}
+                      className="underline"
+                    >
+                      {isCreatingSession &&
+                      selectedScheduleId === schedule.id.toString()
+                        ? translate("Creating...", "Création...", "جاري الإنشاء...")
+                        : translate("Select", "Sélectionner", "اختيار")}
+                    </button>
+                  </td>
+                </tr>
+              ))}
+              {(!scheduleData?.data || scheduleData.data.length === 0) && (
+                <tr>
+                  <td
+                    colSpan={5}
+                    className="px-6 py-4 text-center text-gray-500"
+                  >
+                    {translate(
+                      "No sessions scheduled for this date",
+                      "Aucune session prévue pour cette date",
+                      "لا توجد جلسات مجدولة لهذا التاريخ"
                     )}
-                  </tbody>
-                </table>
+                  </td>
+                </tr>
               )}
-            </div>
+            </tbody>
+          </table>
+        )}
+      </div>
+    </div>
+  </div>
+
+  <div className="flex w-full gap-10 max-[1080px]:grid">
+    <div className="flex h-fit w-[450px] rounded-md bg-bgPrimary p-4 max-[1080px]:w-full max-[800px]:overflow-auto">
+      <div className="relative w-full overflow-auto">
+        <Text font={"bold"} size={"2xl"} className="mb-4">
+          {translate("Daily Attendance", "Présence quotidienne", "الحضور اليومي")}
+        </Text>
+        {isAttendanceLoading ? (
+          <div className="flex w-full justify-center">
+            <Spinner />
           </div>
-        </div>
-        <div className="flex w-full gap-10 max-[1080px]:grid">
-          <div className="flex h-fit w-[450px] rounded-md bg-bgPrimary p-4 max-[1080px]:w-full max-[800px]:overflow-auto">
-            <div className="relative w-full overflow-auto">
-              <Text font={"bold"} size={"2xl"} className="mb-4">
-                Daily Attendance
-              </Text>
-              {isAttendanceLoading ? (
-                <div className="flex w-full justify-center">
-                  <p></p>
-                </div>
-              ) : (
-                <table className="w-full table-auto overflow-auto p-4 text-left text-sm text-textPrimary">
-                  <thead className="text-xs uppercase text-textPrimary">
-                    <tr>
-                      <th scope="col" className="whitespace-nowrap px-6 py-3">
-                        Student
-                      </th>
-                      <th
-                        scope="col"
-                        className="justify-end whitespace-nowrap px-6 py-3 text-end"
-                      >
-                        Absent
-                      </th>
-                      <th
-                        scope="col"
-                        className="justify-end whitespace-nowrap px-6 py-3 text-end"
-                      >
-                        Present
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {attendanceData?.data?.map((student) => (
-                      <tr key={student.studentId} className="font-semibold">
-                        <th
-                          scope="row"
-                          className="grid gap-2 whitespace-nowrap px-6 py-4 font-medium text-textSecondary"
-                        >
-                          {student.studentName}
-                          {/* Assuming you want to show some additional info */}
-                          {/* <p className="text-textMuted">{student.additionalInfo}</p> */}
-                        </th>
-                        <td className="justify-end whitespace-nowrap px-6 py-4 text-end">
-                          <button
-                            onClick={() =>
-                              handleAttendanceRecord(
-                                student.studentId.toString(),
-                                AttendanceStatus.ABSENT,
-                              )
-                            }
-                            disabled={isPending}
-                            className={`rounded-full p-3 shadow-lg ${student.sessionStatus !== AttendanceStatus.ABSENT
-                                ? "bg-gray-200"
-                                : "bg-error/10"
-                              }`}
-                          >
-                            <img src="/images/remove.png" alt="Absent" />
-                          </button>
-                        </td>
-                        <td className="justify-end whitespace-nowrap px-6 py-4 text-end">
-                          <button
-                            onClick={() =>
-                              handleAttendanceRecord(
-                                student.studentId.toString(),
-                                AttendanceStatus.PRESENT,
-                              )
-                            }
-                            disabled={isPending}
-                            className={`rounded-full p-3 shadow-lg ${student.sessionStatus !== AttendanceStatus.ABSENT
-                                ? "bg-success/10"
-                                : "bg-gray-200"
-                              }`}
-                          >
-                            <img src="/images/check.png" alt="Present" />
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                    {(!attendanceData?.data ||
-                      attendanceData.data.length === 0) && (
-                        <tr>
-                          <td
-                            colSpan={3}
-                            className="px-6 py-4 text-center text-gray-500"
-                          >
-                            {selectedScheduleId
-                              ? "No attendance data available for this session"
-                              : "Select a session to view attendance"}
-                          </td>
-                        </tr>
-                      )}
-                  </tbody>
-                </table>
+        ) : (
+          <table className="w-full table-auto overflow-auto p-4 text-left text-sm text-textPrimary">
+            <thead className="text-xs uppercase text-textPrimary">
+              <tr>
+                <th scope="col" className="whitespace-nowrap px-6 py-3">
+                  {translate("Student", "Élève", "الطالب")}
+                </th>
+                <th
+                  scope="col"
+                  className="justify-end whitespace-nowrap px-6 py-3 text-end"
+                >
+                  {translate("Absent", "Absent", "غياب")}
+                </th>
+                <th
+                  scope="col"
+                  className="justify-end whitespace-nowrap px-6 py-3 text-end"
+                >
+                  {translate("Present", "Présent", "حضور")}
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {/* Attendance rows */}
+              {attendanceData?.data?.map((student) => (
+                <tr key={student.studentId} className="font-semibold">
+                  <th
+                    scope="row"
+                    className="grid gap-2 whitespace-nowrap px-6 py-4 font-medium text-textSecondary"
+                  >
+                    {student.studentName}
+                  </th>
+                  <td className="justify-end whitespace-nowrap px-6 py-4 text-end">
+                    <button
+                      onClick={() =>
+                        handleAttendanceRecord(
+                          student.studentId.toString(),
+                          AttendanceStatus.ABSENT
+                        )
+                      }
+                      disabled={isPending}
+                      className={`rounded-full p-3 shadow-lg ${
+                        student.sessionStatus !== AttendanceStatus.ABSENT
+                          ? "bg-gray-200"
+                          : "bg-error/10"
+                      }`}
+                    >
+                      <img src="/images/remove.png" alt={translate("Absent", "Absent", "غياب")} />
+                    </button>
+                  </td>
+                  <td className="justify-end whitespace-nowrap px-6 py-4 text-end">
+                    <button
+                      onClick={() =>
+                        handleAttendanceRecord(
+                          student.studentId.toString(),
+                          AttendanceStatus.PRESENT
+                        )
+                      }
+                      disabled={isPending}
+                      className={`rounded-full p-3 shadow-lg ${
+                        student.sessionStatus !== AttendanceStatus.PRESENT
+                          ? "bg-gray-200"
+                          : "bg-success/10"
+                      }`}
+                    >
+                      <img src="/images/check.png" alt={translate("Present", "Présent", "حضور")} />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+              {(!attendanceData?.data || attendanceData.data.length === 0) && (
+                <tr>
+                  <td
+                    colSpan={3}
+                    className="px-6 py-4 text-center text-gray-500"
+                  >
+                    {selectedScheduleId
+                      ? translate(
+                          "No attendance data available for this session",
+                          "Aucune donnée de présence pour cette session",
+                          "لا توجد بيانات حضور لهذه الجلسة"
+                        )
+                      : translate(
+                          "Select a session to view attendance",
+                          "Sélectionnez une session pour voir les présences",
+                          "اختر جلسة لعرض الحضور"
+                        )}
+                  </td>
+                </tr>
               )}
-            </div>
-          </div>
+            </tbody>
+          </table>
+        )}
+      </div>
+    </div>
           <div className="grid w-full gap-4">
             <div className="grid w-full gap-2 rounded-md bg-bgPrimary p-4">
               <div className="flex w-full items-start justify-between">
-                <Text font={"bold"} size={"2xl"} className="mb-4">
-                  Materials
-                </Text>
+              <Text font={"bold"} size={"2xl"} className="mb-4">
+  {translate("Materials", "Matériaux", "المواد")}
+</Text>
+
                 <button
                   className={`flex items-center gap-2 font-medium ${selectedScheduleId
                       ? "cursor-pointer text-primary"
@@ -666,7 +695,7 @@ const Schedule = () => {
                       d="M12 4v16m8-8H4"
                     />
                   </svg>
-                  Add Material
+                  {translate("Add Material", "Ajouter un matériel", "إضافة مادة")}
                 </button>
               </div>
 
@@ -702,24 +731,20 @@ const Schedule = () => {
                       {menuOpenMaterialId === material.materialId && (
                         <div className="-mt-22 absolute -right-5 top-10 z-10 w-fit rounded border bg-bgPrimary shadow-lg">
                           <ul>
-                            <li
-                              className="flex cursor-pointer justify-between gap-2 px-4 py-2 transition hover:bg-bgSecondary hover:text-primary"
-                              onClick={() => handleEditClick(material.materialId)}
-                            >
-                              Edit
-                              <BiSolidEditAlt size={20} />
-                            </li>
-                            <li
-                              className="flex cursor-pointer justify-between gap-2 px-4 py-2 transition hover:bg-bgSecondary hover:text-error"
-                              onClick={() =>
-                                handleDeleteMaterial(
-                                  material.materialId.toString(),
-                                )
-                              }
-                            >
-                              Delete
-                              <MdDelete size={20} />
-                            </li>
+                          <li
+  className="flex cursor-pointer justify-between gap-2 px-4 py-2 transition hover:bg-bgSecondary hover:text-primary"
+  onClick={() => handleEditClick(material.materialId)}
+>
+  {translate("Edit", "Éditer", "تحرير")}
+  <BiSolidEditAlt size={20} />
+</li>
+<li
+  className="flex cursor-pointer justify-between gap-2 px-4 py-2 transition hover:bg-bgSecondary hover:text-error"
+  onClick={() => handleDeleteMaterial(material.materialId.toString())}
+>
+  {translate("Delete", "Supprimer", "حذف")}
+  <MdDelete size={20} />
+</li>
                           </ul>
                         </div>
                       )}
@@ -727,59 +752,66 @@ const Schedule = () => {
                   ))
                 ) : (
                   <div className="text-center text-gray-500">
-                    No Materials Available{" "}
+                    {translate("No Materials Available", "Aucun matériel disponible", "لا توجد مواد متاحة")}
                     {selectedScheduleId ? `at class ${selectedScheduleId}` : ""}
                   </div>
                 )
               ) : (
                 <div className="text-center">
-                  <Text color={"gray"}>Select a class</Text>
+                  <Text color={"gray"}>{translate("Select a class", "Sélectionnez une classe", "اختر فصلاً دراسياً")}</Text>
+
                 </div>
               )}
 
 <Modal isOpen={isModalEditOpen} onClose={handleCloseModal3}>
-
-<h2 className="mb-4 text-xl font-bold">Edit Material</h2>
-<div className="flex flex-col gap-4">
-  <Input
-    border="gray"
-    theme="transparent"
-    type="text"
-    name="title"
-    placeholder="Enter title"
-    value={materialEditData.title}
-    onChange={handleEditChange}
-  />
-  <Input
-    border="gray"
-    theme="transparent"
-    name="description"
-    placeholder="Enter description"
-    value={materialEditData.description}
-    onChange={handleEditChange}
-  />
-  <Input
-    border="gray"
-    theme="transparent"
-    type="file"
-    name="file"
-    onChange={handleEditFileChange}
+  <h2 className="mb-4 text-xl font-bold">
+    {translate("Edit Material", "Modifier le document", "تحرير المادة")}
+  </h2>
+  <div className="flex flex-col gap-4">
+    <Input
+      border="gray"
+      theme="transparent"
+      type="text"
+      name="title"
+      placeholder={translate("Enter title", "Entrez le titre", "أدخل العنوان")}
+      value={materialEditData.title}
+      onChange={handleEditChange}
     />
-  <div className="flex gap-2">
-    <Button
-      onClick={() => {
-        handleUpdateDetails();
-        handleUpdateFile(); // تأكد أن selectedFile تم تحديده
-      }}
+    <Input
+      border="gray"
+      theme="transparent"
+      name="description"
+      placeholder={translate(
+        "Enter description",
+        "Entrez la description",
+        "أدخل الوصف"
+      )}
+      value={materialEditData.description}
+      onChange={handleEditChange}
+    />
+    <Input
+      border="gray"
+      theme="transparent"
+      type="file"
+      name="file"
+      onChange={handleEditFileChange}
+    />
+    <div className="flex gap-2">
+      <Button
+        onClick={() => {
+          handleUpdateDetails();
+          handleUpdateFile();
+        }}
       >
-      Save Changes
-    </Button>
-    <Button color="secondary" onClick={handleCloseEditModal}>
-      Close
-    </Button>
+        {translate("Save Changes", "Enregistrer les modifications", "حفظ التغييرات")}
+      </Button>
+      <Button color="secondary" onClick={handleCloseEditModal}>
+        {translate("Close", "Fermer", "إغلاق")}
+      </Button>
+    </div>
   </div>
-</div>
-      </Modal>
+</Modal>
+
 
             </div>
             <div className="grid w-full gap-2 rounded-md bg-bgPrimary p-4">
@@ -790,8 +822,9 @@ const Schedule = () => {
               ) : (
                 <div className="flex w-full items-start justify-between">
                   <Text font={"bold"} size={"2xl"} className="mb-4">
-                    Explained
-                  </Text>
+  {translate("Explained", "Expliqué", "مشروح")}
+</Text>
+
                   <button
                     className={`flex items-center gap-2 font-medium ${selectedScheduleId
                         ? "cursor-pointer text-primary"
@@ -814,7 +847,7 @@ const Schedule = () => {
                         d="M12 4v16m8-8H4"
                       />
                     </svg>
-                    Add Explained
+                    {translate("Add Explained", "Ajouter une explication", "إضافة شرح")}
                   </button>
                 </div>
               )}
@@ -854,7 +887,11 @@ const Schedule = () => {
                 ))
               ) : (
                 <div className="px-6 py-4 text-center text-gray-500">
-                  No explained topics available
+                  {translate(
+    "No explained topics available",
+    "Aucun sujet expliqué disponible",
+    "لا توجد مواضيع مشروحة متاحة"
+  )}
                 </div>
               )}
             </div>
@@ -864,114 +901,139 @@ const Schedule = () => {
 
       </Container>
       <Modal isOpen={isModalOpen} onClose={handleCloseModal1}>
-        <h2 className="mb-4 text-xl font-bold">Add Material</h2>
-        <div className="flex flex-col gap-4">
-          <Input
-            border="gray"
-            theme="transparent"
-            type="text"
-            name="title"
-            placeholder="Enter title"
-            value={materialData.title}
-            onChange={handleChange}
-          />
-          <Input
-            border="gray"
-            theme="transparent"
-            name="description"
-            placeholder="Enter description"
-            value={materialData.description}
-            onChange={handleChange}
-          />
-          <Input
-            border="gray"
-            theme="transparent"
-            type="file"
-            name="file"
-            onChange={handleFileChange}
-          />
-          <div className="flex gap-2">
-            <Button onClick={handleSubmit}>Add Material</Button>
-            <Button color="secondary" onClick={handleCloseModal1}>
-              Close
-            </Button>
-          </div>
-        </div>
-      </Modal>
-      <Modal isOpen={isModalEditOpen} onClose={handleCloseModal3}>
-
-<h2 className="mb-4 text-xl font-bold">Edit Material</h2>
-<div className="flex flex-col gap-4">
-  <Input
-    border="gray"
-    theme="transparent"
-    type="text"
-    name="title"
-    placeholder="Enter title"
-    value={materialEditData.title}
-    onChange={handleEditChange}
-  />
-  <Input
-    border="gray"
-    theme="transparent"
-    name="description"
-    placeholder="Enter description"
-    value={materialEditData.description}
-    onChange={handleEditChange}
-  />
-  <Input
-    border="gray"
-    theme="transparent"
-    type="file"
-    name="file"
-    onChange={handleEditFileChange}
+  <h2 className="mb-4 text-xl font-bold">
+    {translate("Add Material", "Ajouter un document", "إضافة مادة")}
+  </h2>
+  <div className="flex flex-col gap-4">
+    <Input
+      border="gray"
+      theme="transparent"
+      type="text"
+      name="title"
+      placeholder={translate("Enter title", "Entrez le titre", "أدخل العنوان")}
+      value={materialData.title}
+      onChange={handleChange}
     />
-  <div className="flex gap-2">
-    <Button
-      onClick={() => {
-        handleUpdateDetails();
-        handleUpdateFile(); // تأكد أن selectedFile تم تحديده
-      }}
-      >
-      Save Changes
-    </Button>
-    <Button color="secondary" onClick={handleCloseEditModal}>
-      Close
-    </Button>
+    <Input
+      border="gray"
+      theme="transparent"
+      name="description"
+      placeholder={translate(
+        "Enter description",
+        "Entrez la description",
+        "أدخل الوصف"
+      )}
+      value={materialData.description}
+      onChange={handleChange}
+    />
+    <Input
+      border="gray"
+      theme="transparent"
+      type="file"
+      name="file"
+      onChange={handleFileChange}
+    />
+    <div className="flex gap-2">
+      <Button onClick={handleSubmit}>
+        {translate("Add Material", "Ajouter un document", "إضافة مادة")}
+      </Button>
+      <Button color="secondary" onClick={handleCloseModal1}>
+        {translate("Close", "Fermer", "إغلاق")}
+      </Button>
+    </div>
   </div>
-</div>
-      </Modal>
-      <Modal isOpen={isExplainedModalOpen} onClose={handleCloseModal2}>
-        <h2 className="mb-4 text-xl font-bold">Add Explained Topic</h2>
-        <div className="flex flex-col gap-4">
-          <Input
-            border="gray"
-            theme="transparent"
-            type="text"
-            name="topicId"
-            placeholder="Enter topic ID"
-            value={explainedData.topicId}
-            onChange={handleExplainedChange}
-          />
-          <Input
-            border="gray"
-            theme="transparent"
-            name="description"
-            placeholder="Enter description"
-            value={explainedData.description}
-            onChange={handleExplainedChange}
-          />
-          <div className="flex gap-2">
-            <Button onClick={handleExplainedSubmit}>Add Explained</Button>
-            <Button
-              color="secondary"
-              onClick={() => setIsExplainedModalOpen(false)}
-            >
-              Close
-            </Button>
-          </div>
-        </div>
-      </Modal>
+</Modal>
+
+<Modal isOpen={isModalEditOpen} onClose={handleCloseModal3}>
+  <h2 className="mb-4 text-xl font-bold">
+    {translate("Edit Material", "Modifier le document", "تحرير المادة")}
+  </h2>
+  <div className="flex flex-col gap-4">
+    <Input
+      border="gray"
+      theme="transparent"
+      type="text"
+      name="title"
+      placeholder={translate("Enter title", "Entrez le titre", "أدخل العنوان")}
+      value={materialEditData.title}
+      onChange={handleEditChange}
+    />
+    <Input
+      border="gray"
+      theme="transparent"
+      name="description"
+      placeholder={translate(
+        "Enter description",
+        "Entrez la description",
+        "أدخل الوصف"
+      )}
+      value={materialEditData.description}
+      onChange={handleEditChange}
+    />
+    <Input
+      border="gray"
+      theme="transparent"
+      type="file"
+      name="file"
+      onChange={handleEditFileChange}
+    />
+    <div className="flex gap-2">
+      <Button
+        onClick={() => {
+          handleUpdateDetails();
+          handleUpdateFile();
+        }}
+      >
+        {translate("Save Changes", "Enregistrer les modifications", "حفظ التغييرات")}
+      </Button>
+      <Button color="secondary" onClick={handleCloseEditModal}>
+        {translate("Close", "Fermer", "إغلاق")}
+      </Button>
+    </div>
+  </div>
+</Modal>
+
+<Modal isOpen={isExplainedModalOpen} onClose={handleCloseModal2}>
+  <h2 className="mb-4 text-xl font-bold">
+    {translate("Add Explained Topic", "Ajouter un sujet expliqué", "إضافة موضوع مشروح")}
+  </h2>
+  <div className="flex flex-col gap-4">
+    <Input
+      border="gray"
+      theme="transparent"
+      type="text"
+      name="topicId"
+      placeholder={translate(
+        "Enter topic ID",
+        "Entrez l'ID du sujet",
+        "أدخل معرف الموضوع"
+      )}
+      value={explainedData.topicId}
+      onChange={handleExplainedChange}
+    />
+    <Input
+      border="gray"
+      theme="transparent"
+      name="description"
+      placeholder={translate(
+        "Enter description",
+        "Entrez la description",
+        "أدخل الوصف"
+      )}
+      value={explainedData.description}
+      onChange={handleExplainedChange}
+    />
+    <div className="flex gap-2">
+      <Button onClick={handleExplainedSubmit}>
+        {translate("Add Explained", "Ajouter une explication", "إضافة شرح")}
+      </Button>
+      <Button color="secondary" onClick={() => setIsExplainedModalOpen(false)}>
+        {translate("Close", "Fermer", "إغلاق")}
+      </Button>
+    </div>
+  </div>
+</Modal>
+
     </>
   );
 };

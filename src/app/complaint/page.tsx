@@ -12,6 +12,7 @@ import { useGetStudents } from "~/APIs/hooks/useStudent";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import Button from "~/_components/Button";
+import useLanguageStore from "~/APIs/store";
 
 const Complaint = () => {
   const [selectedStudentId, setSelectedStudentId] = useState<
@@ -26,7 +27,7 @@ const Complaint = () => {
 
   const { mutate: createComplaintMutation } = useCreateComplaint({
     onSuccess: () => {
-      toast.success("Complaint submitted successfully!");
+      toast.success(translate("Complaint submitted successfully!", "Réclamation soumise avec succès!", "تم تقديم الشكوى بنجاح!"));
       refetchComplains();
       // Reset form
       setSelectedStudentId(undefined);
@@ -34,6 +35,11 @@ const Complaint = () => {
       setMessage("");
     },
   });
+
+  const translate = (en: string, fr: string, ar: string) => {
+    const language = useLanguageStore.getState().language;
+    return language === "fr" ? fr : language === "ar" ? ar : en;
+  };
 
   const {
     data: dataStudents,
@@ -71,7 +77,7 @@ const Complaint = () => {
 
   const handleSubmit = () => {
     if (!selectedStudentId || !subject || !message) {
-      toast.error("Please fill in all fields.");
+      toast.error(translate("Please fill in all fields.", "Veuillez remplir tous les champs.", "يرجى ملء جميع الحقول."));
       return;
     }
 
@@ -97,29 +103,6 @@ const Complaint = () => {
   const handleMessageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setMessage(event.target.value);
   };
-
-  function formatBeautifulDate(dateString: string): string {
-    const date = new Date(dateString);
-    const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-    const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-    
-    const dayName = days[date.getDay()];
-    const month = months[date.getMonth()];
-    const day = date.getDate();
-    const year = date.getFullYear();
-
-    return `${dayName}, ${month} ${getOrdinalDay(day)}, ${year}`;
-  }
-
-  function getOrdinalDay(day: number): string {
-    if (day > 3 && day < 21) return day + "th";
-    switch (day % 10) {
-      case 1: return day + "st";
-      case 2: return day + "nd";
-      case 3: return day + "rd";
-      default: return day + "th";
-    }
-  }
 
   const ComplaintSection = ({ title, complaints, showAll, onShowMore }: { title: string, complaints: ComplaintResponse[], showAll: boolean, onShowMore: () => void }) => (
     <div className="mb-6">
@@ -148,19 +131,18 @@ const Complaint = () => {
               </Text>
               <Text size="md">{complaint.message}</Text>
               <Text color="gray">
-                {formatBeautifulDate(complaint.creationDateTime)}
+                {complaint.creationDateTime}
               </Text>
             </div>
           </div>
         </div>
       ))}
-        <Button
-          onClick={onShowMore}
-          className="mt-4 "
-        >
-          {showAll ? "Show Less" : "See More"}
-        </Button>
-      
+      <Button
+        onClick={onShowMore}
+        className="mt-4"
+      >
+        {showAll ? translate("Show Less", "Montrer moins", "عرض أقل") : translate("See More", "Voir plus", "عرض المزيد")}
+      </Button>
     </div>
   );
 
@@ -169,12 +151,12 @@ const Complaint = () => {
       <div className="m-4 mb-4 flex flex-col items-start justify-between gap-4 md:flex-row">
         <div className="flex w-full flex-col gap-4 rounded-xl bg-bgPrimary p-4">
           <Text font="bold" size="4xl">
-            Complaint
+            {translate("Complaint", "Réclamation", "شكوى")}
           </Text>
           <div className="border-b border-borderPrimary pb-4">
             {recent.length > 0 && (
               <ComplaintSection
-                title="Recent Complaints"
+                title={translate("Recent Complaints", "Réclamations récentes", "الشكاوى الحديثة")}
                 complaints={displayedRecent}
                 showAll={showAllRecent}
                 onShowMore={() => setShowAllRecent(!showAllRecent)}
@@ -182,7 +164,7 @@ const Complaint = () => {
             )}
             {earlier.length > 0 && (
               <ComplaintSection
-                title="Earlier Complaints"
+                title={translate("Earlier Complaints", "Réclamations antérieures", "الشكاوى السابقة")}
                 complaints={displayedEarlier}
                 showAll={showAllEarlier}
                 onShowMore={() => setShowAllEarlier(!showAllEarlier)}
@@ -193,7 +175,7 @@ const Complaint = () => {
 
         <div className="w-full rounded-xl bg-bgPrimary p-4 md:w-1/2">
           <Text font="bold" size="2xl">
-            Add Complaint
+            {translate("Add Complaint", "Ajouter une réclamation", "إضافة شكوى")}
           </Text>
           <div className="w-full">
             <label htmlFor="student">
@@ -204,7 +186,7 @@ const Complaint = () => {
                 onChange={handleStudentChange}
                 value={selectedStudentId}
               >
-                <option value="">Select student</option>
+                <option value="">{translate("Select student", "Sélectionnez un étudiant", "اختر طالبًا")}</option>
                 {dataStudents?.data.content?.map((student: Student) => (
                   <option key={student.studentId} value={student.studentId}>
                     {student.studentName}
@@ -215,7 +197,7 @@ const Complaint = () => {
 
             <label htmlFor="subject">
               <Input
-                placeholder="Subject"
+                placeholder={translate("Subject", "Sujet", "الموضوع")}
                 theme="transparent"
                 className="mt-4"
                 border="gray"
@@ -227,7 +209,7 @@ const Complaint = () => {
             <label htmlFor="area">
               <Input
                 id="message"
-                placeholder="Write the problem"
+                placeholder={translate("Write the problem", "Écrivez le problème", "اكتب المشكلة")}
                 theme="transparent"
                 className="mt-4 py-10"
                 border="gray"
@@ -237,7 +219,7 @@ const Complaint = () => {
             </label>
 
             <Button onClick={handleSubmit} className="mt-4">
-              Submit
+              {translate("Submit", "Soumettre", "إرسال")}
             </Button>
           </div>
         </div>
