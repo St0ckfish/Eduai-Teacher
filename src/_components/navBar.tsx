@@ -300,7 +300,7 @@ const NavBar = () => {
       </button>
       
       {isOpenL && (
-        <div className="absolute right-0 mt-2 w-48 bg-bgPrimary border rounded-md shadow-lg">
+        <div className={`absolute ${language == "ar" ? "-right-10" : "right-0" } mt-2 w-48 bg-bgPrimary border rounded-md shadow-lg`}>
           {languages.map((lang) => (
             <button
               key={lang.code}
@@ -340,7 +340,7 @@ const NavBar = () => {
 
                       {profile && (
                         <DropdownMenu.Content
-                          className={`text-textPrimary fixed right-[20px] top-[20px] min-w-60 rounded-lg bg-bgPrimary p-2 shadow-md`}
+                          className={`text-textPrimary fixed  ${language == "ar" ? "" : "right-[20px]" } top-[20px] min-w-60 rounded-lg bg-bgPrimary p-2 shadow-md`}
                           aria-labelledby="hs-dropdown-with-header"
                           align="end"
                           sideOffset={5}
