@@ -620,6 +620,15 @@ const NavBar = () => {
     >
       {translate("Exam", "Examen", "الامتحان")}
     </Link>
+    <Link
+      onClick={() => setIsOpen(false)}
+      className={`hover:text-primary ${
+        url === "/exam" ? "text-primary" : ""
+      }`}
+      href="/questions"
+    >
+      {translate("Questions", "Questions", "الاسئلة")}
+    </Link>
                       </ul>
                     )}
                   </li>
