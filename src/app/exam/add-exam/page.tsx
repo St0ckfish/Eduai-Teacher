@@ -7,10 +7,11 @@ import Input from "~/_components/Input";
 import SearchableSelect from "~/_components/SearchSelect";
 import { Text } from "~/_components/Text";
 import { useCreateExam, useGetAllClasses, useGetAllCourses } from "~/APIs/hooks/useExam";
+import useLanguageStore from "~/APIs/store";
 import { type ExamFormData } from "~/types";
 
 const Bus = () => {
-  const { mutate, isPending} = useCreateExam()
+  const { mutate, isPending } = useCreateExam();
   const {
     control,
     handleSubmit,
@@ -20,10 +21,15 @@ const Bus = () => {
     shouldUnregister: false,
   });
 
+  const translate = (en: string, fr: string, ar: string) => {
+    const language = useLanguageStore.getState().language;
+    return language === "fr" ? fr : language === "ar" ? ar : en;
+  };
+
   const onSubmit = (data: ExamFormData) => {
     mutate(data, {
       onSuccess: () => {
-        toast.success("Form submitted successfully!");
+        toast.success(translate("Form submitted successfully!", "Formulaire soumis avec succès!", "تم إرسال النموذج بنجاح!"));
       },
       onError: (err: Error & { response?: { data: { message: string; data: [] } } }) => {
         if (err.response?.data) {
@@ -35,44 +41,30 @@ const Bus = () => {
     });
   };
 
-  const {data: classes, isLoading: isClasses} = useGetAllClasses()
-  const {data: courses, isLoading: isCourses} = useGetAllCourses()
+  const { data: classes, isLoading: isClasses } = useGetAllClasses();
+  const { data: courses, isLoading: isCourses } = useGetAllCourses();
 
   const classesOptions =
-  classes?.data?.map(
-      (school: {
-        classroomId: string;
-        classroomName: string;
-        classroomStudyLevel: string;
-      }) => ({
+    classes?.data?.map(
+      (school: { classroomId: string; classroomName: string; classroomStudyLevel: string }) => ({
         value: school.classroomId,
         label: `${school.classroomStudyLevel} - ${school.classroomName}`,
-      }),
+      })
     ) || [];
   const coursesOptions =
-  courses?.data?.map(
-      (school: {
-        courseId: string;
-        courseName: string;
-        courseCode: string;
-      }) => ({
+    courses?.data?.map(
+      (school: { courseId: string; courseName: string; courseCode: string }) => ({
         value: school.courseId,
         label: `${school.courseName} - ${school.courseCode}`,
-      }),
+      })
     ) || [];
 
-  const examEndingOptions = [
-    { label: "1st", value: "1st" },
-    { label: "2nd", value: "2nd" },
-    { label: "3rd", value: "3rd" },
-    { label: "4th", value: "4th" },
-  ];
   return (
     <>
       <Container>
         <div className="mt-8 w-full overflow-x-hidden rounded-xl bg-bgPrimary p-4">
           <Text font={"bold"} size={"4xl"}>
-            Add Exam
+            {translate("Add Exam", "Ajouter un examen", "إضافة امتحان")}
           </Text>
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="mt-4 grid grid-cols-1 gap-6 md:grid-cols-2 w-full md:w-3/4">
@@ -81,13 +73,13 @@ const Bus = () => {
                   <Controller
                     name="courseId"
                     control={control}
-                    rules={{ required: "Course selection is required" }}
+                    rules={{ required: translate("Course selection is required", "La sélection du cours est obligatoire", "يجب اختيار المادة") }}
                     render={({ field: { onChange, value } }) => (
                       <SearchableSelect
                         error={errors.courseId?.message?.toString() ?? ""}
                         value={value}
                         onChange={onChange}
-                        placeholder="Course Id"
+                        placeholder={translate("Course Id", "ID du cours", "معرف المادة")}
                         options={coursesOptions}
                         bgColor="bg-bgPrimary"
                         border="border-border"
@@ -101,13 +93,13 @@ const Bus = () => {
                   <Controller
                     name="classroomId"
                     control={control}
-                    rules={{ required: "Classroom selection is required" }}
+                    rules={{ required: translate("Classroom selection is required", "La sélection de la classe est obligatoire", "يجب اختيار الفصل") }}
                     render={({ field: { onChange, value } }) => (
                       <SearchableSelect
                         error={errors.classroomId?.message?.toString() ?? ""}
                         value={value}
                         onChange={onChange}
-                        placeholder="Classroom Id"
+                        placeholder={translate("Classroom Id", "ID de la classe", "معرف الفصل")}
                         options={classesOptions}
                         bgColor="bg-bgPrimary"
                         border="border-border"
@@ -117,80 +109,74 @@ const Bus = () => {
                 </label>
               </div>
               <label htmlFor="name" className="">
-                  <Input
-                    {...register("name", { required: "name is required" })}
-                    error={errors.name?.message?.toString() ?? ""}
-                    placeholder="name"
-                    theme="transparent"
-                    className="border border-gray-200 dark:border-gray-600"
-                  />
-                  {errors.name && (
-                    <p className="mt-1 text-sm text-red-500">
-                      {errors.name.message?.toString()}
-                    </p>
-                  )}
-                </label>
+                <Input
+                  {...register("name", { required: translate("Name is required", "Le nom est requis", "الاسم مطلوب") })}
+                  error={errors.name?.message?.toString() ?? ""}
+                  placeholder={translate("Name", "Nom", "الاسم")}
+                  theme="transparent"
+                  className="border border-gray-200 dark:border-gray-600"
+                />
+                {errors.name && (
+                  <p className="mt-1 text-sm text-red-500">{errors.name.message?.toString()}</p>
+                )}
+              </label>
               <label htmlFor="examTypeId" className="">
-                  <Input
-                    {...register("examTypeId", { required: "examTypeId is required" })}
-                    error={errors.examTypeId?.message?.toString() ?? ""}
-                    placeholder="examTypeId"
-                    theme="transparent"
-                    className="border border-gray-200 dark:border-gray-600"
-                  />
-                  {errors.examTypeId && (
-                    <p className="mt-1 text-sm text-red-500">
-                      {errors.examTypeId.message?.toString()}
-                    </p>
-                  )}
-                </label>
+                <Input
+                  {...register("examTypeId", { required: translate("Exam Type ID is required", "ID du type d'examen requis", "معرف نوع الامتحان مطلوب") })}
+                  error={errors.examTypeId?.message?.toString() ?? ""}
+                  placeholder={translate("Exam Type ID", "ID du type d'examen", "معرف نوع الامتحان")}
+                  theme="transparent"
+                  className="border border-gray-200 dark:border-gray-600"
+                />
+                {errors.examTypeId && (
+                  <p className="mt-1 text-sm text-red-500">{errors.examTypeId.message?.toString()}</p>
+                )}
+              </label>
               <label htmlFor="examDate" className="">
-                  <Input
-                    {...register("examDate", { required: "examDate is required" })}
-                    error={errors.examDate?.message?.toString() ?? ""}
-                    placeholder="examDate"
-                    type="date"
-                    theme="transparent"
-                    className="border border-gray-200 dark:border-gray-600"
-                  />
-                  {errors.examDate && (
-                    <p className="mt-1 text-sm text-red-500">
-                      {errors.examDate.message?.toString()}
-                    </p>
-                  )}
-                </label>
+                <Input
+                  {...register("examDate", { required: translate("Exam Date is required", "La date de l'examen est requise", "تاريخ الامتحان مطلوب") })}
+                  error={errors.examDate?.message?.toString() ?? ""}
+                  placeholder={translate("Exam Date", "Date de l'examen", "تاريخ الامتحان")}
+                  type="date"
+                  theme="transparent"
+                  className="border border-gray-200 dark:border-gray-600"
+                />
+                {errors.examDate && (
+                  <p className="mt-1 text-sm text-red-500">{errors.examDate.message?.toString()}</p>
+                )}
+              </label>
               <label htmlFor="examBeginning" className="">
-                  <Input
-                    {...register("examBeginning", { required: "examBeginning is required" })}
-                    error={errors.examBeginning?.message?.toString() ?? ""}
-                    placeholder="examBeginning"
-                    type="time"
-                    theme="transparent"
-                    className="border border-gray-200 dark:border-gray-600"
-                  />
-                  {errors.examBeginning && (
-                    <p className="mt-1 text-sm text-red-500">
-                      {errors.examBeginning.message?.toString()}
-                    </p>
-                  )}
-                </label>
+                <Input
+                  {...register("examBeginning", { required: translate("Exam Beginning is required", "Le début de l'examen est requis", "بداية الامتحان مطلوبة") })}
+                  error={errors.examBeginning?.message?.toString() ?? ""}
+                  placeholder={translate("Exam Beginning", "Début de l'examen", "بداية الامتحان")}
+                  type="time"
+                  theme="transparent"
+                  className="border border-gray-200 dark:border-gray-600"
+                />
+                {errors.examBeginning && (
+                  <p className="mt-1 text-sm text-red-500">{errors.examBeginning.message?.toString()}</p>
+                )}
+              </label>
               <label htmlFor="examEnding" className="">
-                  <Input
-                    {...register("examEnding", { required: "examEnding is required" })}
-                    error={errors.examEnding?.message?.toString() ?? ""}
-                    placeholder="examEnding"
-                    type="time"
-                    theme="transparent"
-                    className="border border-gray-200 dark:border-gray-600"
-                  />
-                  {errors.examEnding && (
-                    <p className="mt-1 text-sm text-red-500">
-                      {errors.examEnding.message?.toString()}
-                    </p>
-                  )}
-                </label>
+                <Input
+                  {...register("examEnding", { required: translate("Exam Ending is required", "La fin de l'examen est requise", "نهاية الامتحان مطلوبة") })}
+                  error={errors.examEnding?.message?.toString() ?? ""}
+                  placeholder={translate("Exam Ending", "Fin de l'examen", "نهاية الامتحان")}
+                  type="time"
+                  theme="transparent"
+                  className="border border-gray-200 dark:border-gray-600"
+                />
+                {errors.examEnding && (
+                  <p className="mt-1 text-sm text-red-500">{errors.examEnding.message?.toString()}</p>
+                )}
+              </label>
               <div>
-                <Button type="submit" disabled={isPending}>{isPending ? "Continue..." : "Continue"}</Button>
+                <Button type="submit" disabled={isPending}>
+                  {isPending
+                    ? translate("Submitting...", "En cours de soumission...", "جارٍ الإرسال...")
+                    : translate("Submit", "Soumettre", "إرسال")}
+                </Button>
               </div>
             </div>
           </form>

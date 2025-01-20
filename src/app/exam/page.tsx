@@ -1,4 +1,4 @@
-"use client"
+"use client";
 /* eslint-disable @next/next/no-img-element */
 import { useState } from "react";
 import Button from "~/_components/Button";
@@ -6,9 +6,14 @@ import Container from "~/_components/Container";
 import Spinner from "~/_components/Spinner";
 import { Text } from "~/_components/Text";
 import { useGetAllExams, useGetAllUpcomingExams, useGetAllPreviousExams } from "~/APIs/hooks/useExam";
+import useLanguageStore from "~/APIs/store";
 
 const Exam = () => {
   const [activeTab, setActiveTab] = useState<'all' | 'previous' | 'upcoming'>('all');
+  const translate = (en: string, fr: string, ar: string) => {
+    const language = useLanguageStore.getState().language;
+    return language === "fr" ? fr : language === "ar" ? ar : en;
+  };
 
   const { data: allExams, isLoading: isAllExamsLoading } = useGetAllExams();
   const { data: previousExams, isLoading: isPreviousExamsLoading } = useGetAllPreviousExams();
@@ -19,7 +24,7 @@ const Exam = () => {
       <div className="flex w-full overflow-auto rounded-md bg-bgPrimary p-4">
         <div className="relative w-full overflow-auto sm:rounded-lg">
           <Text font="bold" size="2xl" className="mb-4">
-            {title}
+            {translate(title, "Titre", "العنوان")}
           </Text>
           {isLoading ? (
             <div className="flex w-full justify-center">
@@ -29,14 +34,14 @@ const Exam = () => {
             <table className="w-full overflow-x-auto p-4 text-left text-sm text-textPrimary border-separate border-spacing-y-2">
               <thead className="text-textPrimary text-xs uppercase">
                 <tr>
-                  <th scope="col" className="whitespace-nowrap px-6 py-3">Class Name</th>
-                  <th scope="col" className="whitespace-nowrap px-6 py-3">Course Name</th>
-                  <th scope="col" className="whitespace-nowrap px-6 py-3">Exam Legal Type Name</th>
-                  <th scope="col" className="whitespace-nowrap px-6 py-3">Exam Type Name</th>
-                  <th scope="col" className="whitespace-nowrap px-6 py-3">Exam Date</th>
-                  <th scope="col" className="whitespace-nowrap px-6 py-3">Exam Beginning</th>
-                  <th scope="col" className="whitespace-nowrap px-6 py-3">Exam Ending</th>
-                  <th scope="col" className="whitespace-nowrap px-6 py-3">Exam Name</th>
+                  <th scope="col" className="whitespace-nowrap px-6 py-3">{translate("Class Name", "Nom de la classe", "اسم الفصل")}</th>
+                  <th scope="col" className="whitespace-nowrap px-6 py-3">{translate("Course Name", "Nom du cours", "اسم المادة")}</th>
+                  <th scope="col" className="whitespace-nowrap px-6 py-3">{translate("Exam Legal Type Name", "Type juridique de l'examen", "نوع الامتحان القانوني")}</th>
+                  <th scope="col" className="whitespace-nowrap px-6 py-3">{translate("Exam Type Name", "Type d'examen", "نوع الامتحان")}</th>
+                  <th scope="col" className="whitespace-nowrap px-6 py-3">{translate("Exam Date", "Date de l'examen", "تاريخ الامتحان")}</th>
+                  <th scope="col" className="whitespace-nowrap px-6 py-3">{translate("Exam Beginning", "Début de l'examen", "بداية الامتحان")}</th>
+                  <th scope="col" className="whitespace-nowrap px-6 py-3">{translate("Exam Ending", "Fin de l'examen", "نهاية الامتحان")}</th>
+                  <th scope="col" className="whitespace-nowrap px-6 py-3">{translate("Exam Name", "Nom de l'examen", "اسم الامتحان")}</th>
                 </tr>
               </thead>
               <tbody className="rounded-lg">
@@ -74,24 +79,24 @@ const Exam = () => {
         <div className="flex w-[400px] items-center gap-10 max-[600px]:grid grid-cols-2">
           <Button 
             onClick={() => setActiveTab('all')}
-            theme={activeTab === 'all' ?  undefined : 'outline'}
-          color={activeTab === 'upcoming' ? 'primary' : 'primary'}
+            theme={activeTab === 'all' ? undefined : 'outline'}
+            color="primary"
           >
-            All Exams
+            {translate("All Exams", "Tous les examens", "جميع الامتحانات")}
           </Button>
           <Button 
             onClick={() => setActiveTab('previous')}
-            theme={activeTab === 'previous' ?  undefined : 'outline'}
-            color={activeTab === 'upcoming' ? 'primary' : 'primary'}
+            theme={activeTab === 'previous' ? undefined : 'outline'}
+            color="primary"
           >
-            Previous Exams
+            {translate("Previous Exams", "Examens précédents", "الامتحانات السابقة")}
           </Button>
           <Button 
             onClick={() => setActiveTab('upcoming')}
-            theme={activeTab === 'upcoming' ?  undefined : 'outline'}
-            color={activeTab === 'upcoming' ? 'primary' : 'primary'}
+            theme={activeTab === 'upcoming' ? undefined : 'outline'}
+            color="primary"
           >
-            Upcoming Exams
+            {translate("Upcoming Exams", "Examens à venir", "الامتحانات القادمة")}
           </Button>
         </div>
 
@@ -110,14 +115,14 @@ const Exam = () => {
                 d="M12 4v16m8-8H4"
               />
             </svg>{" "}
-            Add Exams
+            {translate("Add Exams", "Ajouter des examens", "إضافة الامتحانات")}
           </Button>
         </div>
       </div>
 
-      {activeTab === 'all' && renderExamsTable(allExams, isAllExamsLoading, 'All Exams')}
-      {activeTab === 'previous' && renderExamsTable(previousExams?.data, isPreviousExamsLoading, 'Previous Exams')}
-      {activeTab === 'upcoming' && renderExamsTable(upcomingExams?.data, isUpcomingExamsLoading, 'Upcoming Exams')}
+      {activeTab === 'all' && renderExamsTable(allExams, isAllExamsLoading, translate("All Exams", "Tous les examens", "جميع الامتحانات"))}
+      {activeTab === 'previous' && renderExamsTable(previousExams?.data, isPreviousExamsLoading, translate("Previous Exams", "Examens précédents", "الامتحانات السابقة"))}
+      {activeTab === 'upcoming' && renderExamsTable(upcomingExams?.data, isUpcomingExamsLoading, translate("Upcoming Exams", "Examens à venir", "الامتحانات القادمة"))}
     </Container>
   );
 };
