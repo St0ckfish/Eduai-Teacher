@@ -241,6 +241,7 @@ const NavBar = () => {
 
                 <div className="flex flex-row items-center justify-end gap-2">
                   <Switch
+                  dir="ltr"
                     checked={theme === "dark"} 
                     onCheckedChange={handleThemeChange} 
                     className="mx-1" 
