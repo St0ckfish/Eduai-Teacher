@@ -55,8 +55,8 @@ export default function Home() {
     },
   });
 
+  const language = useLanguageStore((state) => state.language);
   const translate = (en: string, fr: string, ar: string) => {
-    const language = useLanguageStore.getState().language;
     return language === "fr" ? fr : language === "ar" ? ar : en;
   };
 
@@ -94,9 +94,6 @@ export default function Home() {
       setUpcomingEvents(upcomingEvents);
     }
   }, [dataEvents]);
-
-  const { language } = useLanguageStore();
-
 
   const {
     data: comments,

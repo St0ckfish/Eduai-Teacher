@@ -8,8 +8,8 @@ import useLanguageStore from "~/APIs/store";
 
 const Finance = () => {
   const { data: fees, isLoading: isFees } = useGetAllFees();
+  const language = useLanguageStore((state) => state.language);
   const translate = (en: string, fr: string, ar: string) => {
-    const language = useLanguageStore.getState().language;
     return language === "fr" ? fr : language === "ar" ? ar : en;
   };
   const sortedFees = fees?.data ? [...fees.data].sort((a, b) => {

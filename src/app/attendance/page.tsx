@@ -11,10 +11,9 @@ import Spinner from "~/_components/Spinner";
 import useLanguageStore from "~/APIs/store";
 
 const Attendance = () => {
-  const { language } = useLanguageStore();
 
+  const language = useLanguageStore((state) => state.language);
   const translate = (en: string, fr: string, ar: string) => {
-    const language = useLanguageStore.getState().language;
     return language === "fr" ? fr : language === "ar" ? ar : en;
   };
 

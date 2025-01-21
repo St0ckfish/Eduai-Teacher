@@ -323,10 +323,9 @@ const Schedule = () => {
   const { mutate: deleteMaterial } = useDeleteMaterial();
 
   console.log("👾 ~ Schedule ~ materialEditData:", materialEditData);
-  const { language } = useLanguageStore();
 
+  const language = useLanguageStore((state) => state.language);
   const translate = (en: string, fr: string, ar: string) => {
-    const language = useLanguageStore.getState().language;
     return language === "fr" ? fr : language === "ar" ? ar : en;
   };
   const handleEditChange = (e: React.ChangeEvent<HTMLInputElement>) => {

@@ -10,8 +10,8 @@ import useLanguageStore from "~/APIs/store";
 
 const Exam = () => {
   const [activeTab, setActiveTab] = useState<'all' | 'previous' | 'upcoming'>('all');
+  const language = useLanguageStore((state) => state.language);
   const translate = (en: string, fr: string, ar: string) => {
-    const language = useLanguageStore.getState().language;
     return language === "fr" ? fr : language === "ar" ? ar : en;
   };
 
