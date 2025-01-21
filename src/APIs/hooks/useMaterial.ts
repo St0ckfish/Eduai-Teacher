@@ -6,7 +6,7 @@ import {
   UseQueryOptions,
 } from "@tanstack/react-query";
 import type { LessonSessionData, Material } from "../../types";
-import { createSessionMaterial, deleteMaterial, fetchLessonSession, updateSessionMaterialDetails, updateSessionMaterialFile } from "../features/material";
+import { createSessionMaterial, deleteMaterial, fetchLessonSession, fetchUnreviedQuestions, updateQuestion, updateSessionMaterialDetails, updateSessionMaterialFile } from "../features/material";
 
 export const useCreateSessionMaterial = (
   options?: UseMutationOptions<Material, Error, FormData>,
@@ -31,6 +31,32 @@ export const useLessonSessionId = (
     queryKey: ["lesson-session", date, scheduleItemId],
     queryFn: () => fetchLessonSession(date, scheduleItemId),
     enabled: Boolean(date && scheduleItemId), // Prevent query if inputs are invalid
+    ...options,
+  });
+};
+
+export const useGetAllUnreviedQuestions = (
+  options?: UseQueryOptions<any, Error>,
+) => {
+  return useQuery<any, Error>({
+    queryKey: ["UnreviedQuestions"],
+    queryFn: () => fetchUnreviedQuestions(),
+    // enabled: Boolean(), // Prevent query if inputs are invalid
+    ...options,
+  });
+};
+
+
+export const useUpdateupdateQuestion = (
+  options?: UseMutationOptions<any, Error, { data: any }>
+) => {
+  const queryClient = useQueryClient();
+
+  return useMutation<any, Error, { data: any }>({
+    mutationFn: ({ data }) => updateQuestion(data),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["session-materials"] });
+    },
     ...options,
   });
 };

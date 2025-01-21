@@ -25,6 +25,24 @@ export const fetchLessonSession = async (
   return response.data.data;
 };
 
+export const fetchUnreviedQuestions = async (
+): Promise<any> => {
+  const response = await axiosInstance.get<any>(
+    `/api/v1/lesson-ai-question/unreviewed?course-id=314&lesson-name=lesson_1&limit=1000000`,
+  );
+  return response.data.data;
+};
+
+export const updateQuestion = async (
+  formData: FormData,
+): Promise<any> => {
+  const response = await axiosInstance.put(
+    `/api/v1/lesson-ai-question`,
+    formData
+  );
+  return response.data;
+};
+
 // Update the title and description
 export const updateSessionMaterialDetails = async (
   materialId: string,
