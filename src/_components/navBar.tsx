@@ -22,6 +22,7 @@ import { FaQuoteLeft } from "react-icons/fa6";
 import { FcSupport } from "react-icons/fc";
 import { useNotificationsWebSocket } from "~/hooks/useNotifications";
 import { Globe } from "lucide-react";
+import { cn } from "~/lib/utils";
 
 
 interface NavBarLinkProps {
@@ -480,13 +481,19 @@ const NavBar = () => {
             <div
               dir={language === "ar" ? "rtl" : "ltr"}
               id="application-sidebar"
-              className={` transform transition-all duration-300 ${
-                small ? "w-[90px]" : "w-[260px]"
-              } ${
-                isOpen 
-                    ? "max-lg:translate-x-0" 
+              className={cn(
+                "fixed inset-y-0 start-0 z-[60] transform bg-bgPrimary transition-all duration-300 ease-in lg:bottom-0 lg:end-auto lg:block",
+                small ? "w-[90px]" : "w-[260px]",
+                small ? "" : "overflow-y-auto",
+                "drop-shadow-2xl lg:drop-shadow-none",
+                language === "ar"
+                  ? isOpen
+                    ? "max-lg:translate-x-0"
+                    : "max-lg:translate-x-full"
+                  : isOpen
+                    ? "max-lg:translate-x-0"
                     : "max-lg:-translate-x-full"
-              } fixed inset-y-0 start-0 z-[60] bg-bgPrimary duration-300 ease-in lg:bottom-0 lg:end-auto lg:block ${small ? "" : "overflow-y-auto"}`}
+              )}
             >
               <div className="px-8 pt-4">
                 <Link href="/">
