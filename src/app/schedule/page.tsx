@@ -130,6 +130,10 @@ const Schedule = () => {
     string | null
   >(null);
 
+  const [selectedSessionId, setSessionId] = React.useState<
+    string | null
+  >(null);
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const handleCloseModal1 = () => {
     setIsModalOpen(false);
@@ -393,7 +397,7 @@ const Schedule = () => {
     }
 
     createExplained({
-      id: selectedScheduleId,
+      id: dataLessonId?.sessionId.toString() ?? "",
       formData: explainedData
     });
   };
@@ -551,7 +555,7 @@ const Schedule = () => {
                         </td>
                         <td className="whitespace-nowrap rounded-e-2xl px-6 py-4">
                           <button
-                            onClick={() => handleScheduleSelect(schedule)}
+                            onClick={() => {handleScheduleSelect(schedule); }}
                             className="underline"
                           >
                             {isCreatingSession &&
