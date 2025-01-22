@@ -1018,7 +1018,7 @@ const Schedule = () => {
         "حدد موضوعًا"
       )}
     </option>
-    {data.data?.data?.content?.map((lesson: { lessonId: React.Key | null | undefined; lessonName: string | undefined; topics: any[]; }) => (
+    {data?.data?.data?.content?.map((lesson: { lessonId: React.Key | null | undefined; lessonName: string | undefined; topics: any[]; }) => (
       <optgroup key={lesson.lessonId} label={lesson.lessonName}>
         {lesson.topics.map(topic => (
           <option key={topic.topicId} value={topic.topicId}>
