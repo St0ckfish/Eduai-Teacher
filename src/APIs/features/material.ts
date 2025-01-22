@@ -15,6 +15,20 @@ export const createSessionMaterial = async (
   return response.data;
 };
 
+export const generateExam = async (
+  explainedId: string,
+): Promise<any> => {
+  const response = await axiosInstance.post<any>(
+    `/api/v1/daily-exam/teacher/generate-exams/${explainedId}?questions-count&questions-type`,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    },
+  );
+  return response.data;
+};
+
 export const fetchLessonSession = async (
   date: string,
   scheduleItemId: string,

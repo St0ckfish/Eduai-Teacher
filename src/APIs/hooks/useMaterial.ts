@@ -6,7 +6,7 @@ import {
   UseQueryOptions,
 } from "@tanstack/react-query";
 import type { LessonSessionData, Material } from "../../types";
-import { createSessionMaterial, deleteMaterial, fetchLessonSession, fetchUnreviedQuestions, getAllTopics, updateQuestion, updateSessionMaterialDetails, updateSessionMaterialFile } from "../features/material";
+import { createSessionMaterial, deleteMaterial, fetchLessonSession, fetchUnreviedQuestions, generateExam, getAllTopics, updateQuestion, updateSessionMaterialDetails, updateSessionMaterialFile } from "../features/material";
 
 export const useCreateSessionMaterial = (
   options?: UseMutationOptions<Material, Error, FormData>,
@@ -17,6 +17,20 @@ export const useCreateSessionMaterial = (
     mutationFn: createSessionMaterial,
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ["session-materials"] });
+    },
+    ...options,
+  });
+};
+
+export const useGenerateExam = (
+  options?: UseMutationOptions<any, Error, string>,
+) => {
+  const queryClient = useQueryClient();
+
+  return useMutation<any, Error, string>({
+    mutationFn: generateExam,
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["generateExam"] });
     },
     ...options,
   });

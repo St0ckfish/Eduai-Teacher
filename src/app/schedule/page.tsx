@@ -25,6 +25,7 @@ import {
   useLessonSessionId,
   useUpdateSessionMaterialDetails,
   useUpdateSessionMaterialFile,
+  useGenerateExam,
 } from "~/APIs/hooks/useMaterial";
 import { toast } from "react-toastify";
 import Link from "next/link";
@@ -62,7 +63,7 @@ function CalendarDemo({
 
 const Schedule = () => {
   // console.log("topics", data);
-  
+
   const [materialData, setMaterialData] = useState<Omit<Material, "sessionId">>(
     {
       title: "",
@@ -174,8 +175,8 @@ const Schedule = () => {
 
     }
   }, [selectedSchedule, dataLessonId, formattedDate, refetch, createSession]);
- 
-  
+
+
   function convertToAmPm(time24: string): string {
     const timeRegex = /^([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$/;
     const match = timeRegex.exec(time24);
@@ -263,10 +264,10 @@ const Schedule = () => {
   const { data: Explaineds, isLoading: isExplainedLoading } =
     useGetAllSessionExplained(dataLessonId?.sessionId.toString() ?? "");
   console.log(selectedScheduleId);
-  console.log("selectedSchedule" ,selectedSchedule);
-  
+  console.log("selectedSchedule", selectedSchedule);
+
   console.log("👾 ~ Schedule ~ dataLessonId:", dataLessonId);
-  const {data, isLoading} = useGetAllTopics(dataLessonId?.courseId.toString());
+  const { data, isLoading } = useGetAllTopics(dataLessonId?.courseId.toString());
   console.log("looooooooooooooooooool", data);
   const handleDateSelect = (date: Date) => {
     setSelectedDate(date);
@@ -351,18 +352,33 @@ const Schedule = () => {
     description: ""
   });
 
-  const { mutate: createExplained } = useCreateExpliand({
+  const { mutate: generateExam } = useGenerateExam({
     onSuccess: () => {
+      toast.success("Exam generated successfully!");
+    },
+    onError: (error) => {
+      toast.error("Failed to generate exam");
+      // console.error(error);
+    },
+  });
+  
+  const { mutate: createExplained } = useCreateExpliand({
+    onSuccess: (response) => {
+      const newExplainedId = response?.data?.id?.toString();
+      if (newExplainedId) {
+        generateExam(newExplainedId);
+      }
       toast.success("Explained topic added successfully!");
       setIsExplainedModalOpen(false);
       setExplainedData({ topicId: "", description: "" });
-      // Assuming there's a refetch function for explained data
       void refetch();
     },
     onError: (error) => {
       toast.error("Failed to add explained topic");
-    }
+      // console.error(error);
+    },
   });
+  
 
   // Add these handlers for the explained form
   const handleExplainedChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -468,221 +484,218 @@ const Schedule = () => {
 
   return (
     <>
-<Container>
-  <div className="mb-4 flex w-full gap-10 max-[1080px]:grid">
-    <div className="flex">
-      <CalendarDemo onDateSelect={handleDateSelect} />
-    </div>
-
-    <div className="flex w-full overflow-auto rounded-md bg-bgPrimary p-4">
-      <div className="relative w-full overflow-auto sm:rounded-lg">
-        <Text font={"semiBold"} className="mb-3">
-          {translate(
-            `Sessions for ${format(selectedDate, "MMMM d, yyyy")}`,
-            `Sessions pour ${format(selectedDate, "d MMMM yyyy")}`,
-            `الجلسات بتاريخ ${format(selectedDate, "d MMMM yyyy")}`
-          )}
-        </Text>
-        {isScheduleLoading ? (
-          <div className="flex w-full justify-center">
-            <Spinner />
+      <Container>
+        <div className="mb-4 flex w-full gap-10 max-[1080px]:grid">
+          <div className="flex">
+            <CalendarDemo onDateSelect={handleDateSelect} />
           </div>
-        ) : (
-          <table className="w-full border-separate border-spacing-y-2 overflow-x-auto p-4 text-left text-sm">
-            <thead className="text-xs uppercase text-textPrimary">
-              <tr>
-                <th scope="col" className="whitespace-nowrap px-6 py-3">
-                  {translate("Class", "Classe", "الفصل")}
-                </th>
-                <th scope="col" className="whitespace-nowrap px-6 py-3">
-                  {translate("Subject", "Sujet", "المادة")}
-                </th>
-                <th scope="col" className="whitespace-nowrap px-6 py-3">
-                  {translate("Time", "Temps", "الوقت")}
-                </th>
-                <th scope="col" className="whitespace-nowrap px-6 py-3">
-                  {translate("Duration", "Durée", "المدة")}
-                </th>
-                <th scope="col" className="whitespace-nowrap px-6 py-3">
-                  {translate("Action", "Action", "الإجراء")}
-                </th>
-              </tr>
-            </thead>
-            <tbody className="rounded-lg">
-              {scheduleData?.data?.map((schedule) => (
-                <tr
-                  key={schedule.id}
-                  className={`bg-bgSecondary font-semibold hover:bg-primary hover:text-white ${
-                    selectedScheduleId === schedule.id.toString()
-                      ? "bg-primary text-white"
-                      : ""
-                  }`}
-                >
-                  <th
-                    scope="row"
-                    className="whitespace-nowrap rounded-s-2xl px-6 py-4 font-medium"
-                  >
-                    {schedule.classroomName}
-                  </th>
-                  <td className="whitespace-nowrap px-6 py-4">
-                    {schedule.courseName}
-                  </td>
-                  <td className="whitespace-nowrap px-6 py-4">
-                    {convertToAmPm(schedule.startTime)} -{" "}
-                    {convertToAmPm(schedule.endTime)}
-                  </td>
-                  <td className="whitespace-nowrap px-6 py-4">
-                    {`${getTimeDifference(schedule.startTime, schedule.endTime).hours}h ${getTimeDifference(schedule.startTime, schedule.endTime).minutes}m`}
-                  </td>
-                  <td className="whitespace-nowrap rounded-e-2xl px-6 py-4">
-                    <button
-                      onClick={() => handleScheduleSelect(schedule)}
-                      className="underline"
-                    >
-                      {isCreatingSession &&
-                      selectedScheduleId === schedule.id.toString()
-                        ? translate("Creating...", "Création...", "جاري الإنشاء...")
-                        : translate("Select", "Sélectionner", "اختيار")}
-                    </button>
-                  </td>
-                </tr>
-              ))}
-              {(!scheduleData?.data || scheduleData.data.length === 0) && (
-                <tr>
-                  <td
-                    colSpan={5}
-                    className="px-6 py-4 text-center text-gray-500"
-                  >
-                    {translate(
-                      "No sessions scheduled for this date",
-                      "Aucune session prévue pour cette date",
-                      "لا توجد جلسات مجدولة لهذا التاريخ"
+
+          <div className="flex w-full overflow-auto rounded-md bg-bgPrimary p-4">
+            <div className="relative w-full overflow-auto sm:rounded-lg">
+              <Text font={"semiBold"} className="mb-3">
+                {translate(
+                  `Sessions for ${format(selectedDate, "MMMM d, yyyy")}`,
+                  `Sessions pour ${format(selectedDate, "d MMMM yyyy")}`,
+                  `الجلسات بتاريخ ${format(selectedDate, "d MMMM yyyy")}`
+                )}
+              </Text>
+              {isScheduleLoading ? (
+                <div className="flex w-full justify-center">
+                  <Spinner />
+                </div>
+              ) : (
+                <table className="w-full border-separate border-spacing-y-2 overflow-x-auto p-4 text-left text-sm">
+                  <thead className="text-xs uppercase text-textPrimary">
+                    <tr>
+                      <th scope="col" className="whitespace-nowrap px-6 py-3">
+                        {translate("Class", "Classe", "الفصل")}
+                      </th>
+                      <th scope="col" className="whitespace-nowrap px-6 py-3">
+                        {translate("Subject", "Sujet", "المادة")}
+                      </th>
+                      <th scope="col" className="whitespace-nowrap px-6 py-3">
+                        {translate("Time", "Temps", "الوقت")}
+                      </th>
+                      <th scope="col" className="whitespace-nowrap px-6 py-3">
+                        {translate("Duration", "Durée", "المدة")}
+                      </th>
+                      <th scope="col" className="whitespace-nowrap px-6 py-3">
+                        {translate("Action", "Action", "الإجراء")}
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="rounded-lg">
+                    {scheduleData?.data?.map((schedule) => (
+                      <tr
+                        key={schedule.id}
+                        className={`bg-bgSecondary font-semibold hover:bg-primary hover:text-white ${selectedScheduleId === schedule.id.toString()
+                            ? "bg-primary text-white"
+                            : ""
+                          }`}
+                      >
+                        <th
+                          scope="row"
+                          className="whitespace-nowrap rounded-s-2xl px-6 py-4 font-medium"
+                        >
+                          {schedule.classroomName}
+                        </th>
+                        <td className="whitespace-nowrap px-6 py-4">
+                          {schedule.courseName}
+                        </td>
+                        <td className="whitespace-nowrap px-6 py-4">
+                          {convertToAmPm(schedule.startTime)} -{" "}
+                          {convertToAmPm(schedule.endTime)}
+                        </td>
+                        <td className="whitespace-nowrap px-6 py-4">
+                          {`${getTimeDifference(schedule.startTime, schedule.endTime).hours}h ${getTimeDifference(schedule.startTime, schedule.endTime).minutes}m`}
+                        </td>
+                        <td className="whitespace-nowrap rounded-e-2xl px-6 py-4">
+                          <button
+                            onClick={() => handleScheduleSelect(schedule)}
+                            className="underline"
+                          >
+                            {isCreatingSession &&
+                              selectedScheduleId === schedule.id.toString()
+                              ? translate("Creating...", "Création...", "جاري الإنشاء...")
+                              : translate("Select", "Sélectionner", "اختيار")}
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                    {(!scheduleData?.data || scheduleData.data.length === 0) && (
+                      <tr>
+                        <td
+                          colSpan={5}
+                          className="px-6 py-4 text-center text-gray-500"
+                        >
+                          {translate(
+                            "No sessions scheduled for this date",
+                            "Aucune session prévue pour cette date",
+                            "لا توجد جلسات مجدولة لهذا التاريخ"
+                          )}
+                        </td>
+                      </tr>
                     )}
-                  </td>
-                </tr>
+                  </tbody>
+                </table>
               )}
-            </tbody>
-          </table>
-        )}
-      </div>
-    </div>
-  </div>
-
-  <div className="flex w-full gap-10 max-[1080px]:grid">
-    <div className="flex h-fit w-[450px] rounded-md bg-bgPrimary p-4 max-[1080px]:w-full max-[800px]:overflow-auto">
-      <div className="relative w-full overflow-auto">
-        <Text font={"bold"} size={"2xl"} className="mb-4">
-          {translate("Daily Attendance", "Présence quotidienne", "الحضور اليومي")}
-        </Text>
-        {isAttendanceLoading ? (
-          <div className="flex w-full justify-center">
-            <Spinner />
+            </div>
           </div>
-        ) : (
-          <table className="w-full table-auto overflow-auto p-4 text-left text-sm text-textPrimary">
-            <thead className="text-xs uppercase text-textPrimary">
-              <tr>
-                <th scope="col" className="whitespace-nowrap px-6 py-3">
-                  {translate("Student", "Élève", "الطالب")}
-                </th>
-                <th
-                  scope="col"
-                  className="justify-end whitespace-nowrap px-6 py-3 text-end"
-                >
-                  {translate("Absent", "Absent", "غياب")}
-                </th>
-                <th
-                  scope="col"
-                  className="justify-end whitespace-nowrap px-6 py-3 text-end"
-                >
-                  {translate("Present", "Présent", "حضور")}
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {/* Attendance rows */}
-              {attendanceData?.data?.map((student) => (
-                <tr key={student.studentId} className="font-semibold">
-                  <th
-                    scope="row"
-                    className="grid gap-2 whitespace-nowrap px-6 py-4 font-medium text-textSecondary"
-                  >
-                    {student.studentName}
-                  </th>
-                  <td className="justify-end whitespace-nowrap px-6 py-4 text-end">
-                    <button
-                      onClick={() =>
-                        handleAttendanceRecord(
-                          student.studentId.toString(),
-                          AttendanceStatus.ABSENT
-                        )
-                      }
-                      disabled={isPending}
-                      className={`rounded-full p-3 shadow-lg ${
-                        student.sessionStatus !== AttendanceStatus.ABSENT
-                          ? "bg-gray-200"
-                          : "bg-error/10"
-                      }`}
-                    >
-                      <img src="/images/remove.png" alt={translate("Absent", "Absent", "غياب")} />
-                    </button>
-                  </td>
-                  <td className="justify-end whitespace-nowrap px-6 py-4 text-end">
-                    <button
-                      onClick={() =>
-                        handleAttendanceRecord(
-                          student.studentId.toString(),
-                          AttendanceStatus.PRESENT
-                        )
-                      }
-                      disabled={isPending}
-                      className={`rounded-full p-3 shadow-lg ${
-                        student.sessionStatus !== AttendanceStatus.PRESENT
-                          ? "bg-gray-200"
-                          : "bg-success/10"
-                      }`}
-                    >
-                      <img src="/images/check.png" alt={translate("Present", "Présent", "حضور")} />
-                    </button>
-                  </td>
-                </tr>
-              ))}
-              {(!attendanceData?.data || attendanceData.data.length === 0) && (
-                <tr>
-                  <td
-                    colSpan={3}
-                    className="px-6 py-4 text-center text-gray-500"
-                  >
-                    {selectedScheduleId
-                      ? translate(
-                          "No attendance data available for this session",
-                          "Aucune donnée de présence pour cette session",
-                          "لا توجد بيانات حضور لهذه الجلسة"
-                        )
-                      : translate(
-                          "Select a session to view attendance",
-                          "Sélectionnez une session pour voir les présences",
-                          "اختر جلسة لعرض الحضور"
-                        )}
-                  </td>
-                </tr>
+        </div>
+
+        <div className="flex w-full gap-10 max-[1080px]:grid">
+          <div className="flex h-fit w-[450px] rounded-md bg-bgPrimary p-4 max-[1080px]:w-full max-[800px]:overflow-auto">
+            <div className="relative w-full overflow-auto">
+              <Text font={"bold"} size={"2xl"} className="mb-4">
+                {translate("Daily Attendance", "Présence quotidienne", "الحضور اليومي")}
+              </Text>
+              {isAttendanceLoading ? (
+                <div className="flex w-full justify-center">
+                  <Spinner />
+                </div>
+              ) : (
+                <table className="w-full table-auto overflow-auto p-4 text-left text-sm text-textPrimary">
+                  <thead className="text-xs uppercase text-textPrimary">
+                    <tr>
+                      <th scope="col" className="whitespace-nowrap px-6 py-3">
+                        {translate("Student", "Élève", "الطالب")}
+                      </th>
+                      <th
+                        scope="col"
+                        className="justify-end whitespace-nowrap px-6 py-3 text-end"
+                      >
+                        {translate("Absent", "Absent", "غياب")}
+                      </th>
+                      <th
+                        scope="col"
+                        className="justify-end whitespace-nowrap px-6 py-3 text-end"
+                      >
+                        {translate("Present", "Présent", "حضور")}
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {/* Attendance rows */}
+                    {attendanceData?.data?.map((student) => (
+                      <tr key={student.studentId} className="font-semibold">
+                        <th
+                          scope="row"
+                          className="grid gap-2 whitespace-nowrap px-6 py-4 font-medium text-textSecondary"
+                        >
+                          {student.studentName}
+                        </th>
+                        <td className="justify-end whitespace-nowrap px-6 py-4 text-end">
+                          <button
+                            onClick={() =>
+                              handleAttendanceRecord(
+                                student.studentId.toString(),
+                                AttendanceStatus.ABSENT
+                              )
+                            }
+                            disabled={isPending}
+                            className={`rounded-full p-3 shadow-lg ${student.sessionStatus !== AttendanceStatus.ABSENT
+                                ? "bg-gray-200"
+                                : "bg-error/10"
+                              }`}
+                          >
+                            <img src="/images/remove.png" alt={translate("Absent", "Absent", "غياب")} />
+                          </button>
+                        </td>
+                        <td className="justify-end whitespace-nowrap px-6 py-4 text-end">
+                          <button
+                            onClick={() =>
+                              handleAttendanceRecord(
+                                student.studentId.toString(),
+                                AttendanceStatus.PRESENT
+                              )
+                            }
+                            disabled={isPending}
+                            className={`rounded-full p-3 shadow-lg ${student.sessionStatus !== AttendanceStatus.PRESENT
+                                ? "bg-gray-200"
+                                : "bg-success/10"
+                              }`}
+                          >
+                            <img src="/images/check.png" alt={translate("Present", "Présent", "حضور")} />
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                    {(!attendanceData?.data || attendanceData.data.length === 0) && (
+                      <tr>
+                        <td
+                          colSpan={3}
+                          className="px-6 py-4 text-center text-gray-500"
+                        >
+                          {selectedScheduleId
+                            ? translate(
+                              "No attendance data available for this session",
+                              "Aucune donnée de présence pour cette session",
+                              "لا توجد بيانات حضور لهذه الجلسة"
+                            )
+                            : translate(
+                              "Select a session to view attendance",
+                              "Sélectionnez une session pour voir les présences",
+                              "اختر جلسة لعرض الحضور"
+                            )}
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
               )}
-            </tbody>
-          </table>
-        )}
-      </div>
-    </div>
+            </div>
+          </div>
           <div className="grid w-full gap-4">
             <div className="grid w-full gap-2 rounded-md bg-bgPrimary p-4">
               <div className="flex w-full items-start justify-between">
-              <Text font={"bold"} size={"2xl"} className="mb-4">
-  {translate("Materials", "Matériaux", "المواد")}
-</Text>
+                <Text font={"bold"} size={"2xl"} className="mb-4">
+                  {translate("Materials", "Matériaux", "المواد")}
+                </Text>
 
                 <button
                   className={`flex items-center gap-2 font-medium ${selectedScheduleId
-                      ? "cursor-pointer text-primary"
-                      : "cursor-not-allowed text-textSecondary"
+                    ? "cursor-pointer text-primary"
+                    : "cursor-not-allowed text-textSecondary"
                     }`}
                   disabled={!selectedScheduleId}
                   onClick={handleOpenModal}
@@ -737,20 +750,20 @@ const Schedule = () => {
                       {menuOpenMaterialId === material.materialId && (
                         <div className="-mt-22 absolute -right-5 top-10 z-10 w-fit rounded border bg-bgPrimary shadow-lg">
                           <ul>
-                          <li
-  className="flex cursor-pointer justify-between gap-2 px-4 py-2 transition hover:bg-bgSecondary hover:text-primary"
-  onClick={() => handleEditClick(material.materialId)}
->
-  {translate("Edit", "Éditer", "تحرير")}
-  <BiSolidEditAlt size={20} />
-</li>
-<li
-  className="flex cursor-pointer justify-between gap-2 px-4 py-2 transition hover:bg-bgSecondary hover:text-error"
-  onClick={() => handleDeleteMaterial(material.materialId.toString())}
->
-  {translate("Delete", "Supprimer", "حذف")}
-  <MdDelete size={20} />
-</li>
+                            <li
+                              className="flex cursor-pointer justify-between gap-2 px-4 py-2 transition hover:bg-bgSecondary hover:text-primary"
+                              onClick={() => handleEditClick(material.materialId)}
+                            >
+                              {translate("Edit", "Éditer", "تحرير")}
+                              <BiSolidEditAlt size={20} />
+                            </li>
+                            <li
+                              className="flex cursor-pointer justify-between gap-2 px-4 py-2 transition hover:bg-bgSecondary hover:text-error"
+                              onClick={() => handleDeleteMaterial(material.materialId.toString())}
+                            >
+                              {translate("Delete", "Supprimer", "حذف")}
+                              <MdDelete size={20} />
+                            </li>
                           </ul>
                         </div>
                       )}
@@ -769,54 +782,54 @@ const Schedule = () => {
                 </div>
               )}
 
-<Modal isOpen={isModalEditOpen} onClose={handleCloseModal3}>
-  <h2 className="mb-4 text-xl font-bold">
-    {translate("Edit Material", "Modifier le document", "تحرير المادة")}
-  </h2>
-  <div className="flex flex-col gap-4">
-    <Input
-      border="gray"
-      theme="transparent"
-      type="text"
-      name="title"
-      placeholder={translate("Enter title", "Entrez le titre", "أدخل العنوان")}
-      value={materialEditData.title}
-      onChange={handleEditChange}
-    />
-    <Input
-      border="gray"
-      theme="transparent"
-      name="description"
-      placeholder={translate(
-        "Enter description",
-        "Entrez la description",
-        "أدخل الوصف"
-      )}
-      value={materialEditData.description}
-      onChange={handleEditChange}
-    />
-    <Input
-      border="gray"
-      theme="transparent"
-      type="file"
-      name="file"
-      onChange={handleEditFileChange}
-    />
-    <div className="flex gap-2">
-      <Button
-        onClick={() => {
-          handleUpdateDetails();
-          handleUpdateFile();
-        }}
-      >
-        {translate("Save Changes", "Enregistrer les modifications", "حفظ التغييرات")}
-      </Button>
-      <Button color="secondary" onClick={handleCloseEditModal}>
-        {translate("Close", "Fermer", "إغلاق")}
-      </Button>
-    </div>
-  </div>
-</Modal>
+              <Modal isOpen={isModalEditOpen} onClose={handleCloseModal3}>
+                <h2 className="mb-4 text-xl font-bold">
+                  {translate("Edit Material", "Modifier le document", "تحرير المادة")}
+                </h2>
+                <div className="flex flex-col gap-4">
+                  <Input
+                    border="gray"
+                    theme="transparent"
+                    type="text"
+                    name="title"
+                    placeholder={translate("Enter title", "Entrez le titre", "أدخل العنوان")}
+                    value={materialEditData.title}
+                    onChange={handleEditChange}
+                  />
+                  <Input
+                    border="gray"
+                    theme="transparent"
+                    name="description"
+                    placeholder={translate(
+                      "Enter description",
+                      "Entrez la description",
+                      "أدخل الوصف"
+                    )}
+                    value={materialEditData.description}
+                    onChange={handleEditChange}
+                  />
+                  <Input
+                    border="gray"
+                    theme="transparent"
+                    type="file"
+                    name="file"
+                    onChange={handleEditFileChange}
+                  />
+                  <div className="flex gap-2">
+                    <Button
+                      onClick={() => {
+                        handleUpdateDetails();
+                        handleUpdateFile();
+                      }}
+                    >
+                      {translate("Save Changes", "Enregistrer les modifications", "حفظ التغييرات")}
+                    </Button>
+                    <Button color="secondary" onClick={handleCloseEditModal}>
+                      {translate("Close", "Fermer", "إغلاق")}
+                    </Button>
+                  </div>
+                </div>
+              </Modal>
 
 
             </div>
@@ -828,13 +841,13 @@ const Schedule = () => {
               ) : (
                 <div className="flex w-full items-start justify-between">
                   <Text font={"bold"} size={"2xl"} className="mb-4">
-  {translate("Explained", "Expliqué", "مشروح")}
-</Text>
+                    {translate("Explained", "Expliqué", "مشروح")}
+                  </Text>
 
                   <button
                     className={`flex items-center gap-2 font-medium ${selectedScheduleId
-                        ? "cursor-pointer text-primary"
-                        : "cursor-not-allowed text-textSecondary"
+                      ? "cursor-pointer text-primary"
+                      : "cursor-not-allowed text-textSecondary"
                       }`}
                     onClick={() => selectedScheduleId && setIsExplainedModalOpen(true)}
                     disabled={!selectedScheduleId}
@@ -894,10 +907,10 @@ const Schedule = () => {
               ) : (
                 <div className="px-6 py-4 text-center text-gray-500">
                   {translate(
-    "No explained topics available",
-    "Aucun sujet expliqué disponible",
-    "لا توجد مواضيع مشروحة متاحة"
-  )}
+                    "No explained topics available",
+                    "Aucun sujet expliqué disponible",
+                    "لا توجد مواضيع مشروحة متاحة"
+                  )}
                 </div>
               )}
             </div>
@@ -907,149 +920,149 @@ const Schedule = () => {
 
       </Container>
       <Modal isOpen={isModalOpen} onClose={handleCloseModal1}>
-  <h2 className="mb-4 text-xl font-bold">
-    {translate("Add Material", "Ajouter un document", "إضافة مادة")}
-  </h2>
-  <div className="flex flex-col gap-4">
-    <Input
-      border="gray"
-      theme="transparent"
-      type="text"
-      name="title"
-      placeholder={translate("Enter title", "Entrez le titre", "أدخل العنوان")}
-      value={materialData.title}
-      onChange={handleChange}
-    />
-    <Input
-      border="gray"
-      theme="transparent"
-      name="description"
-      placeholder={translate(
-        "Enter description",
-        "Entrez la description",
-        "أدخل الوصف"
-      )}
-      value={materialData.description}
-      onChange={handleChange}
-    />
-    <Input
-      border="gray"
-      theme="transparent"
-      type="file"
-      name="file"
-      onChange={handleFileChange}
-    />
-    <div className="flex gap-2">
-      <Button onClick={handleSubmit}>
-        {translate("Add Material", "Ajouter un document", "إضافة مادة")}
-      </Button>
-      <Button color="secondary" onClick={handleCloseModal1}>
-        {translate("Close", "Fermer", "إغلاق")}
-      </Button>
-    </div>
-  </div>
-</Modal>
+        <h2 className="mb-4 text-xl font-bold">
+          {translate("Add Material", "Ajouter un document", "إضافة مادة")}
+        </h2>
+        <div className="flex flex-col gap-4">
+          <Input
+            border="gray"
+            theme="transparent"
+            type="text"
+            name="title"
+            placeholder={translate("Enter title", "Entrez le titre", "أدخل العنوان")}
+            value={materialData.title}
+            onChange={handleChange}
+          />
+          <Input
+            border="gray"
+            theme="transparent"
+            name="description"
+            placeholder={translate(
+              "Enter description",
+              "Entrez la description",
+              "أدخل الوصف"
+            )}
+            value={materialData.description}
+            onChange={handleChange}
+          />
+          <Input
+            border="gray"
+            theme="transparent"
+            type="file"
+            name="file"
+            onChange={handleFileChange}
+          />
+          <div className="flex gap-2">
+            <Button onClick={handleSubmit}>
+              {translate("Add Material", "Ajouter un document", "إضافة مادة")}
+            </Button>
+            <Button color="secondary" onClick={handleCloseModal1}>
+              {translate("Close", "Fermer", "إغلاق")}
+            </Button>
+          </div>
+        </div>
+      </Modal>
 
-<Modal isOpen={isModalEditOpen} onClose={handleCloseModal3}>
-  <h2 className="mb-4 text-xl font-bold">
-    {translate("Edit Material", "Modifier le document", "تحرير المادة")}
-  </h2>
-  <div className="flex flex-col gap-4">
-    <Input
-      border="gray"
-      theme="transparent"
-      type="text"
-      name="title"
-      placeholder={translate("Enter title", "Entrez le titre", "أدخل العنوان")}
-      value={materialEditData.title}
-      onChange={handleEditChange}
-    />
-    <Input
-      border="gray"
-      theme="transparent"
-      name="description"
-      placeholder={translate(
-        "Enter description",
-        "Entrez la description",
-        "أدخل الوصف"
-      )}
-      value={materialEditData.description}
-      onChange={handleEditChange}
-    />
-    <Input
-      border="gray"
-      theme="transparent"
-      type="file"
-      name="file"
-      onChange={handleEditFileChange}
-    />
-    <div className="flex gap-2">
-      <Button
-        onClick={() => {
-          handleUpdateDetails();
-          handleUpdateFile();
-        }}
-      >
-        {translate("Save Changes", "Enregistrer les modifications", "حفظ التغييرات")}
-      </Button>
-      <Button color="secondary" onClick={handleCloseEditModal}>
-        {translate("Close", "Fermer", "إغلاق")}
-      </Button>
-    </div>
-  </div>
-</Modal>
+      <Modal isOpen={isModalEditOpen} onClose={handleCloseModal3}>
+        <h2 className="mb-4 text-xl font-bold">
+          {translate("Edit Material", "Modifier le document", "تحرير المادة")}
+        </h2>
+        <div className="flex flex-col gap-4">
+          <Input
+            border="gray"
+            theme="transparent"
+            type="text"
+            name="title"
+            placeholder={translate("Enter title", "Entrez le titre", "أدخل العنوان")}
+            value={materialEditData.title}
+            onChange={handleEditChange}
+          />
+          <Input
+            border="gray"
+            theme="transparent"
+            name="description"
+            placeholder={translate(
+              "Enter description",
+              "Entrez la description",
+              "أدخل الوصف"
+            )}
+            value={materialEditData.description}
+            onChange={handleEditChange}
+          />
+          <Input
+            border="gray"
+            theme="transparent"
+            type="file"
+            name="file"
+            onChange={handleEditFileChange}
+          />
+          <div className="flex gap-2">
+            <Button
+              onClick={() => {
+                handleUpdateDetails();
+                handleUpdateFile();
+              }}
+            >
+              {translate("Save Changes", "Enregistrer les modifications", "حفظ التغييرات")}
+            </Button>
+            <Button color="secondary" onClick={handleCloseEditModal}>
+              {translate("Close", "Fermer", "إغلاق")}
+            </Button>
+          </div>
+        </div>
+      </Modal>
 
-<Modal isOpen={isExplainedModalOpen} onClose={handleCloseModal2}>
-  <h2 className="mb-4 text-xl font-bold">
-    {translate("Add Explained Topic", "Ajouter un sujet expliqué", "إضافة موضوع مشروح")}
-  </h2>
-  <div className="flex flex-col gap-4">
-  <select
-    name="topicId"
-    value={explainedData.topicId}
-    onChange={handleExplainedChange}
-    className="border border-borderPrimary rounded-md px-4 py-3 outline-none w-full bg-transparent"
-    disabled={isLoading}
-  >
-    <option value="">
-      {translate(
-        "Select a topic",
-        "Sélectionnez un sujet",
-        "حدد موضوعًا"
-      )}
-    </option>
-    {data?.data?.data?.content?.map((lesson: { lessonId: React.Key | null | undefined; lessonName: string | undefined; topics: any[]; }) => (
-      <optgroup key={lesson.lessonId} label={lesson.lessonName}>
-        {lesson.topics.map(topic => (
-          <option key={topic.topicId} value={topic.topicId}>
-            {topic.topicName}
-          </option>
-        ))}
-      </optgroup>
-    ))}
-  </select>
-    <Input
-      border="gray"
-      theme="transparent"
-      name="description"
-      placeholder={translate(
-        "Enter description",
-        "Entrez la description",
-        "أدخل الوصف"
-      )}
-      value={explainedData.description}
-      onChange={handleExplainedChange}
-    />
-    <div className="flex gap-2">
-      <Button onClick={handleExplainedSubmit}>
-        {translate("Add Explained", "Ajouter une explication", "إضافة شرح")}
-      </Button>
-      <Button color="secondary" onClick={() => setIsExplainedModalOpen(false)}>
-        {translate("Close", "Fermer", "إغلاق")}
-      </Button>
-    </div>
-  </div>
-</Modal>
+      <Modal isOpen={isExplainedModalOpen} onClose={handleCloseModal2}>
+        <h2 className="mb-4 text-xl font-bold">
+          {translate("Add Explained Topic", "Ajouter un sujet expliqué", "إضافة موضوع مشروح")}
+        </h2>
+        <div className="flex flex-col gap-4">
+          <select
+            name="topicId"
+            value={explainedData.topicId}
+            onChange={handleExplainedChange}
+            className="border border-borderPrimary rounded-md px-4 py-3 outline-none w-full bg-bgPrimary"
+            disabled={isLoading}
+          >
+            <option value="">
+              {translate(
+                "Select a topic",
+                "Sélectionnez un sujet",
+                "حدد موضوعًا"
+              )}
+            </option>
+            {data?.data?.data?.content?.map((lesson: { lessonId: React.Key | null | undefined; lessonName: string | undefined; topics: any[]; }) => (
+              <optgroup key={lesson.lessonId} label={lesson.lessonName}>
+                {lesson.topics.map(topic => (
+                  <option key={topic.topicId} value={topic.topicId}>
+                    {topic.topicName}
+                  </option>
+                ))}
+              </optgroup>
+            ))}
+          </select>
+          <Input
+            border="gray"
+            theme="transparent"
+            name="description"
+            placeholder={translate(
+              "Enter description",
+              "Entrez la description",
+              "أدخل الوصف"
+            )}
+            value={explainedData.description}
+            onChange={handleExplainedChange}
+          />
+          <div className="flex gap-2">
+            <Button onClick={handleExplainedSubmit}>
+              {translate("Add Explained", "Ajouter une explication", "إضافة شرح")}
+            </Button>
+            <Button color="secondary" onClick={() => setIsExplainedModalOpen(false)}>
+              {translate("Close", "Fermer", "إغلاق")}
+            </Button>
+          </div>
+        </div>
+      </Modal>
 
     </>
   );
