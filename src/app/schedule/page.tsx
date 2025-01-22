@@ -21,6 +21,7 @@ import Input from "~/_components/Input";
 import {
   useCreateSessionMaterial,
   useDeleteMaterial,
+  useGetAllTopics,
   useLessonSessionId,
   useUpdateSessionMaterialDetails,
   useUpdateSessionMaterialFile,
@@ -60,6 +61,8 @@ function CalendarDemo({
 }
 
 const Schedule = () => {
+  // console.log("topics", data);
+  
   const [materialData, setMaterialData] = useState<Omit<Material, "sessionId">>(
     {
       title: "",
@@ -171,8 +174,8 @@ const Schedule = () => {
 
     }
   }, [selectedSchedule, dataLessonId, formattedDate, refetch, createSession]);
-  console.log("👾 ~ Schedule ~ dataLessonId:", dataLessonId);
-
+ 
+  
   function convertToAmPm(time24: string): string {
     const timeRegex = /^([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$/;
     const match = timeRegex.exec(time24);
@@ -260,7 +263,11 @@ const Schedule = () => {
   const { data: Explaineds, isLoading: isExplainedLoading } =
     useGetAllSessionExplained(dataLessonId?.sessionId.toString() ?? "");
   console.log(selectedScheduleId);
-
+  console.log("selectedSchedule" ,selectedSchedule);
+  
+  console.log("👾 ~ Schedule ~ dataLessonId:", dataLessonId);
+  const {data, isLoading} = useGetAllTopics(dataLessonId?.courseId.toString());
+  console.log("looooooooooooooooooool", data);
   const handleDateSelect = (date: Date) => {
     setSelectedDate(date);
     // Reset selected schedule when date changes
@@ -358,7 +365,7 @@ const Schedule = () => {
   });
 
   // Add these handlers for the explained form
-  const handleExplainedChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleExplainedChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setExplainedData(prev => ({ ...prev, [name]: value }));
   };
@@ -997,19 +1004,30 @@ const Schedule = () => {
     {translate("Add Explained Topic", "Ajouter un sujet expliqué", "إضافة موضوع مشروح")}
   </h2>
   <div className="flex flex-col gap-4">
-    <Input
-      border="gray"
-      theme="transparent"
-      type="text"
-      name="topicId"
-      placeholder={translate(
-        "Enter topic ID",
-        "Entrez l'ID du sujet",
-        "أدخل معرف الموضوع"
+  <select
+    name="topicId"
+    value={explainedData.topicId}
+    onChange={handleExplainedChange}
+    className="border border-borderPrimary rounded-md px-4 py-3 outline-none w-full bg-transparent"
+    disabled={isLoading}
+  >
+    <option value="">
+      {translate(
+        "Select a topic",
+        "Sélectionnez un sujet",
+        "حدد موضوعًا"
       )}
-      value={explainedData.topicId}
-      onChange={handleExplainedChange}
-    />
+    </option>
+    {data.data?.data?.content?.map((lesson: { lessonId: React.Key | null | undefined; lessonName: string | undefined; topics: any[]; }) => (
+      <optgroup key={lesson.lessonId} label={lesson.lessonName}>
+        {lesson.topics.map(topic => (
+          <option key={topic.topicId} value={topic.topicId}>
+            {topic.topicName}
+          </option>
+        ))}
+      </optgroup>
+    ))}
+  </select>
     <Input
       border="gray"
       theme="transparent"

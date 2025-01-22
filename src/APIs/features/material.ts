@@ -33,6 +33,16 @@ export const fetchUnreviedQuestions = async (
   return response.data.data;
 };
 
+export const getAllTopics = async (courseId: string): Promise<any> => {
+  if (!courseId) {
+    throw new Error('Course ID is required');
+  }
+  const response = await axiosInstance.get<any>(
+    `/api/v1/management/lesson/all?page=0&size=1000&courseId=${courseId}`,
+  );
+  return response;
+};
+
 export const updateQuestion = async (
   formData: FormData,
 ): Promise<any> => {

@@ -6,7 +6,7 @@ import {
   UseQueryOptions,
 } from "@tanstack/react-query";
 import type { LessonSessionData, Material } from "../../types";
-import { createSessionMaterial, deleteMaterial, fetchLessonSession, fetchUnreviedQuestions, updateQuestion, updateSessionMaterialDetails, updateSessionMaterialFile } from "../features/material";
+import { createSessionMaterial, deleteMaterial, fetchLessonSession, fetchUnreviedQuestions, getAllTopics, updateQuestion, updateSessionMaterialDetails, updateSessionMaterialFile } from "../features/material";
 
 export const useCreateSessionMaterial = (
   options?: UseMutationOptions<Material, Error, FormData>,
@@ -42,6 +42,18 @@ export const useGetAllUnreviedQuestions = (
     queryKey: ["UnreviedQuestions"],
     queryFn: () => fetchUnreviedQuestions(),
     // enabled: Boolean(), // Prevent query if inputs are invalid
+    ...options,
+  });
+};
+
+export const useGetAllTopics = (
+  courseId: string | undefined,
+  options?: UseQueryOptions<any, Error>,
+) => {
+  return useQuery<any, Error>({
+    queryKey: ["topics", courseId],
+    queryFn: () => getAllTopics(courseId!),
+    enabled: Boolean(courseId),
     ...options,
   });
 };
