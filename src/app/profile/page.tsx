@@ -16,6 +16,7 @@ import Button from "~/_components/Button";
 import { useGetAllTextBookSummarys } from "~/APIs/hooks/useTextBook";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
+import ImageComponent from "~/_components/ImageSrc";
 
 const EditProfile = () => {
   const router = useRouter();
@@ -130,8 +131,10 @@ const EditProfile = () => {
           </Text>
           <div className="mt-4 flex flex-col items-center">
             <div>
-              <Image
-                src={data?.data?.picture ?? "/images/userr.png"}
+            <ImageComponent
+        fallbackSrc="/images/noImage.png"
+        priority={true}
+                src={data?.data?.picture ?? null}
                 alt="Profile Photo"
                 width={100}
                 height={100}

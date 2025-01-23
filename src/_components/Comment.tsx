@@ -8,6 +8,7 @@ import {
   useUpdateComment,
   useLikeComment,
 } from "~/APIs/hooks/useComments";
+import ImageComponent from "./ImageSrc";
 
 const Comment = ({
   userName,
@@ -108,7 +109,9 @@ const Comment = ({
   return (
     <div className="mb-4 flex">
       <div className="mr-4">
-        <Image
+      <ImageComponent
+        fallbackSrc="/images/noImage.png"
+        priority={true}
           src={imageUrl}
           alt="Profile Photo"
           className="rounded-full w-[60px] h-[60px]"
