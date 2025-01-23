@@ -34,6 +34,13 @@ export const fetchAllCourses = async (): Promise<any> => {
     return response.data;
 };
 
+export const fetchAllExamTypesId = async (courseId: string): Promise<any> => {
+    const response = await axiosInstance.get<any>(
+        `/api/v1/academic/educationalAffairs/exam-types/all-by-course/${courseId}`
+    );
+    return response.data;
+};
+
 export const fetchAllClasses = async (): Promise<any> => {
     const response = await axiosInstance.get<any>(
         `/api/v1/teacher/current-classrooms`

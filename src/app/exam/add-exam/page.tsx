@@ -6,7 +6,7 @@ import Container from "~/_components/Container";
 import Input from "~/_components/Input";
 import SearchableSelect from "~/_components/SearchSelect";
 import { Text } from "~/_components/Text";
-import { useCreateExam, useGetAllClasses, useGetAllCourses } from "~/APIs/hooks/useExam";
+import { useCreateExam, useGetAllClasses, useGetAllCourses, useGetAllExamTypesId } from "~/APIs/hooks/useExam";
 import useLanguageStore from "~/APIs/store";
 import { type ExamFormData } from "~/types";
 
@@ -16,6 +16,8 @@ const Bus = () => {
     control,
     handleSubmit,
     register,
+    setValue,
+    watch,
     formState: { errors },
   } = useForm<ExamFormData>({
     shouldUnregister: false,
@@ -43,6 +45,15 @@ const Bus = () => {
 
   const { data: classes, isLoading: isClasses } = useGetAllClasses();
   const { data: courses, isLoading: isCourses } = useGetAllCourses();
+  const { data: examType, isLoading: isExamType } = useGetAllExamTypesId(watch("courseId")?.toString());
+
+  const examTypeOptions =
+    examType?.data?.map(
+      (type: { examTypeId: number; name: string; examGrade: number }) => ({
+        value: type.examTypeId,
+        label: `${type.name} (${type.examGrade} points)`,
+      })
+    ) || [];
 
   const classesOptions =
     classes?.data?.map(
@@ -51,6 +62,7 @@ const Bus = () => {
         label: `${school.classroomStudyLevel} - ${school.classroomName}`,
       })
     ) || [];
+    
   const coursesOptions =
     courses?.data?.map(
       (school: { courseId: string; courseName: string; courseCode: string }) => ({
@@ -78,7 +90,10 @@ const Bus = () => {
                       <SearchableSelect
                         error={errors.courseId?.message?.toString() ?? ""}
                         value={value}
-                        onChange={onChange}
+                        onChange={(val) => {
+                          onChange(val);
+                          setValue('examTypeId', 0);
+                        }}
                         placeholder={translate("Course Id", "ID du cours", "معرف المادة")}
                         options={coursesOptions}
                         bgColor="bg-bgPrimary"
@@ -120,18 +135,27 @@ const Bus = () => {
                   <p className="mt-1 text-sm text-red-500">{errors.name.message?.toString()}</p>
                 )}
               </label>
-              <label htmlFor="examTypeId" className="">
-                <Input
-                  {...register("examTypeId", { required: translate("Exam Type ID is required", "ID du type d'examen requis", "معرف نوع الامتحان مطلوب") })}
-                  error={errors.examTypeId?.message?.toString() ?? ""}
-                  placeholder={translate("Exam Type ID", "ID du type d'examen", "معرف نوع الامتحان")}
-                  theme="transparent"
-                  className="border border-gray-200 dark:border-gray-600"
-                />
-                {errors.examTypeId && (
-                  <p className="mt-1 text-sm text-red-500">{errors.examTypeId.message?.toString()}</p>
-                )}
-              </label>
+              <div>
+                <label htmlFor="examTypeId" className="block">
+                  <Controller
+                    name="examTypeId"
+                    control={control}
+                    rules={{ required: translate("Exam Type selection is required", "La sélection du type d'examen est obligatoire", "يجب اختيار نوع الامتحان") }}
+                    render={({ field: { onChange, value } }) => (
+                      <SearchableSelect
+                        error={errors.examTypeId?.message?.toString() ?? ""}
+                        value={value}
+                        onChange={onChange}
+                        placeholder={translate("Exam Type", "Type d'examen", "نوع الامتحان")}
+                        options={examTypeOptions}
+                        bgColor="bg-bgPrimary"
+                        border="border-border"
+                        isDisabled={!watch("courseId")}
+                      />
+                    )}
+                  />
+                </label>
+              </div>
               <label htmlFor="examDate" className="">
                 <Input
                   {...register("examDate", { required: translate("Exam Date is required", "La date de l'examen est requise", "تاريخ الامتحان مطلوب") })}
