@@ -632,7 +632,7 @@ const NavBar = () => {
     <Link
       onClick={() => setIsOpen(false)}
       className={`hover:text-primary ${
-        url === "/exam" ? "text-primary" : ""
+        url === "/questions" ? "text-primary" : ""
       }`}
       href="/questions"
     >
