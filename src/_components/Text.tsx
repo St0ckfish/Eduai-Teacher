@@ -35,6 +35,7 @@ const textVariants = cva("text-textPrimary", {
       muted: "text-textMuted",
       warning: "text-warning",
       error: "text-error",
+      success: "text-success"
     },
   },
   defaultVariants: {

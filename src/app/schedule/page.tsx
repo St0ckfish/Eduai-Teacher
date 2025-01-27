@@ -628,40 +628,50 @@ const Schedule = () => {
                         >
                           {student.studentName}
                         </th>
-                        <td className="justify-end whitespace-nowrap px-6 py-4 text-end">
-                          <button
-                            onClick={() =>
-                              handleAttendanceRecord(
-                                student.studentId.toString(),
-                                AttendanceStatus.ABSENT
-                              )
-                            }
-                            disabled={isPending}
-                            className={`rounded-full p-3 shadow-lg ${student.sessionStatus !== AttendanceStatus.ABSENT
-                                ? "bg-gray-200"
-                                : "bg-error/10"
-                              }`}
-                          >
-                            <img src="/images/remove.png" alt={translate("Absent", "Absent", "غياب")} />
-                          </button>
-                        </td>
-                        <td className="justify-end whitespace-nowrap px-6 py-4 text-end">
-                          <button
-                            onClick={() =>
-                              handleAttendanceRecord(
-                                student.studentId.toString(),
-                                AttendanceStatus.PRESENT
-                              )
-                            }
-                            disabled={isPending}
-                            className={`rounded-full p-3 shadow-lg ${student.sessionStatus !== AttendanceStatus.PRESENT
-                                ? "bg-gray-200"
-                                : "bg-success/10"
-                              }`}
-                          >
-                            <img src="/images/check.png" alt={translate("Present", "Présent", "حضور")} />
-                          </button>
-                        </td>
+                        {student.sessionStatus === AttendanceStatus.ABSENT ? (
+                          <td colSpan={2}>
+                            <Text font={"medium"} size={"xl"} className="mb-4" color="error">
+                              {translate("Absent", "Absent", "غياب")}
+                            </Text>
+                          </td>
+                        ) : student.sessionStatus === AttendanceStatus.PRESENT ? (
+                          <td colSpan={2}>
+                            <Text font={"medium"} size={"xl"} className="mb-4" color="success">
+                              {translate("Present", "Présent", "حضور")}
+                            </Text>
+                          </td>
+                        ) : (
+                          <>
+                            <td className="justify-end whitespace-nowrap px-6 py-4 text-end">
+                              <button
+                                onClick={() =>
+                                  handleAttendanceRecord(
+                                    student.studentId.toString(),
+                                    AttendanceStatus.ABSENT
+                                  )
+                                }
+                                disabled={isPending}
+                                className={`rounded-full p-3 shadow-lg bg-error/10`}
+                              >
+                                <img src="/images/remove.png" alt={translate("Absent", "Absent", "غياب")} />
+                              </button>
+                            </td>
+                            <td className="justify-end whitespace-nowrap px-6 py-4 text-end">
+                              <button
+                                onClick={() =>
+                                  handleAttendanceRecord(
+                                    student.studentId.toString(),
+                                    AttendanceStatus.PRESENT
+                                  )
+                                }
+                                disabled={isPending}
+                                className={`rounded-full p-3 shadow-lg bg-success/10`}
+                              >
+                                <img src="/images/check.png" alt={translate("Present", "Présent", "حضور")} />
+                              </button>
+                            </td>
+                          </>
+                        )}
                       </tr>
                     ))}
                     {(!attendanceData?.data || attendanceData.data.length === 0) && (
