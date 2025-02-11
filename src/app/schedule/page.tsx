@@ -311,7 +311,7 @@ const Schedule = () => {
 
     recordAttendance({
       studentId,
-      sessionId: selectedScheduleId,
+      sessionId: dataLessonId?.sessionId.toString() ?? "",
       status,
     });
   };
