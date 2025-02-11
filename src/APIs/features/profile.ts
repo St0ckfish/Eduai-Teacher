@@ -29,6 +29,21 @@ export const updateProfile = async (profileData: TeacherProfileUpdate): Promise<
       throw error; // Re-throw the error if you want to handle it elsewhere
     }
   };
+
+export const updateProfilePicture = async (profileData: any): Promise<TeacherProfileUpdate> => {
+    try {
+      const response = await axiosInstance.put<any>(
+        '/api/v1/my-account/picture',
+        profileData
+      );
+      return response.data;
+    } catch (error) {
+      if (error) {
+        console.log('Error:', error);
+      }
+      throw error; // Re-throw the error if you want to handle it elsewhere
+    }
+  };
   
   export const changePassword = async (data: ChangePassword): Promise<void> => {
     try {

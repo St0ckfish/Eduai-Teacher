@@ -8,33 +8,59 @@ import {
   useGetProfileUpdate,
   useProfile,
   useUpdateProfile,
+  useUpdateProfilePicture
 } from "~/APIs/hooks/useProfile";
 import { useGetAllNationalities } from "~/APIs/hooks/useAuth";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { type TeacherProfileUpdate } from "~/types";
 import Button from "~/_components/Button";
 import { useGetAllTextBookSummarys } from "~/APIs/hooks/useTextBook";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import ImageComponent from "~/_components/ImageSrc";
+import { Pencil } from "lucide-react";
 
 const EditProfile = () => {
   const router = useRouter();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const { data, isLoading, refetch: refetchProfile } = useProfile();
   const { data: dataUpdate } = useGetProfileUpdate();
 
-  const [name, setName] = useState(""); // Initialize state as empty
-  const [phone, setPhone] = useState(""); // Initialize state as empty
-  const [gender, setGender] = useState<"MALE" | "FEMALE">("MALE"); // Initialize state as empty
-  const [nationality, setNationality] = useState(""); // Initialize state as empty
-  const [qualification, setQualification] = useState(""); // Initialize state as empty
-  const [subject, setSubject] = useState(""); // Initialize state as empty
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [gender, setGender] = useState<"MALE" | "FEMALE">("MALE");
+  const [nationality, setNationality] = useState("");
+  const [qualification, setQualification] = useState("");
+  const [subject, setSubject] = useState("");
 
   const { data: nationalityData, isLoading: isNationalities } =
     useGetAllNationalities() as {
       data: Record<string, string>;
       isLoading: boolean;
     };
+
+  const { mutate: updateProfilePicture } = useUpdateProfilePicture({
+    onSuccess: () => {
+      toast.success("Profile picture updated successfully!");
+      void refetchProfile();
+    },
+    onError: () => {
+      toast.error("Error updating profile picture!");
+    },
+  });
+
+  const handleProfilePictureClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const formData = new FormData();
+      formData.append('picture', file);
+      updateProfilePicture(formData);
+    }
+  };
 
   const optionsNationalities = nationalityData?.data
     ? Object.entries(nationalityData.data).map(([key, value]) => ({
@@ -43,7 +69,6 @@ const EditProfile = () => {
       }))
     : [];
 
-  // Set initial values for inputs once data is loaded
   useEffect(() => {
     if (data?.data) {
       setName(data.data.name || "");
@@ -89,10 +114,10 @@ const EditProfile = () => {
   };
 
   const { data: dataSubjects } = useGetAllTextBookSummarys();
-  console.log(dataSubjects);
+  
   const { mutate: updateProfileMutation } = useUpdateProfile({
     onSuccess: () => {
-      router.push("/"); // Navigate to home page on success
+      router.push("/");
       toast.success("Profile Edited successfully!");
       void refetchProfile();
     },
@@ -100,6 +125,7 @@ const EditProfile = () => {
       toast.error("Error editing profile!");
     },
   });
+
   const handleSubmit = () => {
     const updatedProfile: TeacherProfileUpdate = {
       username: dataUpdate?.data?.username || "",
@@ -112,9 +138,7 @@ const EditProfile = () => {
       qualification,
       nationality,
       subjects: ["SCIENCE"],
-      // TODO: Make it dynamic
     };
-    console.log(updatedProfile);
     updateProfileMutation(updatedProfile);
   };
 
@@ -130,15 +154,28 @@ const EditProfile = () => {
             Edit Profile
           </Text>
           <div className="mt-4 flex flex-col items-center">
-            <div>
-            <ImageComponent
-        fallbackSrc="/images/noImage.png"
-        priority={true}
+            <div className="relative">
+              <ImageComponent
+                fallbackSrc="/images/noImage.png"
+                priority={true}
                 src={data?.data?.picture ?? null}
                 alt="Profile Photo"
                 width={100}
                 height={100}
                 className="rounded-full w-[100px] h-[100px]"
+              />
+              <button
+                onClick={handleProfilePictureClick}
+                className="absolute bottom-0 right-0 rounded-full bg-primary p-2 text-white hover:bg-primary/80"
+              >
+                <Pencil size={16} />
+              </button>
+              <input
+                type="file"
+                ref={fileInputRef}
+                className="hidden"
+                accept="image/*"
+                onChange={handleFileChange}
               />
             </div>
             <div className="flex flex-col items-center">
@@ -150,6 +187,8 @@ const EditProfile = () => {
               </Text>
             </div>
           </div>
+
+          {/* Rest of the form remains the same */}
           <div className="m-auto w-4/5">
             <div className="flex gap-8">
               <div>
@@ -233,9 +272,7 @@ const EditProfile = () => {
                 >
                   <option value="qualifications">Select Qualifications</option>
                   <option value="MASTER_DEGREE">Master&apos;s Degree</option>
-                  <option value="BACHELOR_DEGREE">
-                    Bachelor&apos;s Degree
-                  </option>
+                  <option value="BACHELOR_DEGREE">Bachelor&apos;s Degree</option>
                   <option value="PhD">PhD</option>
                 </select>
               </div>

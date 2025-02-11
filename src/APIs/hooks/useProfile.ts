@@ -1,10 +1,11 @@
-import { useMutation, UseMutationOptions, useQuery, UseQueryOptions } from "@tanstack/react-query";
+import { useMutation, type UseMutationOptions, useQuery, type UseQueryOptions } from "@tanstack/react-query";
 import type { ChangePassword, TeacherProfile, TeacherProfileUpdate } from "../../types";
 import {
   changePassword,
   fetchTeacherProfile,
   fetchTeacherProfileUpdate,
   updateProfile,
+  updateProfilePicture,
 } from "../features/profile";
 
 export const useProfile = (
@@ -32,6 +33,15 @@ export const useUpdateProfile = (
   ) => {
     return useMutation<TeacherProfileUpdate, Error, TeacherProfileUpdate>({
       mutationFn: updateProfile, // The mutation function
+      ...options, // Spread any additional options (onSuccess, onError, etc.)
+    });
+  };
+
+export const useUpdateProfilePicture = (
+    options?: UseMutationOptions<any, Error, any>
+  ) => {
+    return useMutation<any, Error, any>({
+      mutationFn: updateProfilePicture, // The mutation function
       ...options, // Spread any additional options (onSuccess, onError, etc.)
     });
   };
