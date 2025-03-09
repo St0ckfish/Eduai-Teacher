@@ -229,16 +229,17 @@ export default function Home() {
                       {post.attachments.slice(0, 6).map((attachment, index) => (
                         <div key={index} className="relative">
                           <ImageComponent
-                        src={attachment.viewLink}
-                        fallbackSrc="/images/noImage.png"
-                        aspectRatio="aspect-video"
-                        objectFit="cover"
-                        priority={true}
-                        className="h-full w-full rounded-md object-cover"
-                        alt={`Post Image ${index + 1}`}
-                        onLoadingComplete={() => console.log('Image loaded')}
-                        onError={(error) => console.error('Image failed to load:', error)}
-                      />
+                            src={attachment.viewLink}
+                            fallbackSrc="/images/noImage.png"
+                            aspectRatio="aspect-video"
+                            objectFit="cover"
+                            priority={true}
+                            className="h-full w-full rounded-md object-cover"
+                            alt={`Post Image ${index + 1}`}
+                            onLoadingComplete={() => console.log('Image loaded')}
+                            onError={(error) => console.error('Image failed to load:', error)}
+                            key={index} 
+                          />
                         </div>
                       ))}
                       {post.attachments.length > 6 && (
