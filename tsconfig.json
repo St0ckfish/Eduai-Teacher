@@ -8,7 +8,10 @@
     "resolveJsonModule": true,
     "moduleDetection": "force",
     "isolatedModules": true,
-
+    "types": [
+      "jest",
+      "@testing-library/jest-dom"
+    ],
     /* Strictness */
     "strict": true,
     "noUncheckedIndexedAccess": true,
