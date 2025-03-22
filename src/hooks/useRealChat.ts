@@ -27,6 +27,8 @@ interface UseWebSocketChatProps {
   userId: string | null;
   initialMessages: Message[];
   onNewMessage?: () => void;
+  refetchFunction?: () => Promise<void>; // New prop to accept external refetch function
+  pollingInterval?: number; // How often to check for new messages
 }
 
 interface MessagePayload {
@@ -44,29 +46,79 @@ const safeStringify = (id: string | number | null | undefined): string => {
   return id != null ? String(id) : '';
 };
 
-// الحل المبسط لإرسال رسائل نصية - تركيز على REST API فقط
+// Enhanced REST-based chat hook with polling
 export const useWebSocketChat = ({
   userId,
   initialMessages,
   onNewMessage,
+  refetchFunction, // External refetch function from RTK Query
+  pollingInterval = 5000, // Default to 5 seconds
 }: UseWebSocketChatProps) => {
   // حالة المكون
   const [messages, setMessages] = useState<Message[]>(initialMessages || []);
-  const [isConnected, setIsConnected] = useState(false);
+  const [isConnected, setIsConnected] = useState(true); // Assume connected by default
+  const [lastMessageId, setLastMessageId] = useState<string | null>(null);
+  const [isPolling, setIsPolling] = useState(false);
   
   // مراجع مهمة
   const messagesMap = useRef(new Map<string, Message>());
+  const pollingTimer = useRef<NodeJS.Timeout | null>(null);
   const isMounted = useRef(true);
+  const lastActivityTime = useRef(Date.now());
+  const currentChatId = useRef<string | null>(null);
+  
+  // Update current chat ID when it changes
+  useEffect(() => {
+    currentChatId.current = userId ? String(userId) : null;
+    
+    // Reset polling state when chat changes
+    if (pollingTimer.current) {
+      clearTimeout(pollingTimer.current);
+      pollingTimer.current = null;
+    }
+    
+    // Start polling for the new chat
+    if (userId) {
+      startPolling();
+    }
+    
+    return () => {
+      if (pollingTimer.current) {
+        clearTimeout(pollingTimer.current);
+        pollingTimer.current = null;
+      }
+    };
+  }, [userId]);
   
   // تهيئة الرسائل الأولية
   useEffect(() => {
     if (initialMessages && initialMessages.length > 0) {
       const newMap = new Map<string, Message>();
+      let latestId: string | null = null;
+      let latestTimestamp = 0;
+      
       initialMessages.forEach(msg => {
-        newMap.set(safeStringify(msg.id), msg);
+        // Only store messages for the current chat
+        if (String(msg.chatId) === currentChatId.current) {
+          const msgId = safeStringify(msg.id);
+          newMap.set(msgId, msg);
+          
+          // Track latest message by timestamp
+          const msgTime = new Date(msg.creationTime).getTime();
+          if (msgTime > latestTimestamp) {
+            latestTimestamp = msgTime;
+            latestId = msgId;
+          }
+        }
       });
+      
       messagesMap.current = newMap;
       setMessages(initialMessages);
+      
+      // Update last message ID if we found one
+      if (latestId) {
+        setLastMessageId(latestId);
+      }
     }
   }, [initialMessages]);
   
@@ -76,6 +128,10 @@ export const useWebSocketChat = ({
     
     return () => {
       isMounted.current = false;
+      if (pollingTimer.current) {
+        clearTimeout(pollingTimer.current);
+        pollingTimer.current = null;
+      }
     };
   }, []);
   
@@ -83,6 +139,47 @@ export const useWebSocketChat = ({
   const getToken = useCallback(() => {
     return Cookies.get("token") || null;
   }, []);
+  
+  // Start polling for new messages
+  const startPolling = useCallback(() => {
+    if (!userId || isPolling || !isMounted.current) return;
+    
+    setIsPolling(true);
+    
+    const poll = async () => {
+      try {
+        // If we have an external refetch function, use it
+        if (refetchFunction) {
+          await refetchFunction();
+        }
+        
+        // Always update the last activity time
+        lastActivityTime.current = Date.now();
+        
+        // Schedule next poll if still mounted
+        if (isMounted.current) {
+          pollingTimer.current = setTimeout(() => void poll(), pollingInterval);
+        }
+      } catch (error) {
+        console.error("Polling error:", error);
+        // Try again after error with exponential backoff
+        if (isMounted.current) {
+          pollingTimer.current = setTimeout(() => void poll(), Math.min(pollingInterval * 2, 30000));
+        }
+      }
+    };
+    
+    // Start polling
+    poll();
+    
+    return () => {
+      setIsPolling(false);
+      if (pollingTimer.current) {
+        clearTimeout(pollingTimer.current);
+        pollingTimer.current = null;
+      }
+    };
+  }, [userId, isPolling, refetchFunction, pollingInterval]);
   
   // رفع ملف إلى الخادم
   const uploadFile = async (file: File): Promise<string> => {
@@ -102,27 +199,32 @@ export const useWebSocketChat = ({
     
     console.log(`رفع ملف إلى ${uploadUrl}`);
     
-    const response = await fetch(uploadUrl, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`
-      },
-      body: formData
-    });
-    
-    if (!response.ok) {
-      const text = await response.text();
-      throw new Error(`فشل رفع الملف: ${response.status} - ${text}`);
+    try {
+      const response = await fetch(uploadUrl, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`
+        },
+        body: formData
+      });
+      
+      if (!response.ok) {
+        const text = await response.text();
+        throw new Error(`فشل رفع الملف: ${response.status} - ${text}`);
+      }
+      
+      const result = await response.json();
+      
+      if (!result.success) {
+        throw new Error(result.message || "فشل رفع الملف");
+      }
+      
+      console.log("تم رفع الملف بنجاح، المعرف:", result.data);
+      return result.data;
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      throw error;
     }
-    
-    const result = await response.json();
-    
-    if (!result.success) {
-      throw new Error(result.message || "فشل رفع الملف");
-    }
-    
-    console.log("تم رفع الملف بنجاح، المعرف:", result.data);
-    return result.data;
   };
   
   // إرسال أي نوع من الرسائل عبر REST API
@@ -138,6 +240,9 @@ export const useWebSocketChat = ({
         console.error("لا يمكن إرسال الرسالة: رمز التوثيق غير موجود");
         return false;
       }
+      
+      // Update last activity time
+      lastActivityTime.current = Date.now();
       
       // إعداد البيانات المناسبة للإرسال
       interface RequestPayload {
@@ -211,13 +316,26 @@ export const useWebSocketChat = ({
             
             // تخزين الرسالة في الخريطة
             messagesMap.current.set(messageId, newMessage);
+            setLastMessageId(messageId);
+            
+            // Trigger a refetch to ensure we have the most up-to-date data
+            if (refetchFunction) {
+              setTimeout(() => {
+                refetchFunction();
+              }, 300);
+            }
             
             // إشعار بوجود رسالة جديدة
             if (onNewMessage) {
               setTimeout(onNewMessage, 0);
             }
             
-            return [...prevMessages, newMessage];
+            // Sort messages by creation time
+            const updatedMessages = [...prevMessages, newMessage].sort((a, b) => 
+              new Date(a.creationTime).getTime() - new Date(b.creationTime).getTime()
+            );
+            
+            return updatedMessages;
           });
         }
       }
@@ -226,6 +344,17 @@ export const useWebSocketChat = ({
       return true;
     } catch (error) {
       console.error("خطأ في إرسال الرسالة:", error);
+      
+      // Set connection state to disconnected if we have network errors
+      setIsConnected(false);
+      
+      // Try to reconnect after a brief delay
+      setTimeout(() => {
+        if (isMounted.current) {
+          setIsConnected(true);
+        }
+      }, 3000);
+      
       return false;
     }
   };
@@ -233,19 +362,47 @@ export const useWebSocketChat = ({
   // واجهة موحدة لإرسال رسائل نصية
   const sendMessage = async (payload: MessagePayload): Promise<boolean> => {
     console.log("إرسال رسالة نصية:", payload);
-    return sendMessageViaRest(payload);
+    const success = await sendMessageViaRest(payload);
+    
+    // If message was sent successfully, trigger an immediate refetch
+    if (success && refetchFunction) {
+      setTimeout(() => {
+        refetchFunction();
+      }, 300);
+    }
+    
+    return success;
   };
   
   // واجهة موحدة لإرسال رسائل مع مرفقات
   const sendMessageWithAttachment = async (payload: FileMessagePayload): Promise<boolean> => {
     console.log("إرسال رسالة مع مرفق:", payload);
-    return sendMessageViaRest(payload);
+    const success = await sendMessageViaRest(payload);
+    
+    // If message was sent successfully, trigger an immediate refetch
+    if (success && refetchFunction) {
+      setTimeout(() => {
+        refetchFunction();
+      }, 300);
+    }
+    
+    return success;
   };
   
+  // Define manual refetch function
+  const refetch = useCallback(() => {
+    if (refetchFunction) {
+      console.log("Manual refetch triggered");
+      refetchFunction();
+    }
+  }, [refetchFunction]);
+  
+  // Export interface
   return {
     messages,
     isConnected,
     sendMessage,
-    sendMessageWithAttachment
+    sendMessageWithAttachment,
+    refetch
   };
 };

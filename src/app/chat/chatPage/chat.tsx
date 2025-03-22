@@ -231,23 +231,19 @@ const userData = useUserDataStore.getState().userData;
 
   const { messages: wsMessages, isConnected, sendMessage, sendMessageWithAttachment } = useWebSocketChat({
     userId,
-    initialMessages: messagesData || [],
-    onNewMessage: () => {
-      // Callback when new message is received - update chat list
-      regetusers();
-      
-      // Also refetch messages via REST API to ensure we have the latest data
-      // This helps with attachments and other metadata that might not come through WebSocket
-      refetch();
-      
-      // Scroll to bottom only if we were already at the bottom
-      if (wasAtBottom) {
-        setTimeout(() => {
-          chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
-        }, 100);
-      } 
+  initialMessages: messagesData || [],
+  refetchFunction: async () => { await refetch(); }, // Wrap refetch to match expected void return type
+  onNewMessage: () => {
+    regetusers();
+    // The hook will handle calling refetch automatically
+    
+    if (wasAtBottom) {
+      setTimeout(() => {
+        chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+      }, 100);
     }
-  });
+  }
+});
 
   useEffect(() => {
     // When userId changes (switching chats), reset the state
@@ -421,7 +417,6 @@ const userData = useUserDataStore.getState().userData;
   return (
     <div className="mx-auto flex h-[700px] w-full flex-col rounded-xl bg-bgPrimary">
       <div className="relative inline-block p-4">
-      <ConnectionStatus isConnected={isConnected} />
         <div className="flex items-center gap-2 font-medium">
           <img src="/images/userr.png" alt="#" className="w-[50px] h-[50px]" />
           <p>{userName}</p>
