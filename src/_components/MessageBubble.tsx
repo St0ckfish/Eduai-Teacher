@@ -41,10 +41,6 @@ export const MessageBubble = ({ message, isCurrentUser, userName, currentChatId 
   // Determine if the current user is the sender by comparing creatorName with userName
   // This provides a more reliable way to determine message ownership
   const isSentByCurrentUser = message.creatorName === userName;
-console.log("username", userName);
-console.log("creatorName", message.creatorName);
-console.log();
-
 
   const formatTime = (datetimeString: string) => {
     const date = new Date(datetimeString);
