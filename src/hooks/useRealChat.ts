@@ -1,6 +1,10 @@
 import { type Client as StompClient, type IMessage, Client } from "@stomp/stompjs";
 import { useEffect, useRef, useState, useCallback } from "react";
 import Cookies from "js-cookie";
+import { baseUrlStock } from "~/APIs/axios";
+
+// DEBUG: Log base URL for troubleshooting
+console.log("Current baseUrlStock value:", baseUrlStock);
 
 // Interface definitions for attachment and message types
 interface Attachment {
@@ -40,6 +44,33 @@ interface FileMessagePayload extends MessagePayload {
   file?: File;
 }
 
+/**
+ * Helper function to convert WebSocket URL to HTTP URL
+ */
+const getHttpUrl = (wsUrl: string) => {
+  if (typeof wsUrl !== 'string') {
+    console.error("Invalid baseUrl:", wsUrl);
+    return 'http://localhost:8080/'; // Fallback URL
+  }
+  
+  // Remove trailing slashes for consistent concatenation
+  const cleanUrl = wsUrl.replace(/\/+$/, '');
+  
+  if (cleanUrl.startsWith('wss://')) {
+    return 'https://' + cleanUrl.substring(6);
+  } else if (cleanUrl.startsWith('ws://')) {
+    return 'http://' + cleanUrl.substring(5);
+  }
+  
+  // If it's already an HTTP URL, ensure it ends with a slash
+  if (cleanUrl.startsWith('http://') || cleanUrl.startsWith('https://')) {
+    return cleanUrl.endsWith('/') ? cleanUrl : cleanUrl + '/';
+  }
+  
+  // Default case - assume it's a hostname without protocol
+  return 'http://' + cleanUrl + '/';
+};
+
 // Helper function to safely stringify message IDs for comparison
 const safeStringify = (id: string | number | null | undefined): string => {
   return id != null ? String(id) : '';
@@ -51,7 +82,7 @@ export const useWebSocketChat = ({
   initialMessages,
   onNewMessage,
 }: UseWebSocketChatProps) => {
-  const [messages, setMessages] = useState<Message[]>(initialMessages || []);
+  const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [isConnected, setIsConnected] = useState(false);
   const stompClientRef = useRef<StompClient | null>(null);
   const messagesMapRef = useRef<Map<string, Message>>(new Map());
@@ -95,16 +126,13 @@ export const useWebSocketChat = ({
     
     // Clean up any existing connection first
     if (stompClientRef.current) {
-      try {
-        stompClientRef.current.deactivate();
-      } catch (error) {
-        console.error("Error deactivating previous STOMP client:", error);
-      }
+      stompClientRef.current.deactivate();
       stompClientRef.current = null;
     }
 
-    // Use direct WebSocket URL
-    const brokerURL = `wss://api.eduai.tech/ws?token=${encodeURIComponent(token)}`;
+    // IMPORTANT: Use the exact WebSocket URL from the error logs
+    // Notice we're not modifying the URL - using it exactly as shown in the error logs
+    const brokerURL = `wss://api.eduai.tech/ws?token=${token}`;
     
     console.log("Connecting to WebSocket URL:", brokerURL);
 
@@ -126,7 +154,7 @@ export const useWebSocketChat = ({
       connectionAttempts.current = 0; // Reset counter on successful connection
       
       try {
-        // Subscribe to user-specific channel
+        // Using the exact subscription path from the logs
         const subscriptionPath = `/direct-chat/${userId}`;
         console.log(`Subscribing to: ${subscriptionPath}`);
         
@@ -134,19 +162,8 @@ export const useWebSocketChat = ({
           console.log("Received message via WebSocket:", message);
           
           try {
-            if (!message.body) {
-              console.error("Empty message body received");
-              return;
-            }
-            
             const newMessage: Message = JSON.parse(message.body);
             console.log("Parsed message:", newMessage);
-            
-            // Make sure we have a valid message with an ID
-            if (!newMessage || !newMessage.id) {
-              console.error("Invalid message format received:", newMessage);
-              return;
-            }
             
             setMessages(prevMessages => {
               const messageId = safeStringify(newMessage.id);
@@ -164,14 +181,14 @@ export const useWebSocketChat = ({
               console.log("Adding new message to state:", newMessage);
               messagesMapRef.current.set(messageId, newMessage);
               
+              // Notify about new message in a setTimeout to avoid React batching issues
+              if (onNewMessage) {
+                console.log("Calling onNewMessage callback");
+                setTimeout(onNewMessage, 0);
+              }
+              
               return [...prevMessages, newMessage];
             });
-            
-            // Notify about new message in a setTimeout to avoid React batching issues
-            if (onNewMessage) {
-              console.log("Calling onNewMessage callback");
-              setTimeout(onNewMessage, 0);
-            }
           } catch (parseError) {
             console.error("Error parsing incoming message:", parseError, "Raw message:", message.body);
           }
@@ -186,22 +203,16 @@ export const useWebSocketChat = ({
     stompClient.onStompError = frame => {
       console.error("Broker reported error:", frame.headers.message);
       setIsConnected(false);
-      // Schedule reconnection
-      scheduleReconnect();
     };
 
     stompClient.onWebSocketError = event => {
       console.error("WebSocket connection error:", event);
       setIsConnected(false);
-      // Schedule reconnection
-      scheduleReconnect();
     };
 
     stompClient.onWebSocketClose = () => {
       console.log("WebSocket connection closed");
       setIsConnected(false);
-      // Schedule reconnection
-      scheduleReconnect();
     };
 
     // Store the client reference before activating
@@ -212,27 +223,8 @@ export const useWebSocketChat = ({
     } catch (error) {
       console.error("Error activating STOMP client:", error);
       stompClientRef.current = null;
-      // Schedule reconnection
-      scheduleReconnect();
     }
   }, [userId, getToken, onNewMessage]);
-
-  // Helper function to schedule reconnection with exponential backoff
-  const scheduleReconnect = useCallback(() => {
-    if (reconnectTimeoutRef.current) {
-      clearTimeout(reconnectTimeoutRef.current);
-    }
-    
-    if (connectionAttempts.current < MAX_RECONNECT_ATTEMPTS) {
-      const backoffTime = Math.min(1000 * Math.pow(2, connectionAttempts.current), 30000);
-      console.log(`Scheduling reconnect attempt in ${backoffTime/1000} seconds...`);
-      
-      reconnectTimeoutRef.current = setTimeout(() => {
-        console.log("Attempting to reconnect WebSocket...");
-        setupWebSocket();
-      }, backoffTime);
-    }
-  }, [setupWebSocket]);
 
   // Connect when component mounts or userId changes
   useEffect(() => {
@@ -249,16 +241,40 @@ export const useWebSocketChat = ({
       
       if (stompClientRef.current) {
         console.log("Cleaning up WebSocket connection");
-        try {
-          stompClientRef.current.deactivate();
-        } catch (error) {
-          console.error("Error deactivating STOMP client during cleanup:", error);
-        }
+        stompClientRef.current.deactivate();
         stompClientRef.current = null;
       }
       setIsConnected(false);
     };
   }, [userId, setupWebSocket]);
+
+  // Monitor connection status and implement reconnection
+  useEffect(() => {
+    console.log("WebSocket connection status:", isConnected ? "CONNECTED" : "DISCONNECTED");
+    
+    // Auto-reconnect on disconnection with exponential backoff
+    if (!isConnected && userId && getToken()) {
+      const backoffTime = Math.min(1000 * Math.pow(2, connectionAttempts.current), 30000);
+      
+      console.log(`Scheduling reconnect attempt in ${backoffTime/1000} seconds...`);
+      
+      if (reconnectTimeoutRef.current) {
+        clearTimeout(reconnectTimeoutRef.current);
+      }
+      
+      reconnectTimeoutRef.current = setTimeout(() => {
+        console.log("Attempting to reconnect WebSocket...");
+        setupWebSocket();
+      }, backoffTime);
+      
+      return () => {
+        if (reconnectTimeoutRef.current) {
+          clearTimeout(reconnectTimeoutRef.current);
+          reconnectTimeoutRef.current = null;
+        }
+      };
+    }
+  }, [isConnected, userId, getToken, setupWebSocket]);
 
   // Upload file to server with retry logic
   const uploadFile = async (file: File, retryCount = 0): Promise<string> => {
@@ -273,7 +289,9 @@ export const useWebSocketChat = ({
     formData.append("file", file);
 
     try {
-      const uploadUrl = `https://api.eduai.tech/api/v1/messages/${userId}/file`;
+      // Use the exact domain from the WebSocket URL
+      const apiUrl = "https://api.eduai.tech/";
+      const uploadUrl = `${apiUrl}api/v1/messages/${userId}/file`;
       
       console.log(`Uploading file to ${uploadUrl}`);
       
@@ -281,7 +299,7 @@ export const useWebSocketChat = ({
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
-          // No Content-Type header for multipart/form-data
+          // Do NOT set Content-Type here - browser will set it with boundary for multipart/form-data
         },
         body: formData,
       });
@@ -340,10 +358,11 @@ export const useWebSocketChat = ({
         attachmentId: attachmentId || undefined,
       };
 
-      // Send message with attachment
-      const sendUrl = `https://api.eduai.tech/api/v1/messages/new`;
+      // Use the exact domain from the WebSocket URL
+      const apiUrl = "https://api.eduai.tech/";
+      const sendUrl = `${apiUrl}api/v1/messages/new`;
       
-      // Format request parameters
+      // تهيئة الرسالة بتنسيق URLSearchParams لإرسال البيانات كمعلمة طلب
       const urlParams = new URLSearchParams();
       urlParams.append('request', JSON.stringify(payload));
       
@@ -355,7 +374,7 @@ export const useWebSocketChat = ({
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({}), // Empty body as we're using URL params
+        body: JSON.stringify({}),
       });
 
       if (!response.ok) {
@@ -372,13 +391,11 @@ export const useWebSocketChat = ({
         
         setMessages(prev => {
           // Check if message already exists
-          const messageId = safeStringify(newMessage.id);
-          if (prev.some(msg => safeStringify(msg.id) === messageId)) {
+          if (prev.some(msg => safeStringify(msg.id) === safeStringify(newMessage.id))) {
             return prev;
           }
           
-          // Add new message and update our message map
-          messagesMapRef.current.set(messageId, newMessage);
+          // Add new message
           return [...prev, newMessage];
         });
         
@@ -396,7 +413,6 @@ export const useWebSocketChat = ({
     }
   };
 
-  // Send a regular text message
   const sendMessage = async (messagePayload: MessagePayload): Promise<boolean> => {
     // Ensure we're using string IDs consistently
     const normalizedPayload = {
@@ -409,8 +425,9 @@ export const useWebSocketChat = ({
       try {
         console.log("Sending message via WebSocket:", normalizedPayload);
         
+        // Use the standard STOMP destination pattern - may need adjustment
         stompClientRef.current.publish({
-          destination: "/app/chat.sendMessage", // Updated to match server-side endpoint
+          destination: "/app/sendMessage",  // Use this standard destination based on STOMP patterns
           body: JSON.stringify(normalizedPayload),
           headers: { 'content-type': 'application/json' }
         });
@@ -426,17 +443,19 @@ export const useWebSocketChat = ({
       console.log("WebSocket not connected, using REST API");
     }
     
-    // Fallback to REST API
-    const token = getToken();
-    if (!token) {
-      console.error("Cannot send message: missing token");
-      return false;
-    }
-    
+    // Fallback to REST API if WebSocket isn't connected or failed
     try {
-      const sendUrl = `https://api.eduai.tech/api/v1/messages/new`;
+      const token = getToken();
+      if (!token) {
+        console.error("Cannot send message: missing token");
+        return false;
+      }
       
-      // Format request parameters
+      // Use the exact domain from the WebSocket URL
+      const apiUrl = "https://api.eduai.tech/";
+      const sendUrl = `${apiUrl}api/v1/messages/new`;
+      
+      // تهيئة الرسالة بتنسيق URLSearchParams لإرسال البيانات كمعلمة طلب
       const urlParams = new URLSearchParams();
       urlParams.append('request', JSON.stringify(normalizedPayload));
       
@@ -448,7 +467,7 @@ export const useWebSocketChat = ({
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({}), // Empty body as we're using URL params
+        body: JSON.stringify({}),
       });
       
       if (!response.ok) {
