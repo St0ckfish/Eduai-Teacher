@@ -3,12 +3,24 @@
 import { useGetAllMessages } from "~/APIs/hooks/useChat";
 import { Client, type IMessage } from "@stomp/stompjs";
 import Cookies from "js-cookie";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { MessageBubble } from "~/_components/MessageBubble";
 import Link from "next/link";
 import { toast } from "react-toastify";
 import { baseUrlStock } from "~/APIs/axios";
 import { useUserDataStore } from "~/APIs/store";
+import { useWebSocketChat } from "~/hooks/useRealChat";
+
+
+interface Attachment {
+  id: string;
+  viewLink: string;
+  downloadLink: string;
+  isVideo: boolean;
+  isAudio: boolean;
+  isFile: boolean;
+  isImage: boolean;
+}
 
 interface Message {
   chatId: number | string;
@@ -17,8 +29,20 @@ interface Message {
   creationTime: string;
   creatorName: string;
   imageUrl?: string;
+  hasAttachment?: boolean;
+  attachment?: Attachment;
 }
 
+interface ChatPageProps {
+  userId: string | null;
+  regetusers: () => void;
+  userName: string;
+  userRole: string;
+  realuserId: string;
+}
+
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+const ALLOWED_FILE_TYPES = ["image/jpeg", "image/png", "image/gif"];
 
 const EmojiPicker = ({ onEmojiSelect, onClose }: { onEmojiSelect: (emoji: string) => void; onClose: () => void }) => {
   const emojis = [
@@ -53,25 +77,58 @@ const DateSeparator = ({ date }: { date: string }) => (
   </div>
 );
 
-interface ChatPageProps {
-  userId: string | null;
-  regetusers: () => void;
-  userName: string;
-  userRole: string;
-  realuserId: string;
-}
+const ConnectionStatus = ({ isConnected }: { isConnected: boolean }) => (
+  isConnected ? null : (
+    <div className="absolute top-0 left-0 right-0 bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100 text-xs p-1 text-center">
+      Connection issues. Messages will still be sent when possible.
+    </div>
+  )
+);
+
+const logDebug = (message: string, ...args: any[]) => {
+  if (process.env.NODE_ENV !== 'production') {
+    console.log(`[ChatPage] ${message}`, ...args);
+  }
+};
 
 const ChatPage = ({ userId, regetusers, userName, userRole, realuserId }: ChatPageProps) => {
   const chatEndRef = useRef<HTMLDivElement | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
+  const chatContainerRef = useRef<HTMLDivElement | null>(null);
   const [input, setInput] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [isSending, setIsSending] = useState(false);
+  const [wasAtBottom, setWasAtBottom] = useState(true);
 
 const handleEmojiSelect = (emoji: string) => {
     setInput(prev => prev + emoji);
   };
+  const formatMessageDate = useCallback((dateString: string) => {
+    const date = new Date(dateString);
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+    
+    // Check if date is today
+    if (date.toDateString() === today.toDateString()) {
+      return "Today";
+    }
+    
+    // Check if date is yesterday
+    if (date.toDateString() === yesterday.toDateString()) {
+      return "Yesterday";
+    }
+    
+    // Otherwise return full date
+    return date.toLocaleDateString(undefined, {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  }, []);
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (showEmojiPicker && !(event.target as Element).closest('.emoji-picker-container')) {
@@ -83,24 +140,23 @@ const handleEmojiSelect = (emoji: string) => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [showEmojiPicker]);
   const token = Cookies.get("token");
-  const { data: messagesData, isLoading, error } = useGetAllMessages(userId ?? '');
+  const { data: messagesData, isLoading, error, refetch } = useGetAllMessages(userId ?? '');
 const userData = useUserDataStore.getState().userData;
   const currentUserName = userData.name_en;
 
   const stompClientRef = useRef<Client | null>(null);
 
   // Group messages by date
-  const groupMessagesByDate = (messages: Message[]) => {
+  const groupMessagesByDate = useCallback((messages: Message[]) => {
     const groups: Record<string, Message[]> = {};
     
-    messages.forEach(message => {
-      const date = new Date(message.creationTime);
-      const dateStr = date.toLocaleDateString(undefined, {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-      });
+    // Filter to only include messages for the current chat
+    const filteredMessages = messages.filter(msg => 
+      String(msg.chatId) === String(userId)
+    );
+    
+    filteredMessages.forEach(message => {
+      const dateStr = formatMessageDate(message.creationTime);
       
       if (!groups[dateStr]) {
         groups[dateStr] = [];
@@ -109,8 +165,7 @@ const userData = useUserDataStore.getState().userData;
     });
     
     return groups;
-  };
-
+  }, [userId, formatMessageDate]);
   useEffect(() => {
     if (messagesData) {
       setMessages(messagesData);
@@ -165,6 +220,97 @@ const userData = useUserDataStore.getState().userData;
     };
   }, [token, userId]);
 
+  const handleScroll = useCallback(() => {
+    if (chatContainerRef.current) {
+      const { scrollTop, scrollHeight, clientHeight } = chatContainerRef.current;
+      // Consider "at bottom" if within 100px of the bottom
+      const isAtBottom = scrollHeight - scrollTop - clientHeight < 100;
+      setWasAtBottom(isAtBottom);
+    }
+  }, []);
+
+  const { messages: wsMessages, isConnected, sendMessage, sendMessageWithAttachment } = useWebSocketChat({
+    userId,
+    initialMessages: messagesData || [],
+    onNewMessage: () => {
+      // Callback when new message is received - update chat list
+      regetusers();
+      
+      // Also refetch messages via REST API to ensure we have the latest data
+      // This helps with attachments and other metadata that might not come through WebSocket
+      refetch();
+      
+      // Scroll to bottom only if we were already at the bottom
+      if (wasAtBottom) {
+        setTimeout(() => {
+          chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+        }, 100);
+      } 
+    }
+  });
+
+  useEffect(() => {
+    // When userId changes (switching chats), reset the state
+    setMessages([]); // Clear previous messages
+    setInput(""); // Clear input field
+    handleRemoveImage(); // Clear any uploaded images
+    setWasAtBottom(true); // Reset scroll position tracking
+    
+    if (messagesData) {
+      // Only set messages for the current chat, ensuring strict type comparison
+      const filteredMessages = messagesData.filter((msg: { chatId: any; }) => 
+        String(msg.chatId) === String(userId)
+      );
+      setMessages(filteredMessages);
+      
+      // Log message count for debugging
+      logDebug(`Loaded ${filteredMessages.length} messages for chat ${userId}`);
+    }
+    
+    // Auto-scroll to bottom when changing chats
+    setTimeout(() => {
+      chatEndRef.current?.scrollIntoView({ behavior: "auto" });
+    }, 100);
+  }, [userId, messagesData]);
+  useEffect(() => {
+    if (wsMessages && wsMessages.length > 0 && userId) {
+      // Filter to only include messages for the current chat with strict equality
+      const relevantMessages = wsMessages.filter((msg: { chatId: any; }) => 
+        String(msg.chatId) === String(userId)
+      );
+      
+      if (relevantMessages.length > 0) {
+        logDebug(`Processing ${relevantMessages.length} WebSocket messages for chat ${userId}`);
+      }
+      
+      // Merge with current messages, avoiding duplicates
+      setMessages(prev => {
+        const newMessages = [...prev];
+        const seenIds = new Set(newMessages.map(msg => String(msg.id)));
+        
+        relevantMessages.forEach((wsMsg: Message) => {
+          if (!seenIds.has(String(wsMsg.id))) {
+            newMessages.push(wsMsg);
+            seenIds.add(String(wsMsg.id));
+          }
+        });
+        
+        // Sort by creation time
+        return newMessages.sort((a, b) => 
+          new Date(a.creationTime).getTime() - new Date(b.creationTime).getTime()
+        );
+      });
+    }
+  }, [wsMessages, userId]);
+  useEffect(() => {
+    const container = chatContainerRef.current;
+    if (container) {
+      container.addEventListener('scroll', handleScroll);
+      return () => {
+        container.removeEventListener('scroll', handleScroll);
+      };
+    }
+  }, [handleScroll]);
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
       const file = event.target.files[0];
@@ -197,51 +343,92 @@ const userData = useUserDataStore.getState().userData;
   };
 
   const handleSendMessage = async () => {
-    if (!input.trim() && !imageFile) {
+    const trimmedInput = input.trim();
+    
+    if (!trimmedInput && !imageFile) {
       toast.error("Cannot send empty message");
       return;
     }
 
-    if (!stompClientRef.current?.connected) {
+    if (isSending) {
+      toast.info("Message is already being sent");
       return;
     }
 
-    const messagePayload = {
-      chatId: userId,
-      content: input.trim(),
-      ...(imageFile ? { imageUrl: URL.createObjectURL(imageFile) } : {}),
-    };
+    if (!userId) {
+      toast.error("No chat selected");
+      return;
+    }
+
+    setIsSending(true);
 
     try {
-      stompClientRef.current.publish({
-        destination: "/app/sendMessage",
-        body: JSON.stringify(messagePayload),
-      });
+      let success;
+      
+      // Prepare the message payload with string chat ID
+      const messagePayload = {
+        chatId: String(userId),
+        content: trimmedInput || " " // Use space if empty (for image-only messages)
+      };
+      
+      if (imageFile) {
+        // Log for debugging
+        logDebug(`Sending message with image. File size: ${imageFile.size} bytes, type: ${imageFile.type}`);
+        
+        // Use file upload + message sending with attachmentId
+        success = await sendMessageWithAttachment({
+          ...messagePayload,
+          file: imageFile
+        });
+      } else {
+        // Use WebSocket for text-only messages
+        logDebug("Sending text-only message:", messagePayload);
+        success = await sendMessage(messagePayload);
+      }
 
-      regetusers();
-      setInput("");
-      handleRemoveImage();
+      if (success) {
+        // Trigger chat list refresh
+        regetusers();
+        // Clear input field and image
+        setInput("");
+        handleRemoveImage();
+        setWasAtBottom(true); // Reset scroll position after sending
+        
+        // Scroll to bottom after sending
+        setTimeout(() => {
+          chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+        }, 100);
+        
+        // Show success message
+      } else {
+        toast.error("Failed to send message. Please try again.");
+      }
     } catch (error) {
       console.error("Message sending failed:", error);
+      toast.error("Failed to send message. Please try again.");
+    } finally {
+      setIsSending(false);
     }
   };
+
+  const groupedMessages = groupMessagesByDate(messages);
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  const groupedMessages = groupMessagesByDate(messages);
 
   return (
     <div className="mx-auto flex h-[700px] w-full flex-col rounded-xl bg-bgPrimary">
       <div className="relative inline-block p-4">
+      <ConnectionStatus isConnected={isConnected} />
         <div className="flex items-center gap-2 font-medium">
           <img src="/images/userr.png" alt="#" className="w-[50px] h-[50px]" />
           <p>{userName}</p>
         </div>
         
       </div>
-      <div className="flex-1 overflow-y-auto break-words rounded-xl bg-bgPrimary p-4">
+      <div ref={chatContainerRef} onScroll={handleScroll} className="flex-1 overflow-y-auto break-words rounded-xl bg-bgPrimary p-4">
         {isLoading && (
           <div className="flex h-full items-center justify-center">
             <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
@@ -262,6 +449,7 @@ const userData = useUserDataStore.getState().userData;
                 message={msg}
                 isCurrentUser={msg.creatorName === currentUserName}
                 userName={userName}
+                currentChatId={userId} 
               />
             ))}
           </div>
@@ -306,9 +494,10 @@ const userData = useUserDataStore.getState().userData;
                 accept="image/*"
                 onChange={handleImageChange}
                 className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+                disabled={isSending}
               />
               <svg
-                className="h-6 w-6 cursor-pointer"
+                className={`h-6 w-6 cursor-pointer ${isSending ? 'opacity-50' : ''} text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200`}
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
@@ -323,11 +512,13 @@ const userData = useUserDataStore.getState().userData;
             </label>
           </div>
           <div className="emoji-picker-container relative">
-              <button
+          <button
                 onClick={() => setShowEmojiPicker(!showEmojiPicker)}
                 className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full"
+                aria-label="Emoji picker"
+                disabled={isSending}
               >
-                <svg className="h-6 w-6" viewBox="0 0 24 24" width="24" height="24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <svg className={`h-6 w-6 ${isSending ? 'opacity-50' : ''} text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200`} viewBox="0 0 24 24" width="24" height="24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <circle cx="12" cy="12" r="10" />
                   <path d="M8 14s1.5 2 4 2 4-2 4-2" />
                   <line x1="9" y1="9" x2="9.01" y2="9" />
@@ -342,36 +533,49 @@ const userData = useUserDataStore.getState().userData;
               )}
             </div>
 
-          <input
+            <input
             type="text"
-            className="flex-1 rounded-lg p-2 focus:outline-none"
+            className="flex-1 rounded-lg p-2 focus:outline-none bg-transparent focus:bg-white dark:focus:bg-gray-700 border border-transparent focus:border-borderPrimary transition-colors"
             value={input}
             placeholder="Type your message..."
             onChange={e => setInput(e.target.value)}
             onKeyPress={e => {
-              if (e.key === "Enter") {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
                 handleSendMessage();
               }
             }}
+            disabled={isSending}
           />
           <button
-            className="ml-4 flex items-center gap-3 rounded-lg bg-[#ffead1] dark:bg-blue-900 px-2 py-1 font-semibold text-black hover:bg-[#dfbd90] hover:dark:bg-blue-700 dark:text-white"
+            className="ml-4 flex items-center gap-3 rounded-lg bg-[#ffead1] dark:bg-blue-900 hover:bg-[#dfbd90] hover:dark:bg-blue-700 px-3 py-2 font-semibold text-black dark:text-white transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
             onClick={handleSendMessage}
+            disabled={isSending || (!input.trim() && !imageFile)}
+            aria-label="Send message"
           >
-            Send
-            <svg
-              className="h-5 w-5 text-black dark:text-white"
-              viewBox="0 0 24 24"
-              strokeWidth="2"
-              stroke="currentColor"
-              fill="none"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path stroke="none" d="M0 0h24v24H0z" />
-              <line x1="10" y1="14" x2="21" y2="3" />
-              <path d="M21 3L14.5 21a.55 .55 0 0 1 -1 0L10 14L3 10.5a.55 .55 0 0 1 0 -1L21 3" />
-            </svg>
+            {isSending ? (
+              <>
+                <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
+                <span>Sending</span>
+              </>
+            ) : (
+              <>
+                <span>Send</span>
+                <svg
+                  className="h-5 w-5 text-black dark:text-white"
+                  viewBox="0 0 24 24"
+                  strokeWidth="2"
+                  stroke="currentColor"
+                  fill="none"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path stroke="none" d="M0 0h24v24H0z" />
+                  <line x1="10" y1="14" x2="21" y2="3" />
+                  <path d="M21 3L14.5 21a.55 .55 0 0 1 -1 0L10 14L3 10.5a.55 .55 0 0 1 0 -1L21 3" />
+                </svg>
+              </>
+            )}
           </button>
         </div>
       </div>
